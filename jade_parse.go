@@ -1,13 +1,13 @@
 package jade
 
 import (
-	// "fmt"
+	"fmt"
 )
 
 
 
 func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
-	token := t.peek()
+	token := t.next()
 	t.Root = t.newList(token.pos)
 
 	for token.typ != itemEOF {
@@ -15,6 +15,8 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 		switch token.typ {
 		case itemError:
 			t.errorf("%s", token.val)
+		case itemDoctype:
+			t.Root.append( t.newDoctype(token.pos, token.val) )
 		case itemTag:
 			tag := t.newTag(token.pos, token.val)
 			t.Root.append( tag )
@@ -24,6 +26,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 		token = t.next()
 		// fmt.Printf("%s\t\t\t%s\n", itemToStr[token.typ], token.val)
 	}
+	fmt.Printf("dixi.")
 	return nil
 }
 
