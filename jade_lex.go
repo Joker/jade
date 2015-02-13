@@ -18,18 +18,18 @@ const (
 	itemIdentTab
 
 	itemTag 			// html tag
+	itemDiv 			// html div for . or #
 	itemVoidTag 		// self-closing tags
 	itemInlineTag 		// inline tags
 	itemInlineVoidTag 	// inline + self-closing tags
-	itemHtmlTag 		// html <tag>
 
-	itemDiv 			// html div for . or #
-	itemId				// html div with id attr
-	itemClass			// html div with class attr
-	itemAttr 			// html attributes
+	itemId				// id    attribute
+	itemClass			// class attribute
+	itemAttr 			// html  attribute
 
 	itemSpace 			// run of spaces separating arguments
 	itemText 			// plain text
+	itemHtmlTag 		// html <tag>
 
 	itemDoctype 		// Doctype tag
 	itemComment

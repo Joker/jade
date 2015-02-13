@@ -24,6 +24,7 @@ type TagNode struct {
 	tr    *Tree
 	Nodes []Node
 
+	typ 	itemType
 	Tag     string
 	Indent  int
 	Nesting int
@@ -41,6 +42,15 @@ func (tg *TagNode) tree() *Tree {
 }
 
 func (tg *TagNode) String() string {
+	switch tg.typ {
+	case itemDiv:
+		tg.Tag = "div"
+	case itemVoidTag:
+	case itemInlineTag:
+	case itemInlineVoidTag:
+	}
+
+
 	b := new(bytes.Buffer)
 
 	fmt.Fprint(b, fmt.Sprintf("<%s>\n", tg.Tag))
