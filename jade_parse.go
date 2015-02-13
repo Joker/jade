@@ -20,7 +20,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 		case itemTag:
 			tag := t.newTag(token.pos, token.val)
 			t.Root.append( tag )
-			if t.parseInside( tag ) { return nil }
+			if ok, _ := t.parseInside( tag ); !ok { return nil }
 		}
 
 		token = t.next()
@@ -30,7 +30,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 	return nil
 }
 
-func (t *Tree) parseInside( outTag *TagNode ) bool {
+func (t *Tree) parseInside( outTag *TagNode ) (bool, int) {
 	indentCount := 0
 	token := t.next()
 
@@ -48,17 +48,22 @@ func (t *Tree) parseInside( outTag *TagNode ) bool {
 		case itemTag:
 			if indentCount > outTag.Indent {
 				tag := t.newTag(token.pos, token.val)
-				tag.Indent = indentCount
+				tag.Indent  = indentCount
+				tag.Nesting = outTag.Nesting + 1
 				outTag.append( tag )
-				if t.parseInside( tag ) { return true }
+				if ok, idt := t.parseInside( tag ); ok {
+					indentCount = idt
+				} else {
+					return false, 0
+				}
 			}else{
 				t.backup()
-				return false
+				return true, indentCount
 			}
 		}
 
 		token = t.next()
 		// fmt.Printf("-%d-%d---- %s\t\t\t%s\n", indentCount, outTag.Indent, itemToStr[token.typ], token.val)
 	}
-	return true
+	return false, 0
 }

@@ -108,7 +108,7 @@ func (t *Tree) newText(pos Pos, text string) *TextNode {
 }
 
 func (tx *TextNode) String() string {
-	return fmt.Sprintf("%s", tx.Text)
+	return fmt.Sprintf("%s\n", tx.Text)
 }
 
 func (tx *TextNode) tree() *Tree {
