@@ -43,6 +43,8 @@ func (t *Tree) parseInside( outTag *TagNode ) bool {
 			indentCount ++
 		case itemIdentTab:
 			indentCount += tabSize
+		case itemText:
+			outTag.append( t.newText(token.pos, token.val) )
 		case itemTag:
 			if indentCount > outTag.Indent {
 				tag := t.newTag(token.pos, token.val)

@@ -11,6 +11,7 @@ import (
 type NodeType int
 const (
 	NodeList    NodeType = iota
+	NodeText
 	NodeTag
 	NodeDoctype
 )
@@ -45,7 +46,7 @@ func (tg *TagNode) String() string {
 	fmt.Fprint(b, fmt.Sprintf("<%s>\n", tg.Tag))
 
 	for _, n := range tg.Nodes {
-		if n.Type() == NodeTag { fmt.Fprint(b, n) }
+		if n.Type() == NodeTag || n.Type() == NodeText { fmt.Fprint(b, n) }
 	}
 
 	fmt.Fprintf(b, "</%s>\n", tg.Tag)
