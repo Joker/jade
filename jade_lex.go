@@ -165,7 +165,7 @@ func lexAfterTag(l *lexer) stateFn {
 		return lexTags
 	case r == ' ' || r == '\t':
 		l.ignore()
-		return lexTextEndL
+		return lexInlineText
 	case r == '=':
 		l.ignore()
 		return lexInlineAction
@@ -316,6 +316,11 @@ func lexTextEndL(l *lexer) stateFn {
 	return nil
 }
 
+func lexInlineText(l *lexer) stateFn {
+	if l.toEndL(itemInlineText) { return lexIndents }
+	return nil
+}
+
 func lexActionEndL(l *lexer) stateFn {
 	if l.toEndL(itemAction) { return lexIndents }
 	return nil
@@ -325,6 +330,7 @@ func lexInlineAction(l *lexer) stateFn {
 	if l.toEndL(itemInlineAction) { return lexIndents }
 	return nil
 }
+
 
 func lexAction(l *lexer) stateFn {
 	l.next()

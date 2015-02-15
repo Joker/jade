@@ -27,6 +27,7 @@ type Node interface {
 	// tree returns the containing *Tree.
 	// It is unexported so all implementations of Node are in this package.
 	tree() *Tree
+	tp() itemType
 }
 
 // Type returns itself and provides an easy default implementation
@@ -68,6 +69,9 @@ func (l *ListNode) append(n Node) {
 
 func (l *ListNode) tree() *Tree {
 	return l.tr
+}
+func (l *ListNode) tp() itemType {
+	return 0
 }
 
 func (l *ListNode) String() string {

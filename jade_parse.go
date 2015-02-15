@@ -46,7 +46,7 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 		case itemIdentTab:
 			indentCount += tabSize
 
-		case itemText, itemInlineAction:
+		case itemText, itemInlineText, itemInlineAction:
 			outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
 
 		case itemTag, itemDiv, itemInlineTag, itemAction:

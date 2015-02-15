@@ -40,6 +40,9 @@ func (nn *NestNode) append(n Node) {
 func (nn *NestNode) tree() *Tree {
 	return nn.tr
 }
+func (nn *NestNode) tp() itemType {
+	return nn.typ
+}
 
 func (nn *NestNode) String() string {
 	// fmt.Printf("%s\t%s\n", itemToStr[nn.typ], nn.Tag)
@@ -47,12 +50,17 @@ func (nn *NestNode) String() string {
 	idt := new(bytes.Buffer)
 
 	bgnFormat := "<%s>"
-	endFormat := "</%s>"
 
 	if nn.typ != itemInlineTag { idt.WriteByte('\n') }
 
-	for i := 0; i < nn.Nesting; i++ {
-		idt.WriteString("    ")
+	if nestIndent {
+		for i := 0; i < nn.Nesting; i++ {
+			idt.WriteString(outputIndent)
+		}
+	} else {
+		for i := 0; i < nn.Indent; i++ {
+			idt.WriteByte(' ')
+		}
 	}
 
 	switch nn.typ {
@@ -64,11 +72,14 @@ func (nn *NestNode) String() string {
 
 	fmt.Fprint(b, fmt.Sprintf(idt.String()+bgnFormat, nn.Tag))
 
+	endFormat := idt.String()+"</%s>"
+
 	for _, n := range nn.Nodes {
 		fmt.Fprint(b, n)
+		if n.tp() == itemInlineText || n.tp() == itemInlineAction { endFormat = "</%s>" } else { endFormat = idt.String()+"</%s>" }
 	}
 
-	if nn.typ < itemVoidTag { fmt.Fprintf(b, idt.String()+endFormat, nn.Tag) }
+	if nn.typ < itemVoidTag { fmt.Fprintf(b, endFormat, nn.Tag) }
 
 	return b.String()
 }
@@ -124,6 +135,9 @@ func (d *DoctypeNode) String() string {
 	return fmt.Sprintf("<!DOCTYPE html>")
 }
 
+func (tx *DoctypeNode) tp() itemType {
+	return 0
+}
 func (d *DoctypeNode) tree() *Tree {
 	return d.tr
 }
@@ -154,8 +168,14 @@ func (tx *LineNode) String() string {
 	idt := new(bytes.Buffer)
 
 	lnFormat := "%s"
-	for i := 0; i < tx.Nesting; i++ {
-		idt.WriteString("    ")
+	if lineIndent {
+		for i := 0; i < tx.Nesting; i++ {
+			idt.WriteString(outputIndent)
+		}
+	} else {
+		for i := 0; i < tx.Indent; i++ {
+			idt.WriteByte(' ')
+		}
 	}
 
 	switch tx.typ {
@@ -169,6 +189,9 @@ func (tx *LineNode) String() string {
 	return fmt.Sprintf( lnFormat, tx.Text )
 }
 
+func (tx *LineNode) tp() itemType {
+	return tx.typ
+}
 func (tx *LineNode) tree() *Tree {
 	return tx.tr
 }

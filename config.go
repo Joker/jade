@@ -2,6 +2,10 @@ package jade
 
 const (
 	tabSize = 4
+
+	outputIndent  = "    "
+	nestIndent = true
+	lineIndent = false
 	
 	leftDelim    = "{{"
 	rightDelim   = "}}"
