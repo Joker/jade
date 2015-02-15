@@ -92,28 +92,3 @@ func (l *ListNode) CopyList() *ListNode {
 func (l *ListNode) Copy() Node {
 	return l.CopyList()
 }
-
-
-
-// TextNode holds plain text.
-type TextNode struct {
-	NodeType
-	Pos
-	tr   *Tree
-	Text []byte // The text; may span newlines.
-}
-
-func (t *Tree) newText(pos Pos, text string) *TextNode {
-	return &TextNode{tr: t, NodeType: NodeText, Pos: pos, Text: []byte(text)}
-}
-
-func (tx *TextNode) String() string {
-	return fmt.Sprintf("%s\n", tx.Text)
-}
-
-func (tx *TextNode) tree() *Tree {
-	return tx.tr
-}
-func (tx *TextNode) Copy() Node {
-	return &TextNode{tr: tx.tr, NodeType: NodeText, Pos: tx.Pos, Text: append([]byte{}, tx.Text...)}
-}

@@ -18,7 +18,7 @@ const (
 
 
 
-type TagNode struct {
+type NestNode struct {
 	NodeType
 	Pos
 	tr    *Tree
@@ -30,51 +30,61 @@ type TagNode struct {
 	Nesting int
 }
 
-func (t *Tree) newTag(pos Pos, tag string) *TagNode {
-	return &TagNode{tr: t, NodeType: NodeTag, Pos: pos, Tag: tag}
+func (t *Tree) newNest(pos Pos, tag string, tp itemType, idt, nst int) *NestNode {
+	return &NestNode{tr: t, NodeType: NodeTag, Pos: pos, Tag: tag, typ: tp, Indent: idt, Nesting: nst}
 }
 
-func (tg *TagNode) append(n Node) {
-	tg.Nodes = append(tg.Nodes, n)
+func (nn *NestNode) append(n Node) {
+	nn.Nodes = append(nn.Nodes, n)
 }
-func (tg *TagNode) tree() *Tree {
-	return tg.tr
+func (nn *NestNode) tree() *Tree {
+	return nn.tr
 }
 
-func (tg *TagNode) String() string {
-	switch tg.typ {
+func (nn *NestNode) String() string {
+	// fmt.Printf("%s\t%s\n", itemToStr[nn.typ], nn.Tag)
+	b   := new(bytes.Buffer)
+	idt := new(bytes.Buffer)
+
+	bgnFormat := "<%s>"
+	endFormat := "</%s>"
+
+	if nn.typ != itemInlineTag { idt.WriteByte('\n') }
+
+	for i := 0; i < nn.Nesting; i++ {
+		idt.WriteString("    ")
+	}
+
+	switch nn.typ {
 	case itemDiv:
-		tg.Tag = "div"
-	case itemVoidTag:
-	case itemInlineTag:
-	case itemInlineVoidTag:
+		nn.Tag = "div"
+	case itemAction:
+		bgnFormat = "{{ %s }}"
 	}
 
+	fmt.Fprint(b, fmt.Sprintf(idt.String()+bgnFormat, nn.Tag))
 
-	b := new(bytes.Buffer)
-
-	fmt.Fprint(b, fmt.Sprintf("<%s>\n", tg.Tag))
-
-	for _, n := range tg.Nodes {
-		if n.Type() == NodeTag || n.Type() == NodeText { fmt.Fprint(b, n) }
+	for _, n := range nn.Nodes {
+		fmt.Fprint(b, n)
 	}
 
-	fmt.Fprintf(b, "</%s>\n", tg.Tag)
+	if nn.typ < itemVoidTag { fmt.Fprintf(b, idt.String()+endFormat, nn.Tag) }
+
 	return b.String()
 }
 
-func (tg *TagNode) CopyTag() *TagNode {
-	if tg == nil {
-		return tg
+func (nn *NestNode) CopyTag() *NestNode {
+	if nn == nil {
+		return nn
 	}
-	n := tg.tr.newTag(tg.Pos, string(tg.Tag))
-	for _, elem := range tg.Nodes {
+	n := nn.tr.newNest(nn.Pos, nn.Tag, nn.typ, nn.Indent, nn.Nesting)
+	for _, elem := range nn.Nodes {
 		n.append(elem.Copy())
 	}
 	return n
 }
-func (tg *TagNode) Copy() Node {
-	return tg.CopyTag()
+func (nn *NestNode) Copy() Node {
+	return nn.CopyTag()
 }
 
 
@@ -109,9 +119,9 @@ func (t *Tree) newDoctype(pos Pos, dt string) *DoctypeNode {
 
 func (d *DoctypeNode) String() string {
 	if dt, ok := doctype[d.Doctype]; ok {
-		return fmt.Sprintf("%s\n", dt)
+		return fmt.Sprintf("%s", dt)
 	}
-	return fmt.Sprintf("<!DOCTYPE html>\n")
+	return fmt.Sprintf("<!DOCTYPE html>")
 }
 
 func (d *DoctypeNode) tree() *Tree {
@@ -119,4 +129,49 @@ func (d *DoctypeNode) tree() *Tree {
 }
 func (d *DoctypeNode) Copy() Node {
 	return &DoctypeNode{tr: d.tr, NodeType: NodeDoctype, Pos: d.Pos, Doctype: d.Doctype}
+}
+
+
+
+// LineNode holds plain text.
+type LineNode struct {
+	NodeType
+	Pos
+	tr   *Tree
+
+	Text []byte // The text; may span newlines.
+	typ 	itemType
+	Indent  int
+	Nesting int
+}
+
+func (t *Tree) newLine(pos Pos, text string, tp itemType, idt, nst int) *LineNode {
+	return &LineNode{tr: t, NodeType: NodeText, Pos: pos, Text: []byte(text), typ: tp, Indent: idt, Nesting: nst}
+}
+
+func (tx *LineNode) String() string {
+	// fmt.Printf("%s\t%s\n", itemToStr[tx.typ], tx.Text)
+	idt := new(bytes.Buffer)
+
+	lnFormat := "%s"
+	for i := 0; i < tx.Nesting; i++ {
+		idt.WriteString("    ")
+	}
+
+	switch tx.typ {
+	case itemText:
+		lnFormat = "\n"+idt.String()+lnFormat
+	case itemInlineText:
+	case itemInlineAction:
+		lnFormat = " {{%s }}"
+	}
+
+	return fmt.Sprintf( lnFormat, tx.Text )
+}
+
+func (tx *LineNode) tree() *Tree {
+	return tx.tr
+}
+func (tx *LineNode) Copy() Node {
+	return &LineNode{tr: tx.tr, NodeType: NodeText, Pos: tx.Pos, Text: append([]byte{}, tx.Text...), typ: tx.typ, Indent: tx.Indent, Nesting: tx.Nesting}
 }

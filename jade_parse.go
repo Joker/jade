@@ -18,9 +18,9 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 		case itemDoctype:
 			t.Root.append( t.newDoctype(token.pos, token.val) )
 		case itemTag:
-			tag := t.newTag(token.pos, token.val)
-			t.Root.append( tag )
-			if ok, _ := t.parseInside( tag ); !ok { return nil }
+			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
+			t.Root.append( nest )
+			if ok, _ := t.parseInside( nest ); !ok { return nil }
 		}
 
 		token = t.next()
@@ -30,29 +30,31 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 	return nil
 }
 
-func (t *Tree) parseInside( outTag *TagNode ) (bool, int) {
+func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 	indentCount := 0
 	token := t.next()
 
 	for token.typ != itemEOF {
+		// fmt.Printf("-%d-%d---- %s\t\t\t%s\n", indentCount, outTag.Indent, itemToStr[token.typ], token.val)
 
 		switch token.typ {
+
 		case itemEndL:
 			indentCount = 0
 		case itemIdentSpace:
 			indentCount ++
 		case itemIdentTab:
 			indentCount += tabSize
-		case itemText:
-			outTag.append( t.newText(token.pos, token.val) )
-		case itemTag, itemDiv, itemVoidTag, itemInlineTag, itemInlineVoidTag:
+
+		case itemText, itemInlineAction:
+			outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
+
+		case itemTag, itemDiv, itemInlineTag, itemAction:
 			if indentCount > outTag.Indent {
-				tag := t.newTag(token.pos, token.val)
-				tag.Indent  = indentCount
-				tag.Nesting = outTag.Nesting + 1
-				tag.typ     = token.typ
-				outTag.append( tag )
-				if ok, idt := t.parseInside( tag ); ok {
+				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
+
+				outTag.append( nest )
+				if ok, idt := t.parseInside( nest ); ok {
 					indentCount = idt
 				} else {
 					return false, 0
@@ -64,7 +66,6 @@ func (t *Tree) parseInside( outTag *TagNode ) (bool, int) {
 		}
 
 		token = t.next()
-		// fmt.Printf("-%d-%d---- %s\t\t\t%s\n", indentCount, outTag.Indent, itemToStr[token.typ], token.val)
 	}
 	return false, 0
 } 

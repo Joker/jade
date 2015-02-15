@@ -36,6 +36,8 @@ var itemToStr = map[itemType]string {
 	itemClass:			"itemClass",
 	itemAttr:			"itemAttr",
 	itemAction:			"itemAction",
+	itemInlineAction:	"itemInlineAction",
+	itemInlineText:		"itemInlineText",
 	itemFilter:			"itemFilter",
 	itemDoctype:		"itemDoctype",
 	itemComment:		"itemComment",

@@ -19,8 +19,8 @@ const (
 
 	itemTag 			// html tag
 	itemDiv 			// html div for . or #
-	itemVoidTag 		// self-closing tags
 	itemInlineTag 		// inline tags
+	itemVoidTag 		// self-closing tags
 	itemInlineVoidTag 	// inline + self-closing tags
 
 	itemId				// id    attribute
@@ -29,6 +29,7 @@ const (
 
 	itemSpace 			// run of spaces separating arguments
 	itemText 			// plain text
+	itemInlineText
 	itemHtmlTag 		// html <tag>
 
 	itemDoctype 		// Doctype tag
@@ -36,6 +37,7 @@ const (
 	itemBlank
 	itemFilter
 	itemAction 			// from go template {{...}}
+	itemInlineAction	// title= .titleName
 )
 
 
@@ -166,7 +168,7 @@ func lexAfterTag(l *lexer) stateFn {
 		return lexTextEndL
 	case r == '=':
 		l.ignore()
-		return lexActionEndL
+		return lexInlineAction
 	case r == '#':
 		l.ignore()
 		return lexId
@@ -316,6 +318,11 @@ func lexTextEndL(l *lexer) stateFn {
 
 func lexActionEndL(l *lexer) stateFn {
 	if l.toEndL(itemAction) { return lexIndents }
+	return nil
+}
+
+func lexInlineAction(l *lexer) stateFn {
+	if l.toEndL(itemInlineAction) { return lexIndents }
 	return nil
 }
 
