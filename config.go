@@ -16,10 +16,6 @@ const (
 	interDelim      = "#{"
 	unEscInterDelim = "!{"
 	rightInterDelim = "}"
-
-	tabDelim      = "-"
-	tabBufDelim   = "="
-	tabUnEscDelim = "!="
 )
 
 
@@ -71,13 +67,24 @@ var key = map[string]itemType {
 	"extends":  itemAction,
 	"mixin": 	itemAction,
 	"block": 	itemAction,
+	"for": 		itemAction,
 	"each": 	itemAction,
 	"while": 	itemAction,
 	"if": 		itemAction,
 	"else": 	itemAction,
+	"unless": 	itemAction,
 	"case": 	itemAction,
 	"when": 	itemAction,
 	"default":  itemAction,
+
+	// "if": 	itemIf,
+	// "else": 	itemElse,
+	"end": 		itemEnd,
+	"range": 	itemRange,
+	"with": 	itemWith,
+	"nil": 		itemNil,
+	"define": 	itemDefine,
+	"template": itemTemplate,
 
 	"a":		itemInlineTag,
 	"abbr":		itemInlineTag,

@@ -50,6 +50,7 @@ func (nn *NestNode) String() string {
 	idt := new(bytes.Buffer)
 
 	bgnFormat := "<%s>"
+	endFormat := "</%s>"
 
 	if nn.typ != itemInlineTag { idt.WriteByte('\n') }
 
@@ -66,6 +67,10 @@ func (nn *NestNode) String() string {
 	switch nn.typ {
 	case itemDiv:
 		nn.Tag = "div"
+	case itemComment:
+		nn.Tag = "--"
+		bgnFormat = "<!%s"
+		endFormat = "%s>"
 	case itemAction:
 		bgnFormat = "{{ %s }}"
 	}
@@ -73,7 +78,7 @@ func (nn *NestNode) String() string {
 	fmt.Fprint(b, fmt.Sprintf(idt.String()+bgnFormat, nn.Tag))
 
 	var (
-		endFormat string
+		endFmt string
 		endFlag bool
 	)
 
@@ -82,8 +87,8 @@ func (nn *NestNode) String() string {
 		if n.tp() == itemInlineText || n.tp() == itemInlineAction {endFlag = false} else {endFlag = true}
 	}
 
-	if !endFlag { endFormat = "</%s>" } else { endFormat = idt.String()+"</%s>" }
-	if nn.typ < itemVoidTag { fmt.Fprintf(b, endFormat, nn.Tag) }
+	if !endFlag { endFmt = endFormat } else { endFmt = idt.String()+endFormat }
+	if nn.typ < itemVoidTag { fmt.Fprintf(b, endFmt, nn.Tag) }
 
 	return b.String()
 }

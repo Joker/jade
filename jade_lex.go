@@ -19,6 +19,7 @@ const (
 
 	itemTag 			// html tag
 	itemDiv 			// html div for . or #
+	itemComment
 	itemInlineTag 		// inline tags
 	itemVoidTag 		// self-closing tags
 	itemInlineVoidTag 	// inline + self-closing tags
@@ -33,11 +34,19 @@ const (
 	itemHtmlTag 		// html <tag>
 
 	itemDoctype 		// Doctype tag
-	itemComment
 	itemBlank
 	itemFilter
 	itemAction 			// from go template {{...}}
 	itemInlineAction	// title= .titleName
+
+	itemDefine
+	itemElse
+	itemEnd
+	itemIf
+	itemRange
+	itemNil
+	itemTemplate
+	itemWith
 )
 
 
@@ -169,13 +178,18 @@ func lexAfterTag(l *lexer) stateFn {
 	case r == '=':
 		l.ignore()
 		return lexInlineAction
+	case r == '!':
+		sp := l.peek()
+		l.ignore()
+		if sp == '=' { l.next(); l.ignore(); return lexInlineAction }
+		return l.errorf("expect '=' after '!'")
 	case r == '#':
 		l.ignore()
 		return lexId
 	case r == '.':
 		sp := l.peek()
 		l.ignore()
-		if sp == ' ' { l.next(); l.ignore(); return lexLongText }
+		if sp == ' ' { return l.errorf("expect new line") } // { l.next(); l.ignore(); return lexLongText }
 		if sp == '\r' || sp == '\n' { return lexLongText }
 		return lexClass
 	case r == '\r':
