@@ -27,7 +27,7 @@ const (
 	itemClass			// class attribute
 	itemAttr 			// html  attribute
 
-	itemSpace 			// run of spaces separating arguments
+	itemParentIdent 	// Ident for 'tag:'
 	itemText 			// plain text
 	itemInlineText
 	itemHtmlTag 		// html <tag>
@@ -354,7 +354,7 @@ func lexSp(l *lexer) {
 	for isSpace(l.peek()) {
 		l.next()
 	}
-	l.emit(itemSpace)
+	l.emit(itemParentIdent)
 }
 
 

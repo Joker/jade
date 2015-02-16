@@ -72,13 +72,17 @@ func (nn *NestNode) String() string {
 
 	fmt.Fprint(b, fmt.Sprintf(idt.String()+bgnFormat, nn.Tag))
 
-	endFormat := idt.String()+"</%s>"
+	var (
+		endFormat string
+		endFlag bool
+	)
 
 	for _, n := range nn.Nodes {
 		fmt.Fprint(b, n)
-		if n.tp() == itemInlineText || n.tp() == itemInlineAction { endFormat = "</%s>" } else { endFormat = idt.String()+"</%s>" }
+		if n.tp() == itemInlineText || n.tp() == itemInlineAction {endFlag = false} else {endFlag = true}
 	}
 
+	if !endFlag { endFormat = "</%s>" } else { endFormat = idt.String()+"</%s>" }
 	if nn.typ < itemVoidTag { fmt.Fprintf(b, endFormat, nn.Tag) }
 
 	return b.String()
@@ -180,6 +184,8 @@ func (tx *LineNode) String() string {
 
 	switch tx.typ {
 	case itemText:
+		lnFormat = "\n"+idt.String()+lnFormat
+	case itemHtmlTag:
 		lnFormat = "\n"+idt.String()+lnFormat
 	case itemInlineText:
 	case itemInlineAction:
