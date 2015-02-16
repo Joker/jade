@@ -62,7 +62,7 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 				return true, indentCount
 			}
 
-		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment:
+		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
 

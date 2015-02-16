@@ -83,8 +83,9 @@ func (nn *NestNode) String() string {
 	)
 
 	for _, n := range nn.Nodes {
-		fmt.Fprint(b, n)
-		if n.tp() == itemInlineText || n.tp() == itemInlineAction {endFlag = false} else {endFlag = true}
+		   tp := n.tp()
+		if tp == itemInlineText || tp == itemInlineAction {endFlag = false} else {endFlag = true}
+		if tp != itemBlank { fmt.Fprint(b, n) }
 	}
 
 	if !endFlag { endFmt = endFormat } else { endFmt = idt.String()+endFormat }
@@ -93,7 +94,7 @@ func (nn *NestNode) String() string {
 	return b.String()
 }
 
-func (nn *NestNode) CopyTag() *NestNode {
+func (nn *NestNode) CopyNest() *NestNode {
 	if nn == nil {
 		return nn
 	}
@@ -104,7 +105,7 @@ func (nn *NestNode) CopyTag() *NestNode {
 	return n
 }
 func (nn *NestNode) Copy() Node {
-	return nn.CopyTag()
+	return nn.CopyNest()
 }
 
 
