@@ -382,25 +382,31 @@ func lexLongText(l *lexer) stateFn {
 	return lexIndents
 }
 
-
 func lexSpace(l *lexer) int {
 	var ident int
 Loop:
 	for {
-		switch l.next() {
-		case ' ':
+		switch r := l.next(); {
+		case r == ' ':
 			l.emit(itemIdentSpace)
 			ident ++
-		case '\t':
+		case r == '\t':
 			l.emit(itemIdentTab)
 			ident += tabSize
 		default:
-			l.backup()
+			if r == '\r' || r == '\n' {
+				ident = 500	// for empty lines in lexLongText
+				l.backup()
+				l.emit(itemText)
+			} else {
+				l.backup()
+			}
 			break Loop
 		}
 	}
 	return ident
 }
+
 
 func lexHtmlTag(l *lexer) stateFn {
 	if l.toEndL(itemHtmlTag) { return lexIndents }

@@ -69,8 +69,8 @@ func (nn *NestNode) String() string {
 		nn.Tag = "div"
 	case itemComment:
 		nn.Tag = "--"
-		bgnFormat = "<!%s"
-		endFormat = "%s>"
+		bgnFormat = "<!%s "
+		endFormat = " %s>"
 	case itemAction:
 		bgnFormat = "{{ %s }}"
 	}
