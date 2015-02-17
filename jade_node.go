@@ -195,7 +195,7 @@ func (tx *LineNode) String() string {
 		lnFormat = "\n"+idt.String()+lnFormat
 	case itemInlineText:
 	case itemInlineAction:
-		lnFormat = " {{%s }}"
+		lnFormat = "{{%s }}"
 	}
 
 	return fmt.Sprintf( lnFormat, tx.Text )

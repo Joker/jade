@@ -66,6 +66,18 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
 
+				attr := t.next()
+				for attr.typ == itemAttr     ||
+					attr.typ == itemId       ||
+					attr.typ == itemClass    ||
+					attr.typ == itemAttrName ||
+					attr.typ == itemAttrVoid ||
+					attr.typ == itemAttrN       {
+					fmt.Println(itemToStr[attr.typ], attr.val)
+					attr = t.next()
+				}
+				t.backup()
+
 				outTag.append( nest )
 				if ok, idt := t.parseInside( nest ); ok {
 					indentCount = idt

@@ -27,6 +27,9 @@ const (
 	itemId				// id    attribute
 	itemClass			// class attribute
 	itemAttr 			// html  attribute
+	itemAttrN			// html  attribute value without quotes
+	itemAttrName 		// html  attribute name
+	itemAttrVoid 		// html  attribute without value
 
 	itemParentIdent 	// Ident for 'tag:'
 	itemText 			// plain text
@@ -270,17 +273,96 @@ func lexTagName(l *lexer) stateFn {
 func lexAttr(l *lexer) stateFn {
 	for {
 		switch r := l.next(); {
-		case r == ')':
+		case isAlphaNumeric(r):
 			l.backup()
-			l.emit(itemAttr)
-			l.next()
+			l.ignore()
+			return lexAttrName
+		case r == ')':
 			l.ignore()
 			return lexAfterTag
-		case r == ',':
-			l.emit(itemAttr)
-			l.ignore()
-		case r == '\n':
-			return l.errorf("lexId: expected ')'")
+		case r == ' ' || r == ',' || r == '\t':
+		case r == eof:
+			return l.errorf("lexAttr: expected ')'")
+		}
+	}
+}
+func lexAttrName(l *lexer) stateFn {
+	for {
+		switch r := l.next(); {
+		case isAlphaNumeric(r):
+			// absorb.
+		case r == '=':
+			word := l.input[l.start:l.pos]
+			switch {
+			case word == "id=":
+				l.ignore()
+				return lexAttrId
+			case word == "class=":
+				l.ignore()
+				return lexAttrClass
+			default:
+				l.backup(); l.emit(itemAttrName)
+				l.next(); l.ignore()
+				return lexAttrVal
+			}
+		case r == ' ' || r == ',' || r == ')' || r == '\r' ||  r == '\n':
+			l.backup();
+			l.emit(itemAttrVoid)
+			return lexAttr
+		default:
+			return l.errorf("lexAttrName: expected '=' or ' ' %#U", r)
+		}
+	}
+}
+func lexAttrId(l *lexer) stateFn {
+	stopCh := l.next()
+	if stopCh == '"' || stopCh == '\'' {
+		l.toStopCh(stopCh, itemId)
+	} else {
+		l.toStopSpace(itemId)
+	}
+	return lexAttr
+}
+func lexAttrClass(l *lexer) stateFn {
+	stopCh := l.next()
+	if stopCh == '"' || stopCh == '\'' {
+		l.toStopCh(stopCh, itemId)
+	} else {
+		l.toStopSpace(itemId)
+	}
+	return lexAttr
+}
+func lexAttrVal(l *lexer) stateFn {
+	stopCh := l.next()
+	if stopCh == '"' || stopCh == '\'' {
+		l.toStopCh(stopCh, itemAttr)
+	} else {
+		l.toStopSpace(itemAttrN)
+	}
+	return lexAttr
+}
+func (l *lexer) toStopCh(stopCh rune, item itemType) {
+	for {
+		switch r := l.next(); {
+		case r == stopCh:
+			l.emit(item)
+			return
+		case r == eof || r == '\r' ||  r == '\n':
+			l.errorf("toStopCh: expected '%s' %#U",stopCh, r)
+			return
+		}
+	}
+}
+func (l *lexer) toStopSpace(item itemType) {
+	for {
+		switch r := l.next(); {
+		case r == ' ' || r == ',' || r == ')' || r == '\r' ||  r == '\n':
+			l.backup()
+			l.emit(itemAttrN)
+			return
+		case r == eof:
+			l.errorf("toStopCh: expected ')' %#U", r)
+			return
 		}
 	}
 }
