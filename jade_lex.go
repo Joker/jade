@@ -1,7 +1,7 @@
 package jade
 
 import (
-	// "fmt"
+	"fmt"
 	"strings"
 )
 
@@ -108,12 +108,15 @@ func lexCommentSkip(l *lexer) stateFn {
 }
 
 func lexIndents(l *lexer) stateFn {
+	l.parenDepth = 0
 	for {
 		switch l.next() {
 		case ' ':
 			l.emit(itemIdentSpace)
+			l.parenDepth ++
 		case '\t':
 			l.emit(itemIdentTab)
+			l.parenDepth += tabSize
 		default:
 			l.backup()
 			return lexTags
@@ -132,6 +135,7 @@ func lexTags(l *lexer) stateFn {
 	switch r := l.next(); {
 	case r == eof:
 		l.emit(itemEOF)
+		fmt.Println("lex dixi")
 		return nil
 	case r == '\r':
 		return lexTags
@@ -369,42 +373,35 @@ func (l *lexer) toStopSpace(item itemType) {
 
 
 func lexLongText(l *lexer) stateFn {
-	var (
-	 	startIdent int
-		nextIdent  int = 1000
-	)
 	if lexTextEndL(l) == nil  { return nil }
-	startIdent = lexSpace(l)
-	for startIdent <= nextIdent {
+	depth := l.toEndIdents()
+	for l.parenDepth < depth {
 		if lexTextEndL(l) == nil  { return nil }
-		nextIdent = lexSpace(l)
+		depth = l.toEndIdents()
 	}
 	return lexIndents
 }
 
-func lexSpace(l *lexer) int {
+func (l *lexer) toEndIdents() int {
 	var ident int
-Loop:
 	for {
-		switch r := l.next(); {
-		case r == ' ':
+		switch l.next() {
+		case ' ':
 			l.emit(itemIdentSpace)
 			ident ++
-		case r == '\t':
+		case '\t':
 			l.emit(itemIdentTab)
 			ident += tabSize
+		case '\r', '\n':
+			ident = 500	// for empty lines in lexLongText
+			l.backup()
+			l.emit(itemText)
+			return ident
 		default:
-			if r == '\r' || r == '\n' {
-				ident = 500	// for empty lines in lexLongText
-				l.backup()
-				l.emit(itemText)
-			} else {
-				l.backup()
-			}
-			break Loop
+			l.backup()
+			return ident
 		}
 	}
-	return ident
 }
 
 

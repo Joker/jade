@@ -50,7 +50,7 @@ type lexer struct {
 	width      Pos       // width of last rune read from input
 	lastPos    Pos       // position of most recent item returned by nextItem
 	items      chan item // channel of scanned items
-	parenDepth int       // nesting depth of ( ) exprs
+	parenDepth int       // nesting depth
 }
 
 // next returns the next rune in the input.
