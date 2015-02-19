@@ -13,6 +13,7 @@ const (
 	NodeList    NodeType = iota
 	NodeText
 	NodeTag
+	NodeAttr
 	NodeDoctype
 )
 
@@ -28,6 +29,9 @@ type NestNode struct {
 	Tag     string
 	Indent  int
 	Nesting int
+
+	id 		string
+	class 	[]string
 }
 
 func (t *Tree) newNest(pos Pos, tag string, tp itemType, idt, nst int) *NestNode {
@@ -145,8 +149,8 @@ func (d *DoctypeNode) String() string {
 	return fmt.Sprintf("<!DOCTYPE html>")
 }
 
-func (tx *DoctypeNode) tp() itemType {
-	return 0
+func (d *DoctypeNode) tp() itemType {
+	return itemDoctype
 }
 func (d *DoctypeNode) tree() *Tree {
 	return d.tr
@@ -209,4 +213,40 @@ func (tx *LineNode) tree() *Tree {
 }
 func (tx *LineNode) Copy() Node {
 	return &LineNode{tr: tx.tr, NodeType: NodeText, Pos: tx.Pos, Text: append([]byte{}, tx.Text...), typ: tx.typ, Indent: tx.Indent, Nesting: tx.Nesting}
+}
+
+
+type AttrNode struct {
+	NodeType
+	Pos
+	tr    *Tree
+	Attr  string
+	typ   itemType
+}
+
+func (t *Tree) newAttr(pos Pos, attr string, tp itemType) *AttrNode {
+	return &AttrNode{tr: t, NodeType: NodeAttr, Pos: pos, Attr: attr, typ: tp}
+}
+
+func (a *AttrNode) String() string {
+	switch a.typ {
+	case itemAttr:
+		return fmt.Sprintf( "=%s ", a.Attr )
+	case itemAttrN:
+		return fmt.Sprintf( "=\"%s\" ", a.Attr )
+	case itemAttrVoid:
+		return fmt.Sprintf( "%s=\"%s\" ", a.Attr, a.Attr )
+	default:
+		return fmt.Sprintf( "%s", a.Attr )
+	}
+}
+
+func (a *AttrNode) tp() itemType {
+	return a.typ
+}
+func (a *AttrNode) tree() *Tree {
+	return a.tr
+}
+func (a *AttrNode) Copy() Node {
+	return &AttrNode{tr: a.tr, NodeType: NodeAttr, Pos: a.Pos, Attr: a.Attr, typ: a.typ}
 }
