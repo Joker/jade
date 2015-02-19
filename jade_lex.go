@@ -13,14 +13,15 @@ const (
 	itemError        itemType = iota // error occurred; value is text of error
 	itemEOF
 	itemEndL
+	itemEndAttr
 
 	itemIdentSpace
 	itemIdentTab
 
 	itemTag 			// html tag
 	itemDiv 			// html div for . or #
-	itemComment
 	itemInlineTag 		// inline tags
+	itemComment
 	itemVoidTag 		// self-closing tags
 	itemInlineVoidTag 	// inline + self-closing tags
 

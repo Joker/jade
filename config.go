@@ -24,6 +24,7 @@ var itemToStr = map[itemType]string {
 	itemError:			"itemError",
 	itemEOF:			"itemEOF",
 	itemEndL:			"itemEndL",
+	itemEndAttr:		"itemEndAttr",
 	itemIdentSpace:		"itemIdentSpace",
 	itemIdentTab:		"itemIdentTab",
 	itemTag:			"itemTag",

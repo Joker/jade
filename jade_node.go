@@ -3,6 +3,7 @@ package jade
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 
@@ -53,7 +54,7 @@ func (nn *NestNode) String() string {
 	b   := new(bytes.Buffer)
 	idt := new(bytes.Buffer)
 
-	bgnFormat := "<%s>"
+	bgnFormat := "<%s"
 	endFormat := "</%s>"
 
 	if nn.typ != itemInlineTag { idt.WriteByte('\n') }
@@ -79,8 +80,14 @@ func (nn *NestNode) String() string {
 		bgnFormat = "{{ %s }}"
 	}
 
-	fmt.Fprint(b, fmt.Sprintf(idt.String()+bgnFormat, nn.Tag))
+	fmt.Fprintf(b, idt.String()+bgnFormat, nn.Tag)
 
+	if len(nn.id) > 0 {
+		fmt.Fprintf(b, " id=\"%s\"", nn.id)
+	}
+	if len(nn.class) > 0 {
+		fmt.Fprintf(b, " class=\"%s\"", strings.Join(nn.class, " "))
+	}
 	var (
 		endFmt string
 		endFlag bool
@@ -230,14 +237,16 @@ func (t *Tree) newAttr(pos Pos, attr string, tp itemType) *AttrNode {
 
 func (a *AttrNode) String() string {
 	switch a.typ {
-	case itemAttr:
-		return fmt.Sprintf( "=%s ", a.Attr )
-	case itemAttrN:
-		return fmt.Sprintf( "=\"%s\" ", a.Attr )
-	case itemAttrVoid:
-		return fmt.Sprintf( "%s=\"%s\" ", a.Attr, a.Attr )
-	default:
+	case itemEndAttr:
 		return fmt.Sprintf( "%s", a.Attr )
+	case itemAttr:
+		return fmt.Sprintf( "=%s", a.Attr )
+	case itemAttrN:
+		return fmt.Sprintf( "=\"%s\"", a.Attr )
+	case itemAttrVoid:
+		return fmt.Sprintf( " %s=\"%s\"", a.Attr, a.Attr )
+	default:
+		return fmt.Sprintf( " %s", a.Attr )
 	}
 }
 

@@ -22,7 +22,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
-			t.parseAttr( nest )
+			if token.typ < itemInlineTag { t.parseAttr( nest ) }
 			t.Root.append( nest )
 			if ok, _ := t.parseInside( nest ); !ok { return nil }
 		}
@@ -69,7 +69,9 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
-				t.parseAttr( nest )
+				if token.typ < itemInlineTag {
+					t.parseAttr( nest )
+				}
 				outTag.append( nest )
 				if ok, idt := t.parseInside( nest ); ok {
 					indentCount = idt
@@ -90,7 +92,7 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 func (t *Tree) parseAttr( currentTag *NestNode ) {
 	for {
 		attr := t.next()
-		fmt.Println(itemToStr[attr.typ], attr.val)
+		// fmt.Println(itemToStr[attr.typ], attr.val)
 		switch attr.typ {
 		case itemError:
 			t.errorf("%s", attr.val)
@@ -103,6 +105,7 @@ func (t *Tree) parseAttr( currentTag *NestNode ) {
 			currentTag.append( t.newAttr(attr.pos, attr.val, attr.typ) )
 		default:
 			t.backup()
+			currentTag.append( t.newAttr(attr.pos, ">", itemEndAttr) )
 			return
 		}
 	}
