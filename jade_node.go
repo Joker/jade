@@ -54,10 +54,9 @@ func (nn *NestNode) String() string {
 	b   := new(bytes.Buffer)
 	idt := new(bytes.Buffer)
 
-	bgnFormat := "<%s"
-	endFormat := "</%s>"
-
-	if nn.typ != itemInlineTag && prettyOutput { idt.WriteByte('\n') }
+            if prettyOutput &&
+	nn.typ != itemInlineTag &&
+	nn.typ != itemInlineVoidTag { idt.WriteByte('\n') }
 
 	if nestIndent && prettyOutput {
 		for i := 0; i < nn.Nesting; i++ {
@@ -69,9 +68,14 @@ func (nn *NestNode) String() string {
 		}
 	}
 
+	bgnFormat := "<%s"
+	endFormat := "</%s>"
+
 	switch nn.typ {
 	case itemDiv:
 		nn.Tag = "div"
+	case itemInlineTag, itemInlineVoidTag:
+		idt = new(bytes.Buffer)
 	case itemComment:
 		nn.Tag = "--"
 		bgnFormat = "<!%s "
@@ -88,20 +92,20 @@ func (nn *NestNode) String() string {
 	if len(nn.class) > 0 {
 		fmt.Fprintf(b, " class=\"%s\"", strings.Join(nn.class, " "))
 	}
-	var (
-		endFmt string
-		endFlag bool
-	)
+	var endFmt string
+	var endFlag bool
 
 	for _, n := range nn.Nodes {
 		   tp := n.tp()
-		if tp == itemInlineText || tp == itemInlineAction {endFlag = false} else {endFlag = true}
+		if tp == itemInlineText || tp == itemInlineAction || tp == itemInlineTag {endFlag = false} else {endFlag = true}
 		if tp != itemBlank { fmt.Fprint(b, n) }
 	}
 
 	if !endFlag { endFmt = endFormat } else { endFmt = idt.String()+endFormat }
-	if nn.typ < itemVoidTag { fmt.Fprintf(b, endFmt, nn.Tag) }
 
+	if nn.typ != itemVoidTag && nn.typ != itemInlineVoidTag {
+		fmt.Fprintf(b, endFmt, nn.Tag)
+	}
 	return b.String()
 }
 
@@ -184,22 +188,22 @@ func (t *Tree) newLine(pos Pos, text string, tp itemType, idt, nst int) *LineNod
 	return &LineNode{tr: t, NodeType: NodeText, Pos: pos, Text: []byte(text), typ: tp, Indent: idt, Nesting: nst}
 }
 
-func (tx *LineNode) String() string {
-	// fmt.Printf("%s\t%s\n", itemToStr[tx.typ], tx.Text)
+func (l *LineNode) String() string {
+	// fmt.Printf("%s\t%s\n", itemToStr[l.typ], l.Text)
 	idt := new(bytes.Buffer)
 
 	lnFormat := "%s"
 	if lineIndent && prettyOutput {
-		for i := 0; i < tx.Nesting; i++ {
+		for i := 0; i < l.Nesting; i++ {
 			idt.WriteString(outputIndent)
 		}
 	} else if prettyOutput {
-		for i := 0; i < tx.Indent; i++ {
+		for i := 0; i < l.Indent; i++ {
 			idt.WriteByte(' ')
 		}
 	}
 
-	switch tx.typ {
+	switch l.typ {
 	case itemText:
 		lnFormat = "\n"+idt.String()+lnFormat
 	case itemHtmlTag:
@@ -209,17 +213,17 @@ func (tx *LineNode) String() string {
 		lnFormat = "{{%s }}"
 	}
 
-	return fmt.Sprintf( lnFormat, tx.Text )
+	return fmt.Sprintf( lnFormat, l.Text )
 }
 
-func (tx *LineNode) tp() itemType {
-	return tx.typ
+func (l *LineNode) tp() itemType {
+	return l.typ
 }
-func (tx *LineNode) tree() *Tree {
-	return tx.tr
+func (l *LineNode) tree() *Tree {
+	return l.tr
 }
-func (tx *LineNode) Copy() Node {
-	return &LineNode{tr: tx.tr, NodeType: NodeText, Pos: tx.Pos, Text: append([]byte{}, tx.Text...), typ: tx.typ, Indent: tx.Indent, Nesting: tx.Nesting}
+func (l *LineNode) Copy() Node {
+	return &LineNode{tr: l.tr, NodeType: NodeText, Pos: l.Pos, Text: append([]byte{}, l.Text...), typ: l.typ, Indent: l.Indent, Nesting: l.Nesting}
 }
 
 

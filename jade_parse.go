@@ -22,7 +22,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
-			if token.typ < itemInlineTag { t.parseAttr( nest ) }
+			if token.typ < itemComment { t.parseAttr( nest ) }
 			t.Root.append( nest )
 			if ok, _ := t.parseInside( nest ); !ok { return nil }
 		}
@@ -58,6 +58,15 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 			/* if token.typ == itemText && indentCount == 0 { indentCount = outTag.Indent + tabSize } // for  "tag. text" */
 			outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
 
+		case itemVoidTag, itemInlineVoidTag:
+			if indentCount > outTag.Indent {
+				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
+				t.parseAttr( nest )
+				outTag.append( nest )
+			}else{
+				t.backup()
+				return true, indentCount
+			}
 		case itemHtmlTag:
 			if indentCount > outTag.Indent {
 				outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
@@ -69,7 +78,7 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
-				if token.typ < itemInlineTag {
+				if token.typ < itemComment {
 					t.parseAttr( nest )
 				}
 				outTag.append( nest )

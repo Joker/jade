@@ -21,9 +21,9 @@ const (
 	itemTag 			// html tag
 	itemDiv 			// html div for . or #
 	itemInlineTag 		// inline tags
-	itemComment
 	itemVoidTag 		// self-closing tags
 	itemInlineVoidTag 	// inline + self-closing tags
+	itemComment
 
 	itemId				// id    attribute
 	itemClass			// class attribute
@@ -173,6 +173,9 @@ func lexTags(l *lexer) stateFn {
 
 func lexAfterTag(l *lexer) stateFn {
 	switch r := l.next(); {
+	case r == eof:
+		l.emit(itemEOF)
+		return nil
 	case r == '(':
 		l.ignore()
 		return lexAttr
