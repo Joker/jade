@@ -3,12 +3,13 @@ package jade
 const (
 	tabSize = 4
 
-	outputIndent  = "    "
-	nestIndent = true
-	lineIndent = false
-	
-	leftDelim    = "{{"
-	rightDelim   = "}}"
+	prettyOutput = true
+	outputIndent = "    "
+	nestIndent   = true
+	lineIndent   = false
+
+	leftDelim     = "{{"
+	rightDelim    = "}}"
 
 	tabComment    = "//-"
 	htmlComment   = "//"

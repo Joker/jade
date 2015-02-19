@@ -57,13 +57,13 @@ func (nn *NestNode) String() string {
 	bgnFormat := "<%s"
 	endFormat := "</%s>"
 
-	if nn.typ != itemInlineTag { idt.WriteByte('\n') }
+	if nn.typ != itemInlineTag && prettyOutput { idt.WriteByte('\n') }
 
-	if nestIndent {
+	if nestIndent && prettyOutput {
 		for i := 0; i < nn.Nesting; i++ {
 			idt.WriteString(outputIndent)
 		}
-	} else {
+	} else if prettyOutput {
 		for i := 0; i < nn.Indent; i++ {
 			idt.WriteByte(' ')
 		}
@@ -189,11 +189,11 @@ func (tx *LineNode) String() string {
 	idt := new(bytes.Buffer)
 
 	lnFormat := "%s"
-	if lineIndent {
+	if lineIndent && prettyOutput {
 		for i := 0; i < tx.Nesting; i++ {
 			idt.WriteString(outputIndent)
 		}
-	} else {
+	} else if prettyOutput {
 		for i := 0; i < tx.Indent; i++ {
 			idt.WriteByte(' ')
 		}
