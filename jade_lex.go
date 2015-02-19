@@ -26,7 +26,7 @@ const (
 
 	itemId				// id    attribute
 	itemClass			// class attribute
-	itemAttr 			// html  attribute
+	itemAttr 			// html  attribute value
 	itemAttrN			// html  attribute value without quotes
 	itemAttrName 		// html  attribute name
 	itemAttrVoid 		// html  attribute without value
@@ -321,7 +321,8 @@ func lexAttrName(l *lexer) stateFn {
 func lexAttrId(l *lexer) stateFn {
 	stopCh := l.next()
 	if stopCh == '"' || stopCh == '\'' {
-		l.toStopCh(stopCh, itemId)
+		l.ignore()
+		l.toStopCh(stopCh, itemId, true)
 	} else {
 		l.toStopSpace(itemId)
 	}
@@ -330,25 +331,27 @@ func lexAttrId(l *lexer) stateFn {
 func lexAttrClass(l *lexer) stateFn {
 	stopCh := l.next()
 	if stopCh == '"' || stopCh == '\'' {
-		l.toStopCh(stopCh, itemId)
+		l.ignore()
+		l.toStopCh(stopCh, itemClass, true)
 	} else {
-		l.toStopSpace(itemId)
+		l.toStopSpace(itemClass)
 	}
 	return lexAttr
 }
 func lexAttrVal(l *lexer) stateFn {
 	stopCh := l.next()
 	if stopCh == '"' || stopCh == '\'' {
-		l.toStopCh(stopCh, itemAttr)
+		l.toStopCh(stopCh, itemAttr, false)
 	} else {
 		l.toStopSpace(itemAttrN)
 	}
 	return lexAttr
 }
-func (l *lexer) toStopCh(stopCh rune, item itemType) {
+func (l *lexer) toStopCh(stopCh rune, item itemType, backup bool) {
 	for {
 		switch r := l.next(); {
 		case r == stopCh:
+			if backup { l.backup() }
 			l.emit(item)
 			return
 		case r == eof || r == '\r' ||  r == '\n':
@@ -362,7 +365,7 @@ func (l *lexer) toStopSpace(item itemType) {
 		switch r := l.next(); {
 		case r == ' ' || r == ',' || r == ')' || r == '\r' ||  r == '\n':
 			l.backup()
-			l.emit(itemAttrN)
+			l.emit(item)
 			return
 		case r == eof:
 			l.errorf("toStopCh: expected ')' %#U", r)

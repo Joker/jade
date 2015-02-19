@@ -8,7 +8,7 @@ import (
 
 
 func main() {
-	dat, err := ioutil.ReadFile("template1.jade")
+	dat, err := ioutil.ReadFile("template_.jade")
 	if err != nil {
 		fmt.Printf("ReadFile error: %v", err)
 		return

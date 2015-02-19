@@ -17,8 +17,12 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 			t.errorf("%s", token.val)
 		case itemDoctype:
 			t.Root.append( t.newDoctype(token.pos, token.val) )
-		case itemTag:
+		case itemHtmlTag:
+			t.Root.append( t.newLine(token.pos, token.val, token.typ, 0, 0) )
+
+		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
+			t.parseAttr( nest )
 			t.Root.append( nest )
 			if ok, _ := t.parseInside( nest ); !ok { return nil }
 		}
@@ -65,19 +69,7 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
-
-				attr := t.next()
-				for attr.typ == itemAttr     ||
-					attr.typ == itemId       ||
-					attr.typ == itemClass    ||
-					attr.typ == itemAttrName ||
-					attr.typ == itemAttrVoid ||
-					attr.typ == itemAttrN       {
-					fmt.Println(itemToStr[attr.typ], attr.val)
-					attr = t.next()
-				}
-				t.backup()
-
+				t.parseAttr( nest )
 				outTag.append( nest )
 				if ok, idt := t.parseInside( nest ); ok {
 					indentCount = idt
@@ -93,4 +85,25 @@ func (t *Tree) parseInside( outTag *NestNode ) (bool, int) {
 		token = t.next()
 	}
 	return false, 0
-} 
+}
+
+func (t *Tree) parseAttr( currentTag *NestNode ) {
+	for {
+		attr := t.next()
+		fmt.Println(itemToStr[attr.typ], attr.val)
+		switch attr.typ {
+		case itemError:
+			t.errorf("%s", attr.val)
+		case itemId:
+			if len(currentTag.id) > 0 { t.errorf("unexpected second id \"%s\" ", attr.val) }
+			currentTag.id = attr.val
+		case itemClass:
+			currentTag.class = append( currentTag.class, attr.val )
+		case itemAttr, itemAttrN, itemAttrName, itemAttrVoid:
+			currentTag.append( t.newAttr(attr.pos, attr.val, attr.typ) )
+		default:
+			t.backup()
+			return
+		}
+	}
+}
