@@ -50,7 +50,7 @@ func (nn *NestNode) tp() itemType {
 }
 
 func (nn *NestNode) String() string {
-	// fmt.Printf("%s\t%s\n", itemToStr[nn.typ], nn.Tag)
+	// fmt.Printf("%s\t%s\t%d\t\t%s\n", itemToStr[nn.typ], nn.Tag, len(nn.Nodes), itemToStr[nn.Nodes[0].tp()])
 	b   := new(bytes.Buffer)
 	idt := new(bytes.Buffer)
 
@@ -84,7 +84,7 @@ func (nn *NestNode) String() string {
 		bgnFormat = idt.String()+"{{ %s }}"
 	}
 
-	if len(nn.Nodes) > 1 {
+	if len(nn.Nodes) > 1 || ( len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr ) {
 		endEl := nn.Nodes[len(nn.Nodes)-1].tp()
 		if endEl != itemInlineText && endEl != itemInlineAction && endEl != itemInlineTag {
 			endFormat = idt.String()+endFormat

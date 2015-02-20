@@ -201,7 +201,7 @@ func lexAfterTag(l *lexer) stateFn {
 	case r == '.':
 		sp := l.peek()
 		l.ignore()
-		if sp == ' ' { return l.errorf("expect new line after '.'") } // { l.next(); l.ignore(); return lexLongText }
+		if sp == ' ' { l.next(); l.ignore(); return lexLongText } // { return l.errorf("expect new line after '.'") }
 		if sp == '\r' || sp == '\n' { return lexLongText }
 		return lexClass
 	case r == '\r':
@@ -381,7 +381,7 @@ func (l *lexer) toStopSpace(item itemType) {
 
 
 func lexLongText(l *lexer) stateFn {
-	if lexTextEndL(l) == nil  { return nil }
+	if lexInlineText(l) == nil  { return nil }
 	depth := l.toEndIdents()
 	for l.parenDepth < depth {
 		if lexTextEndL(l) == nil  { return nil }
