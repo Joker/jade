@@ -54,9 +54,9 @@ func (nn *NestNode) String() string {
 	b   := new(bytes.Buffer)
 	idt := new(bytes.Buffer)
 
-            if prettyOutput &&
-	nn.typ != itemInlineTag &&
-	nn.typ != itemInlineVoidTag { idt.WriteByte('\n') }
+	if prettyOutput && nn.typ != itemInlineTag && nn.typ != itemInlineVoidTag {
+		idt.WriteByte('\n')
+	}
 
 	if nestIndent && prettyOutput {
 		for i := 0; i < nn.Nesting; i++ {
@@ -68,23 +68,31 @@ func (nn *NestNode) String() string {
 		}
 	}
 
-	bgnFormat := "<%s"
+	bgnFormat := idt.String()+"<%s"
 	endFormat := "</%s>"
 
 	switch nn.typ {
 	case itemDiv:
 		nn.Tag = "div"
 	case itemInlineTag, itemInlineVoidTag:
-		idt = new(bytes.Buffer)
+		bgnFormat = "<%s"
 	case itemComment:
 		nn.Tag = "--"
-		bgnFormat = "<!%s "
+		bgnFormat = idt.String()+"<!%s "
 		endFormat = " %s>"
 	case itemAction:
-		bgnFormat = "{{ %s }}"
+		bgnFormat = idt.String()+"{{ %s }}"
 	}
 
-	fmt.Fprintf(b, idt.String()+bgnFormat, nn.Tag)
+	if len(nn.Nodes) > 1 {
+		endEl := nn.Nodes[len(nn.Nodes)-1].tp()
+		if endEl != itemInlineText && endEl != itemInlineAction && endEl != itemInlineTag {
+			endFormat = idt.String()+endFormat
+		}
+	}
+
+
+		fmt.Fprintf(b, bgnFormat, nn.Tag)
 
 	if len(nn.id) > 0 {
 		fmt.Fprintf(b, " id=\"%s\"", nn.id)
@@ -92,19 +100,11 @@ func (nn *NestNode) String() string {
 	if len(nn.class) > 0 {
 		fmt.Fprintf(b, " class=\"%s\"", strings.Join(nn.class, " "))
 	}
-	var endFmt string
-	var endFlag bool
-
 	for _, n := range nn.Nodes {
-		   tp := n.tp()
-		if tp == itemInlineText || tp == itemInlineAction || tp == itemInlineTag {endFlag = false} else {endFlag = true}
-		if tp != itemBlank { fmt.Fprint(b, n) }
+		fmt.Fprint(b, n)
 	}
-
-	if !endFlag { endFmt = endFormat } else { endFmt = idt.String()+endFormat }
-
-	if nn.typ != itemVoidTag && nn.typ != itemInlineVoidTag {
-		fmt.Fprintf(b, endFmt, nn.Tag)
+	if nn.typ != itemVoidTag && nn.typ != itemInlineVoidTag && nn.typ != itemAction {
+		fmt.Fprintf(b, endFormat, nn.Tag)
 	}
 	return b.String()
 }
