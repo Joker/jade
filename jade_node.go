@@ -18,7 +18,22 @@ const (
 	NodeDoctype
 )
 
-
+func indentToString(nesting, indent int, n_or_i bool) string {
+	if prettyOutput {
+		idt := new(bytes.Buffer)
+		if n_or_i {
+			for i := 0; i < nesting; i++ {
+				idt.WriteString(outputIndent)
+			}
+		} else {
+			for i := 0; i < indent; i++ {
+				idt.WriteByte(' ')
+			}
+		}
+		return idt.String()
+	}
+	return ""
+}
 
 type NestNode struct {
 	NodeType
@@ -52,23 +67,14 @@ func (nn *NestNode) tp() itemType {
 func (nn *NestNode) String() string {
 	// fmt.Printf("%s\t%s\t%d\t\t%s\n", itemToStr[nn.typ], nn.Tag, len(nn.Nodes), itemToStr[nn.Nodes[0].tp()])
 	b   := new(bytes.Buffer)
-	idt := new(bytes.Buffer)
+	// idt := new(bytes.Buffer)
+	idt := indentToString(nn.Nesting, nn.Indent, nestIndent)
 
 	if prettyOutput && nn.typ != itemInlineTag && nn.typ != itemInlineVoidTag {
-		idt.WriteByte('\n')
+		idt = "\n" + idt
 	}
 
-	if nestIndent && prettyOutput {
-		for i := 0; i < nn.Nesting; i++ {
-			idt.WriteString(outputIndent)
-		}
-	} else if prettyOutput {
-		for i := 0; i < nn.Indent; i++ {
-			idt.WriteByte(' ')
-		}
-	}
-
-	bgnFormat := idt.String()+"<%s"
+	bgnFormat := idt+"<%s"
 	endFormat := "</%s>"
 
 	switch nn.typ {
@@ -78,16 +84,16 @@ func (nn *NestNode) String() string {
 		bgnFormat = "<%s"
 	case itemComment:
 		nn.Tag = "--"
-		bgnFormat = idt.String()+"<!%s "
+		bgnFormat = idt+"<!%s "
 		endFormat = " %s>"
 	case itemAction:
-		bgnFormat = idt.String()+"{{ %s }}"
+		bgnFormat = idt+"{{ %s }}"
 	}
 
 	if len(nn.Nodes) > 1 || ( len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr ) {
 		endEl := nn.Nodes[len(nn.Nodes)-1].tp()
 		if endEl != itemInlineText && endEl != itemInlineAction && endEl != itemInlineTag {
-			endFormat = idt.String()+endFormat
+			endFormat = idt+endFormat
 		}
 	}
 
@@ -189,30 +195,20 @@ func (t *Tree) newLine(pos Pos, text string, tp itemType, idt, nst int) *LineNod
 }
 
 func (l *LineNode) String() string {
-	// fmt.Printf("%s\t%s\n", itemToStr[l.typ], l.Text)
-	idt := new(bytes.Buffer)
+	idt := indentToString(l.Nesting, l.Indent, lineIndent)
 
-	lnFormat := "%s"
-	if lineIndent && prettyOutput {
-		for i := 0; i < l.Nesting; i++ {
-			idt.WriteString(outputIndent)
-		}
-	} else if prettyOutput {
-		for i := 0; i < l.Indent; i++ {
-			idt.WriteByte(' ')
-		}
-	}
+	var lnFormat string
 
 	switch l.typ {
 	case itemText:
-		lnFormat = "\n"+idt.String()+lnFormat
+		lnFormat = "\n"+idt+"%s"
 	case itemHtmlTag:
-		lnFormat = "\n"+idt.String()+lnFormat
+		lnFormat = "\n"+idt+"%s"
 	case itemInlineText:
+		lnFormat = "%s"
 	case itemInlineAction:
 		lnFormat = "{{%s }}"
 	}
-
 	return fmt.Sprintf( lnFormat, l.Text )
 }
 
