@@ -75,21 +75,28 @@ var key = map[string]itemType {
 	"for": 		itemAction,
 	"each": 	itemAction,
 	"while": 	itemAction,
-	"if": 		itemAction,
-	"else": 	itemAction,
 	"unless": 	itemAction,
 	"case": 	itemAction,
 	"when": 	itemAction,
 	"default":  itemAction,
 
-	// "if": 	itemIf,
-	// "else": 	itemElse,
-	"end": 		itemEnd,
-	"range": 	itemRange,
-	"with": 	itemWith,
-	"nil": 		itemNil,
-	"define": 	itemDefine,
-	"template": itemTemplate,
+	"end": 		itemAction,
+	"template": itemAction,
+
+	"if": 		itemActionEnd,
+	"else": 	itemActionEnd,
+	"range": 	itemActionEnd,
+	"with": 	itemActionEnd,
+	"define": 	itemActionEnd,
+
+	// "if": 		itemIf,
+	// "else": 		itemElse,
+	// "end": 		itemEnd,
+	// "range": 	itemRange,
+	// "with": 		itemWith,
+	// "nil": 		itemNil,
+	// "define": 	itemDefine,
+	// "template": 	itemTemplate,
 
 	"a":		itemInlineTag,
 	"abbr":		itemInlineTag,
@@ -112,5 +119,4 @@ var key = map[string]itemType {
 	"br": 		itemInlineVoidTag,
 	"img":		itemInlineVoidTag,
 }
-
 

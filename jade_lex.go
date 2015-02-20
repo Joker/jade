@@ -41,6 +41,7 @@ const (
 	itemBlank
 	itemFilter
 	itemAction 			// from go template {{...}}
+	itemActionEnd 		// from go template {{...}} {{end}}
 	itemInlineAction	// title= .titleName
 
 	itemDefine
@@ -158,7 +159,7 @@ func lexTags(l *lexer) stateFn {
 		return lexFilter
 	case r == '<':
 		return lexHtmlTag
-	case r == '=' || r == '+' || r == '-':
+	case r == '=' || r == '+' || r == '-' || r == '$':
 		l.ignore()
 		return lexActionEndL
 
@@ -200,7 +201,7 @@ func lexAfterTag(l *lexer) stateFn {
 	case r == '.':
 		sp := l.peek()
 		l.ignore()
-		if sp == ' ' { return l.errorf("expect new line") } // { l.next(); l.ignore(); return lexLongText }
+		if sp == ' ' { return l.errorf("expect new line after '.'") } // { l.next(); l.ignore(); return lexLongText }
 		if sp == '\r' || sp == '\n' { return lexLongText }
 		return lexClass
 	case r == '\r':
