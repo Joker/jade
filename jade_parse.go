@@ -2,6 +2,7 @@ package jade
 
 import (
 	"fmt"
+	"strings"
 )
 
 
@@ -54,7 +55,7 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 		case itemParentIdent:
 			indentCount = outTag.Indent + 1  // for  "tag: tag: tag"
 
-		case itemText, itemInlineText, itemInlineAction:
+		case itemText, itemInlineText, itemInlineAction, itemTemplate:
 			outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
 
 		case itemHtmlTag:
@@ -83,11 +84,16 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 				t.backup(); return indentCount
 			}
 
-		case itemAction:
+		case itemAction, itemActionEnd:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
 				outTag.append( nest )
 				indentCount = t.parseInside( nest )
+				if strings.HasPrefix(nest.Tag, "if") {
+					action := t.next()
+					if action.val == "else" { nest.typ = itemAction }
+					t.backup()
+				}
 			}else{
 				t.backup(); return indentCount
 			}

@@ -74,20 +74,20 @@ func (nn *NestNode) String() string {
 		idt = "\n" + idt
 	}
 
-	bgnFormat := idt+"<%s"
-	endFormat := "</%s>"
+	beginFormat := idt+"<%s"
+	endFormat   := "</%s>"
 
 	switch nn.typ {
 	case itemDiv:
 		nn.Tag = "div"
 	case itemInlineTag, itemInlineVoidTag:
-		bgnFormat = "<%s"
+		beginFormat = "<%s"
 	case itemComment:
 		nn.Tag = "--"
-		bgnFormat = idt+"<!%s "
+		beginFormat = idt+"<!%s "
 		endFormat = " %s>"
-	case itemAction:
-		bgnFormat = idt+"{{ %s }}"
+	case itemAction, itemActionEnd:
+		beginFormat = idt+"{{ %s }}"
 	}
 
 	if len(nn.Nodes) > 1 || ( len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr ) {
@@ -98,7 +98,7 @@ func (nn *NestNode) String() string {
 	}
 
 
-		fmt.Fprintf(b, bgnFormat, nn.Tag)
+		fmt.Fprintf(b, beginFormat, nn.Tag)
 
 	if len(nn.id) > 0 {
 		fmt.Fprintf(b, " id=\"%s\"", nn.id)
@@ -109,7 +109,10 @@ func (nn *NestNode) String() string {
 	for _, n := range nn.Nodes {
 		fmt.Fprint(b, n)
 	}
-	if nn.typ != itemVoidTag && nn.typ != itemInlineVoidTag && nn.typ != itemAction {
+	switch nn.typ {
+	case itemActionEnd:
+		fmt.Fprint(b, idt+"{{ end }}")
+	case itemTag, itemDiv, itemInlineTag, itemComment:
 		fmt.Fprintf(b, endFormat, nn.Tag)
 	}
 	return b.String()
@@ -200,14 +203,14 @@ func (l *LineNode) String() string {
 	var lnFormat string
 
 	switch l.typ {
-	case itemText:
-		lnFormat = "\n"+idt+"%s"
-	case itemHtmlTag:
-		lnFormat = "\n"+idt+"%s"
+	case itemTemplate:
+		lnFormat = "\n"+idt+"{{ template %s }}"
 	case itemInlineText:
 		lnFormat = "%s"
 	case itemInlineAction:
 		lnFormat = "{{%s }}"
+	default:
+		lnFormat = "\n"+idt+"%s"
 	}
 	return fmt.Sprintf( lnFormat, l.Text )
 }

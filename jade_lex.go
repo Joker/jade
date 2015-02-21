@@ -159,7 +159,11 @@ func lexTags(l *lexer) stateFn {
 		return lexFilter
 	case r == '<':
 		return lexHtmlTag
-	case r == '=' || r == '+' || r == '-' || r == '$':
+	case r == '+':
+		l.ignore()
+		if l.toEndL(itemTemplate) { return lexIndents }
+		return nil
+	case r == '=' || r == '-' || r == '$':
 		l.ignore()
 		return lexActionEndL
 
@@ -266,10 +270,16 @@ func lexTagName(l *lexer) stateFn {
 		default:
 			l.backup()
 			word := l.input[l.start:l.pos]
-			switch {
-			case key[word] >= itemAction:
-				return lexActionEndL
-			case key[word] > itemTag :
+			switch key[word] {
+			case itemAction:
+				if l.toEndL(itemAction)    { return lexIndents }
+				return nil
+			case itemActionEnd:
+				if l.toEndL(itemActionEnd) { return lexIndents }
+				return nil
+			case itemVoidTag,
+				 itemInlineVoidTag,
+				 itemInlineTag:
 				l.emit(key[word])
 			default:
 				l.emit(itemTag)
@@ -278,6 +288,7 @@ func lexTagName(l *lexer) stateFn {
 		}
 	}
 }
+
 
 func lexAttr(l *lexer) stateFn {
 	for {
