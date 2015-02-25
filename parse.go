@@ -41,6 +41,7 @@ func (t *Tree) Copy() *Tree {
 // templates described in the argument string. The top-level template will be
 // given the specified name. If an error is encountered, parsing stops and an
 // empty map is returned with the error.
+/*
 func Parse(name, text, leftDelim, rightDelim string, funcs ...map[string]interface{}) (treeSet map[string]*Tree, err error) {
 	treeSet = make(map[string]*Tree)
 	t := New(name)
@@ -48,6 +49,7 @@ func Parse(name, text, leftDelim, rightDelim string, funcs ...map[string]interfa
 	_, err = t.Parse(text, leftDelim, rightDelim, treeSet, funcs...)
 	return
 }
+// */
 
 // next returns the next token.
 func (t *Tree) next() item {

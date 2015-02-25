@@ -14,12 +14,12 @@ func main() {
 		return
 	}
 
-	tmpl, err := jade.New("jade_tpl").Parse(string(dat), "", "", make( map[string]*jade.Tree ), nil)
+	tmpl, err := jade.Parse("name_of_tpl", string(dat))
 	if err != nil {
 		fmt.Printf("Parse error: %v", err)
 		return
 	}
 
 	fmt.Printf( "\nOutput:\n\n"  )
-	fmt.Printf( tmpl.Root.String() )
+	fmt.Printf( "%s", tmpl )
 }

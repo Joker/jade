@@ -1,7 +1,7 @@
 package jade
 
 import (
-	"fmt"
+	// "fmt"
 	"strings"
 )
 
@@ -129,7 +129,6 @@ func lexIndents(l *lexer) stateFn {
 
 // lexTags scans tags.
 func lexTags(l *lexer) stateFn {
-		// fmt.Println("------")
 	if strings.HasPrefix(l.input[l.pos:], l.leftDelim) 	{ return lexAction }
 	if strings.HasPrefix(l.input[l.pos:], tabComment) 	{ return lexCommentSkip }
 	if strings.HasPrefix(l.input[l.pos:], htmlComment)  { return lexComment }
@@ -137,7 +136,7 @@ func lexTags(l *lexer) stateFn {
 	switch r := l.next(); {
 	case r == eof:
 		l.emit(itemEOF)
-		fmt.Println("lex dixi")
+		// fmt.Println("lex dixi")
 		return nil
 	case r == '\r':
 		return lexTags

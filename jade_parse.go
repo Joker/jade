@@ -1,7 +1,7 @@
 package jade
 
 import (
-	"fmt"
+	// "fmt"
 	"strings"
 )
 
@@ -31,7 +31,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 		token = t.next()
 		// fmt.Printf("%s\t\t\t%s\n", itemToStr[token.typ], token.val)
 	}
-	fmt.Println("dixi.")
+	// fmt.Println("dixi.")
 	return nil
 }
 
