@@ -89,9 +89,9 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
 				outTag.append( nest )
 				indentCount = t.parseInside( nest )
-				if strings.HasPrefix(nest.Tag, "if") {
+				if strings.HasPrefix(nest.Tag, "if") || strings.HasPrefix(nest.Tag, "with") {
 					action := t.next()
-					if action.val == "else" { nest.typ = itemAction }
+					if strings.HasPrefix(action.val, "else") { nest.typ = itemAction }
 					t.backup()
 				}
 			}else{
