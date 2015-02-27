@@ -77,9 +77,13 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 		case itemTag, itemDiv, itemInlineTag:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1)
-				t.parseAttr( nest )
-				outTag.append( nest )
-				indentCount = t.parseInside( nest )
+				if t.parseAttr( nest ){
+					outTag.append( nest )
+					indentCount = t.parseInside( nest )
+				} else {
+					nest.typ = itemVoidTag
+					outTag.append( nest )
+				}
 			}else{
 				t.backup(); return indentCount
 			}
@@ -113,7 +117,7 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 	t.backup(); return indentCount
 }
 
-func (t *Tree) parseAttr( currentTag *NestNode ) {
+func (t *Tree) parseAttr( currentTag *NestNode ) bool {
 	for {
 		attr := t.next()
 		// fmt.Println(itemToStr[attr.typ], attr.val)
@@ -127,10 +131,13 @@ func (t *Tree) parseAttr( currentTag *NestNode ) {
 			currentTag.class = append( currentTag.class, attr.val )
 		case itemAttr, itemAttrN, itemAttrName, itemAttrVoid:
 			currentTag.append( t.newAttr(attr.pos, attr.val, attr.typ) )
+		case itemEndTag:
+			currentTag.append( t.newAttr(attr.pos, "/>", itemEndTag) )
+			return false
 		default:
 			t.backup()
 			currentTag.append( t.newAttr(attr.pos, ">", itemEndAttr) )
-			return
+			return true
 		}
 	}
 }

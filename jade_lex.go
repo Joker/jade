@@ -13,6 +13,7 @@ const (
 	itemError        itemType = iota // error occurred; value is text of error
 	itemEOF
 	itemEndL
+	itemEndTag
 	itemEndAttr
 
 	itemIdentSpace
@@ -297,7 +298,9 @@ func lexAttr(l *lexer) stateFn {
 			l.ignore()
 			return lexAttrName
 		case r == ')':
+			sp := l.peek()
 			l.ignore()
+			if sp == '/' { l.next(); l.emit(itemEndTag) }
 			return lexAfterTag
 		case r == ' ' || r == ',' || r == '\t':
 		case r == eof:
