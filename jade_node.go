@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"regexp"
 )
 
 
@@ -199,18 +200,19 @@ func (t *Tree) newLine(pos Pos, text string, tp itemType, idt, nst int) *LineNod
 
 func (l *LineNode) String() string {
 	idt := indentToString(l.Nesting, l.Indent, lineIndent)
+	rex := regexp.MustCompile("[!#]{(.+?)}")
 
 	var lnFormat string
 
 	switch l.typ {
+	case itemInlineAction:
+		lnFormat = "{{%s }}"
 	case itemTemplate:
 		lnFormat = "\n"+idt+"{{ template %s }}"
 	case itemInlineText:
-		lnFormat = "%s"
-	case itemInlineAction:
-		lnFormat = "{{%s }}"
+		return fmt.Sprintf( "%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
 	default:
-		lnFormat = "\n"+idt+"%s"
+		return fmt.Sprintf( "\n"+idt+"%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
 	}
 	return fmt.Sprintf( lnFormat, l.Text )
 }
