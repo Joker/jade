@@ -184,6 +184,9 @@ func lexAfterTag(l *lexer) stateFn {
 	case r == '(':
 		l.ignore()
 		return lexAttr
+	case r == '/':
+		l.emit(itemEndTag)
+		return lexAfterTag
 	case r == ':':
 		l.ignore()
 		lexSp(l)
@@ -298,9 +301,7 @@ func lexAttr(l *lexer) stateFn {
 			l.ignore()
 			return lexAttrName
 		case r == ')':
-			sp := l.peek()
 			l.ignore()
-			if sp == '/' { l.next(); l.emit(itemEndTag) }
 			return lexAfterTag
 		case r == ' ' || r == ',' || r == '\t':
 		case r == eof:
