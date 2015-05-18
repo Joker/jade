@@ -313,6 +313,7 @@ func lexAttrName(l *lexer) stateFn {
 	for {
 		switch r := l.next(); {
 		case isAlphaNumeric(r):
+		case r == '-':
 			// absorb.
 		case r == '=':
 			word := l.input[l.start:l.pos]
