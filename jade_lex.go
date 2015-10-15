@@ -270,6 +270,8 @@ func lexTagName(l *lexer) stateFn {
 		switch r := l.next(); {
 		case isAlphaNumeric(r):
 			// absorb.
+		case r == '-':
+			// absorb.	
 		default:
 			l.backup()
 			word := l.input[l.start:l.pos]
