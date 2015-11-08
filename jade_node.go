@@ -89,6 +89,8 @@ func (nn *NestNode) String() string {
 		endFormat = " %s>"
 	case itemAction, itemActionEnd:
 		beginFormat = idt+"{{ %s }}"
+	case itemTemplate:
+		beginFormat = idt+"{{ template %s }}"
 	}
 
 	if len(nn.Nodes) > 1 || ( len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr ) {
@@ -148,8 +150,8 @@ var doctype = map[string]string {
 	"transitional" 	: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">`,
 	"4" 			: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
 	"4strict" 		: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
-	"4frameset" 	: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">`,
-	"4transitional" : `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"> `,
+	"4frameset"		: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"> `,
+	"4transitional" : `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">`,
 }
 
 type DoctypeNode struct {
@@ -202,19 +204,14 @@ func (l *LineNode) String() string {
 	idt := indentToString(l.Nesting, l.Indent, lineIndent)
 	rex := regexp.MustCompile("[!#]{(.+?)}")
 
-	var lnFormat string
-
 	switch l.typ {
 	case itemInlineAction:
-		lnFormat = "{{%s }}"
-	case itemTemplate:
-		lnFormat = "\n"+idt+"{{ template %s }}"
+		return fmt.Sprintf( "{{%s }}", l.Text )
 	case itemInlineText:
 		return fmt.Sprintf( "%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
 	default:
 		return fmt.Sprintf( "\n"+idt+"%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
 	}
-	return fmt.Sprintf( lnFormat, l.Text )
 }
 
 func (l *LineNode) tp() itemType {
