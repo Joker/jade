@@ -34,6 +34,7 @@ const (
 	itemAttrVoid 		// html  attribute without value
 
 	itemParentIdent 	// Ident for 'tag:'
+	itemChildIdent		// Ident for ']'
 	itemText 			// plain text
 	itemInlineText
 	itemHtmlTag 		// html <tag>
@@ -193,7 +194,7 @@ func lexAfterTag(l *lexer) stateFn {
 		return lexTags
 	case r == ' ' || r == '\t':
 		l.ignore()
-		return lexInlineText
+		return lexText
 	case r == '=':
 		l.ignore()
 		return lexInlineAction
@@ -430,9 +431,44 @@ func (l *lexer) toEndIdents() int {
 }
 
 
-func lexHtmlTag(l *lexer) stateFn {
-	if l.toEndL(itemHtmlTag) { return lexIndents }
-	return nil
+var inText = false
+func lexText(l *lexer) stateFn {
+	for {
+		switch r := l.next(); {
+		case r == '#':
+			sp := l.peek()
+			if sp == '[' {
+				inText = true
+				l.backup()
+				if l.pos > l.start { l.emit(itemInlineText) }
+				l.next(); l.next(); l.emit(itemParentIdent)
+				lexSp(l)
+				return lexTags
+			}
+		case r == ']':
+			if inText {
+				l.backup()
+				if l.pos > l.start { l.emit(itemInlineText) }
+				l.next(); l.emit(itemChildIdent)
+				inText = false
+			}
+		case r == '\r':
+			l.backup()
+			if l.pos > l.start { l.emit(itemInlineText) }
+			l.next()
+			l.emit(itemEndL)
+			return lexIndents
+		case r == '\n':
+			l.backup()
+			if l.pos > l.start { l.emit(itemInlineText) }
+			l.emit(itemEndL)
+			return lexIndents
+		case r == eof:
+			if l.pos > l.start { l.emit(itemInlineText) }
+			l.emit(itemEOF)
+			return nil
+		}
+	}
 }
 
 func lexTextEndL(l *lexer) stateFn {
@@ -442,6 +478,12 @@ func lexTextEndL(l *lexer) stateFn {
 
 func lexInlineText(l *lexer) stateFn {
 	if l.toEndL(itemInlineText) { return lexIndents }
+	return nil
+}
+
+
+func lexHtmlTag(l *lexer) stateFn {
+	if l.toEndL(itemHtmlTag) { return lexIndents }
 	return nil
 }
 
@@ -505,3 +547,4 @@ func (l *lexer) toEndL(item itemType) bool {
 	l.emit(itemEndL)
 	return true
 }
+

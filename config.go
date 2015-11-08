@@ -48,6 +48,7 @@ var itemToStr = map[itemType]string {
 	itemComment:		"itemComment",
 	itemBlank:			"itemBlank",
 	itemParentIdent:	"itemParentIdent",
+	itemChildIdent:		"itemChildIdent",
 	itemText:			"itemText",
 }
 
