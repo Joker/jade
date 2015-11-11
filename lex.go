@@ -50,7 +50,9 @@ type lexer struct {
 	width      Pos       // width of last rune read from input
 	lastPos    Pos       // position of most recent item returned by nextItem
 	items      chan item // channel of scanned items
+	previous   int       // previous depth
 	parenDepth int       // nesting depth
+	env        map[mode]int
 }
 
 // next returns the next rune in the input.
@@ -139,6 +141,7 @@ func lex(name, input, left, right string) *lexer {
 		leftDelim:  left,
 		rightDelim: right,
 		items:      make(chan item),
+		env:        make(map[mode]int),
 	}
 	go l.run()
 	return l

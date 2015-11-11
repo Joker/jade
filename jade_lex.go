@@ -5,7 +5,16 @@ import (
 	"strings"
 )
 
-
+type mode int
+const (
+       mInterpolation    mode = iota
+       mBrText
+       mInText
+)
+const (
+       stText   		  int = iota
+       stInlineText
+)
 
 // itemType identifies the type of lex items.
 type itemType int
@@ -112,7 +121,9 @@ func lexCommentSkip(l *lexer) stateFn {
 }
 
 func lexIndents(l *lexer) stateFn {
+	l.previous   = l.parenDepth
 	l.parenDepth = 0
+	Loop:
 	for {
 		switch l.next() {
 		case ' ':
@@ -121,11 +132,18 @@ func lexIndents(l *lexer) stateFn {
 		case '\t':
 			l.emit(itemIdentTab)
 			l.parenDepth += tabSize
+		case '\r', '\n':
+			if l.parenDepth < l.previous { l.parenDepth = l.previous }
+			l.backup()
+			l.emit(itemText)
+			break Loop
 		default:
 			l.backup()
-			return lexTags
+			break Loop
 		}
 	}
+	if l.env[mInText] > 0 { l.env[mBrText] = stText; return lexLongText }
+	return lexTags
 }
 
 
@@ -154,7 +172,8 @@ func lexTags(l *lexer) stateFn {
 		return lexId
 	case r == '|':
 		l.ignore()
-		return lexTextEndL
+		l.env[mBrText] = stText
+		return lexText
 	case r == ':':
 		l.ignore()
 		return lexFilter
@@ -194,6 +213,7 @@ func lexAfterTag(l *lexer) stateFn {
 		return lexTags
 	case r == ' ' || r == '\t':
 		l.ignore()
+		l.env[mBrText] = stInlineText
 		return lexText
 	case r == '=':
 		l.ignore()
@@ -278,9 +298,11 @@ func lexTagName(l *lexer) stateFn {
 			word := l.input[l.start:l.pos]
 			switch key[word] {
 			case itemAction:
+				if l.env[mInterpolation] > 0 { l.errorf("lexTagName: Tag Interpolation error (no itemAction)") }
 				if l.toEndL(itemAction)    { return lexIndents }
 				return nil
 			case itemActionEnd:
+				if l.env[mInterpolation] > 0 { l.errorf("lexTagName: Tag Interpolation error (no itemAction)") }
 				if l.toEndL(itemActionEnd) { return lexIndents }
 				return nil
 			case itemVoidTag,
@@ -399,86 +421,60 @@ func (l *lexer) toStopSpace(item itemType) {
 
 
 func lexLongText(l *lexer) stateFn {
-	if lexInlineText(l) == nil  { return nil }
-	depth := l.toEndIdents()
-	for l.parenDepth < depth {
-		if lexTextEndL(l) == nil  { return nil }
-		depth = l.toEndIdents()
+	if l.env[mInText] == 0 {
+		l.env[mInText] = l.parenDepth
+		l.env[mBrText] = stInlineText
+		return lexText
 	}
+
+	if l.env[mInText] < l.parenDepth {
+		return lexText
+	}
+
+	l.env[mInText] = 0
 	return lexIndents
 }
 
-func (l *lexer) toEndIdents() int {
-	var ident int
-	for {
-		switch l.next() {
-		case ' ':
-			l.emit(itemIdentSpace)
-			ident ++
-		case '\t':
-			l.emit(itemIdentTab)
-			ident += tabSize
-		case '\r', '\n':
-			ident = 500	// for empty lines in lexLongText
-			l.backup()
-			l.emit(itemText)
-			return ident
-		default:
-			l.backup()
-			return ident
-		}
-	}
-}
-
-
-var inText = false
 func lexText(l *lexer) stateFn {
+	var item  itemType
+	switch l.env[mBrText] {
+		case stText:
+			item  = itemText
+		case stInlineText:
+			item  = itemInlineText
+		default:
+			l.errorf("lexText: expected 'l.env[mBrText]'")
+	}
 	for {
 		switch r := l.next(); {
 		case r == '#':
 			sp := l.peek()
 			if sp == '[' {
-				inText = true
-				l.backup()
-				if l.pos > l.start { l.emit(itemInlineText) }
-				l.next(); l.next(); l.emit(itemParentIdent)
-				lexSp(l)
+				l.env[mInterpolation] ++
+				l.backup(); l.emit(item); l.next(); l.next(); l.emit(itemParentIdent)
 				return lexTags
 			}
 		case r == ']':
-			if inText {
+			if l.env[mInterpolation] > 0 {
 				l.backup()
-				if l.pos > l.start { l.emit(itemInlineText) }
-				l.next(); l.emit(itemChildIdent)
-				inText = false
+				if l.pos > l.start { l.emit(item) }
+				l.next(); l.emit(itemChildIdent);
+				l.env[mInterpolation] --
 			}
-		case r == '\r':
+		case r == '\n', r == '\r':
 			l.backup()
-			if l.pos > l.start { l.emit(itemInlineText) }
+			if l.pos > l.start { l.emit(item) }
 			l.next()
+			if r == '\r' { l.next() }
 			l.emit(itemEndL)
-			return lexIndents
-		case r == '\n':
-			l.backup()
-			if l.pos > l.start { l.emit(itemInlineText) }
-			l.emit(itemEndL)
+			if l.env[mInterpolation] > 0 { l.errorf("toEndText: expected ']'") }
 			return lexIndents
 		case r == eof:
-			if l.pos > l.start { l.emit(itemInlineText) }
+			if l.pos > l.start { l.emit(item) }
 			l.emit(itemEOF)
 			return nil
 		}
 	}
-}
-
-func lexTextEndL(l *lexer) stateFn {
-	if l.toEndL(itemText) { return lexIndents }
-	return nil
-}
-
-func lexInlineText(l *lexer) stateFn {
-	if l.toEndL(itemInlineText) { return lexIndents }
-	return nil
 }
 
 
@@ -547,4 +543,3 @@ func (l *lexer) toEndL(item itemType) bool {
 	l.emit(itemEndL)
 	return true
 }
-
