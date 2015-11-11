@@ -20,39 +20,39 @@ html(lang="en")
       else
         p Get on it!
       p.
-        Jade is a terse and simple
+        Jade is #[a(terse)] and simple
         templating language with a
-        strong focus on performance
+        #[strong focus] on performance
         and powerful features.
 ```
 becomes
 ```html
-<!DOCTYPE html>                             
-<html lang="en">                            
-    <head>                                  
-        <title>{{ pageTitle }}</title>      
-        <script type='text/javascript'>     
-            if (foo) {                      
-                bar(1 + 5)                  
-            }                               
-        </script>                           
-    </head>                                 
-    <body>                                  
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{ pageTitle }}</title>
+        <script type='text/javascript'>
+            if (foo) {
+                bar(1 + 5)
+            }
+        </script>
+    </head>
+    <body>
         <h1>Jade - template engine</h1>
-        <div id="container" class="col">    
-            {{ if youAreUsingJade }}        
-                <p>You are amazing</p>      
-            {{ else }}                      
-                <p>Get on it!</p>           
-            {{ end }}                       
-            <p>                             
-                Jade is a terse and simple  
-                templating language with a  
-                strong focus on performance 
-                and powerful features.      
-            </p>                            
-        </div>                              
-    </body>                                 
+        <div id="container" class="col">
+            {{ if youAreUsingJade }}
+                <p>You are amazing</p>
+            {{ else }}
+                <p>Get on it!</p>
+            {{ end }}
+            <p>
+                Jade is <a terse="terse"></a> and simple
+                templating language with a
+                <strong>focus</strong> on performance
+                and powerful features.
+            </p>
+        </div>
+    </body>
 </html>
 ```
 

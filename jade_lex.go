@@ -8,8 +8,8 @@ import (
 type mode int
 const (
        mInterpolation    mode = iota
-       mBrText
        mInText
+       mBrText
 )
 const (
        stText   		  int = iota
@@ -209,12 +209,25 @@ func lexAfterTag(l *lexer) stateFn {
 		return lexAfterTag
 	case r == ':':
 		l.ignore()
-		lexSp(l)
+		for isSpace(l.peek()) {
+			l.next()
+		}
+		l.emit(itemParentIdent)
 		return lexTags
 	case r == ' ' || r == '\t':
 		l.ignore()
 		l.env[mBrText] = stInlineText
 		return lexText
+	case r == ']':
+		if l.env[mInterpolation] > 0 {
+			l.ignore()
+			l.emit(itemInlineText)
+			l.emit(itemChildIdent)
+			l.env[mInterpolation] --
+			l.env[mBrText] = stInlineText
+			return lexLongText
+		}
+		return l.errorf("lexAfterTag: %#U", r)
 	case r == '=':
 		l.ignore()
 		return lexInlineAction
@@ -291,8 +304,6 @@ func lexTagName(l *lexer) stateFn {
 		switch r := l.next(); {
 		case isAlphaNumeric(r):
 			// absorb.
-		case r == '-':
-			// absorb.	
 		default:
 			l.backup()
 			word := l.input[l.start:l.pos]
@@ -338,7 +349,6 @@ func lexAttrName(l *lexer) stateFn {
 	for {
 		switch r := l.next(); {
 		case isAlphaNumeric(r):
-		case r == '-':
 			// absorb.
 		case r == '=':
 			word := l.input[l.start:l.pos]
@@ -434,7 +444,6 @@ func lexLongText(l *lexer) stateFn {
 	l.env[mInText] = 0
 	return lexIndents
 }
-
 func lexText(l *lexer) stateFn {
 	var item  itemType
 	switch l.env[mBrText] {
@@ -467,7 +476,7 @@ func lexText(l *lexer) stateFn {
 			l.next()
 			if r == '\r' { l.next() }
 			l.emit(itemEndL)
-			if l.env[mInterpolation] > 0 { l.errorf("toEndText: expected ']'") }
+			if l.env[mInterpolation] > 0 { l.errorf("toEndText: expected ']' (no closing bracket found)") }
 			return lexIndents
 		case r == eof:
 			if l.pos > l.start { l.emit(item) }
@@ -493,33 +502,6 @@ func lexInlineAction(l *lexer) stateFn {
 	return nil
 }
 
-
-func lexAction(l *lexer) stateFn {
-	l.next()
-	l.next()
-	l.ignore()
-	for {
-		l.next()
-		if strings.HasPrefix(l.input[l.pos:], l.rightDelim) {
-			break
-		}
-	}
-	l.emit(itemAction)
-	l.next()
-	l.next()
-	l.ignore()
-	return lexAfterTag
-}
-
-
-func lexSp(l *lexer) {
-	for isSpace(l.peek()) {
-		l.next()
-	}
-	l.emit(itemParentIdent)
-}
-
-
 func (l *lexer) toEndL(item itemType) bool {
 	Loop:
 	for {
@@ -542,4 +524,22 @@ func (l *lexer) toEndL(item itemType) bool {
 	l.next()
 	l.emit(itemEndL)
 	return true
+}
+
+
+func lexAction(l *lexer) stateFn {
+	l.next()
+	l.next()
+	l.ignore()
+	for {
+		l.next()
+		if strings.HasPrefix(l.input[l.pos:], l.rightDelim) {
+			break
+		}
+	}
+	l.emit(itemAction)
+	l.next()
+	l.next()
+	l.ignore()
+	return lexAfterTag
 }
