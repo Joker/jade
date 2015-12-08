@@ -35,7 +35,7 @@ const (
 	itemInlineVoidTag 	// inline + self-closing tags
 	itemComment
 
-	itemId				// id    attribute
+	itemID				// id    attribute
 	itemClass			// class attribute
 	itemAttr 			// html  attribute value
 	itemAttrN			// html  attribute value without quotes
@@ -46,7 +46,7 @@ const (
 	itemChildIdent		// Ident for ']'
 	itemText 			// plain text
 	itemInlineText
-	itemHtmlTag 		// html <tag>
+	itemHTMLTag 		// html <tag>
 
 	itemDoctype 		// Doctype tag
 	itemBlank
@@ -169,7 +169,7 @@ func lexTags(l *lexer) stateFn {
 		return lexClass
 	case r == '#':
 		l.emit(itemDiv)
-		return lexId
+		return lexID
 	case r == '|':
 		l.ignore()
 		l.env[mBrText] = stText
@@ -178,7 +178,7 @@ func lexTags(l *lexer) stateFn {
 		l.ignore()
 		return lexFilter
 	case r == '<':
-		return lexHtmlTag
+		return lexHTMLTag
 	case r == '+':
 		l.ignore()
 		if l.toEndL(itemTemplate) { return lexIndents }
@@ -238,7 +238,7 @@ func lexAfterTag(l *lexer) stateFn {
 		return l.errorf("expect '=' after '!'")
 	case r == '#':
 		l.ignore()
-		return lexId
+		return lexID
 	case r == '.':
 		sp := l.peek()
 		l.ignore()
@@ -259,17 +259,17 @@ func lexAfterTag(l *lexer) stateFn {
 
 
 
-func lexId(l *lexer) stateFn {
+func lexID(l *lexer) stateFn {
 	var r rune
 	for {
 		r = l.next()
 		if !isAlphaNumeric(r) {
-			if r == '#' { return l.errorf("lexId: unexpected #") }
+			if r == '#' { return l.errorf("lexID: unexpected #") }
 			l.backup()
 			break
 		}
 	}
-	l.emit(itemId)
+	l.emit(itemID)
 	return lexAfterTag
 }
 
@@ -355,7 +355,7 @@ func lexAttrName(l *lexer) stateFn {
 			switch {
 			case word == "id=":
 				l.ignore()
-				return lexAttrId
+				return lexAttrID
 			case word == "class=":
 				l.ignore()
 				return lexAttrClass
@@ -373,13 +373,13 @@ func lexAttrName(l *lexer) stateFn {
 		}
 	}
 }
-func lexAttrId(l *lexer) stateFn {
+func lexAttrID(l *lexer) stateFn {
 	stopCh := l.next()
 	if stopCh == '"' || stopCh == '\'' {
 		l.ignore()
-		l.toStopCh(stopCh, itemId, true)
+		l.toStopCh(stopCh, itemID, true)
 	} else {
-		l.toStopSpace(itemId)
+		l.toStopSpace(itemID)
 	}
 	return lexAttr
 }
@@ -487,8 +487,8 @@ func lexText(l *lexer) stateFn {
 }
 
 
-func lexHtmlTag(l *lexer) stateFn {
-	if l.toEndL(itemHtmlTag) { return lexIndents }
+func lexHTMLTag(l *lexer) stateFn {
+	if l.toEndL(itemHTMLTag) { return lexIndents }
 	return nil
 }
 

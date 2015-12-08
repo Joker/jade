@@ -14,7 +14,7 @@ import (
 type Tree struct {
 	Name      string    // name of the template represented by the tree.
 	ParseName string    // name of the top-level template during parsing, for error messages.
-	Root      *ListNode // top-level root of the tree.
+	Root      *listNode // top-level root of the tree.
 	text      string    // text parsed to create the template (or its parent)
 	// Parsing only; cleared after parse.
 	funcs     []map[string]interface{}
@@ -251,7 +251,7 @@ func IsEmptyTree(n Node) bool {
 	case nil:
 		return true
 	// case *ActionNode:
-	case *ListNode:
+	case *listNode:
 		for _, node := range n.Nodes {
 			if !IsEmptyTree(node) {
 				return false

@@ -18,7 +18,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 			t.errorf("%s", token.val)
 		case itemDoctype:
 			t.Root.append( t.newDoctype(token.pos, token.val) )
-		case itemHtmlTag:
+		case itemHTMLTag:
 			t.Root.append( t.newLine(token.pos, token.val, token.typ, 0, 0) )
 
 		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
@@ -35,7 +35,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 	return nil
 }
 
-func (t *Tree) parseInside( outTag *NestNode ) int {
+func (t *Tree) parseInside( outTag *nestNode ) int {
 	indentCount := 0
 	token := t.next()
 
@@ -60,7 +60,7 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 		case itemText, itemInlineText, itemInlineAction:
 			outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
 
-		case itemHtmlTag:
+		case itemHTMLTag:
 			if indentCount > outTag.Indent {
 				outTag.append( t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting + 1) )
 			}else{
@@ -119,14 +119,14 @@ func (t *Tree) parseInside( outTag *NestNode ) int {
 	t.backup(); return indentCount
 }
 
-func (t *Tree) parseAttr( currentTag *NestNode ) bool {
+func (t *Tree) parseAttr( currentTag *nestNode ) bool {
 	for {
 		attr := t.next()
 		// fmt.Println(itemToStr[attr.typ], attr.val)
 		switch attr.typ {
 		case itemError:
 			t.errorf("%s", attr.val)
-		case itemId:
+		case itemID:
 			if len(currentTag.id) > 0 { t.errorf("unexpected second id \"%s\" ", attr.val) }
 			currentTag.id = attr.val
 		case itemClass:

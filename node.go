@@ -16,7 +16,7 @@ var textFormat = "%s" // Changed to "%q" in tests for better error messages.
 // types local to this package can satisfy it.
 type Node interface {
 	Type() NodeType
-	Position() Pos // byte position of start of node in full original input string
+	position() Pos // byte position of start of node in full original input string
 	String() string
 
 	// Copy does a deep copy of the Node and all its components.
@@ -40,7 +40,7 @@ func (t NodeType) Type() NodeType {
 // this template was parsed.
 type Pos int
 
-func (p Pos) Position() Pos {
+func (p Pos) position() Pos {
 	return p
 }
 
@@ -51,30 +51,30 @@ func (p Pos) Position() Pos {
 
 
 
-// ListNode holds a sequence of nodes.
-type ListNode struct {
+// listNode holds a sequence of nodes.
+type listNode struct {
 	NodeType
 	Pos
 	tr    *Tree
 	Nodes []Node // The element nodes in lexical order.
 }
 
-func (t *Tree) newList(pos Pos) *ListNode {
-	return &ListNode{tr: t, NodeType: NodeList, Pos: pos}
+func (t *Tree) newList(pos Pos) *listNode {
+	return &listNode{tr: t, NodeType: nodeList, Pos: pos}
 }
 
-func (l *ListNode) append(n Node) {
+func (l *listNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *ListNode) tree() *Tree {
+func (l *listNode) tree() *Tree {
 	return l.tr
 }
-func (l *ListNode) tp() itemType {
+func (l *listNode) tp() itemType {
 	return 0
 }
 
-func (l *ListNode) String() string {
+func (l *listNode) String() string {
 	b := new(bytes.Buffer)
 	for _, n := range l.Nodes {
 		fmt.Fprint(b, n)
@@ -82,7 +82,7 @@ func (l *ListNode) String() string {
 	return b.String()
 }
 
-func (l *ListNode) CopyList() *ListNode {
+func (l *listNode) CopyList() *listNode {
 	if l == nil {
 		return l
 	}
@@ -93,6 +93,6 @@ func (l *ListNode) CopyList() *ListNode {
 	return n
 }
 
-func (l *ListNode) Copy() Node {
+func (l *listNode) Copy() Node {
 	return l.CopyList()
 }
