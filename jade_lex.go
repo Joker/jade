@@ -410,7 +410,7 @@ func (l *lexer) toStopCh(stopCh rune, item itemType, backup bool) {
 			l.emit(item)
 			return
 		case r == eof || r == '\r' ||  r == '\n':
-			l.errorf("toStopCh: expected '%s' %#U",stopCh, r)
+			l.errorf("toStopCh: expected '%#U' %#U",stopCh, r)
 			return
 		}
 	}

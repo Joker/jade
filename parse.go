@@ -263,5 +263,4 @@ func IsEmptyTree(n Node) bool {
 	default:
 		panic("unknown node: " + n.String())
 	}
-	return false
 }
