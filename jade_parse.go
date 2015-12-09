@@ -6,8 +6,7 @@ import (
 )
 
 
-
-func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
+func (t *tree) parse(treeSet map[string]*tree) (next node) {
 	token := t.next()
 	t.Root = t.newList(token.pos)
 
@@ -35,7 +34,7 @@ func (t *Tree) parse(treeSet map[string]*Tree) (next Node) {
 	return nil
 }
 
-func (t *Tree) parseInside( outTag *nestNode ) int {
+func (t *tree) parseInside( outTag *nestNode ) int {
 	indentCount := 0
 	token := t.next()
 
@@ -119,7 +118,7 @@ func (t *Tree) parseInside( outTag *nestNode ) int {
 	t.backup(); return indentCount
 }
 
-func (t *Tree) parseAttr( currentTag *nestNode ) bool {
+func (t *tree) parseAttr( currentTag *nestNode ) bool {
 	for {
 		attr := t.next()
 		// fmt.Println(itemToStr[attr.typ], attr.val)

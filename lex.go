@@ -15,7 +15,7 @@ import (
 // item represents a token or text string returned from the scanner.
 type item struct {
 	typ itemType // The type of this item.
-	pos Pos      // The starting position, in bytes, of this item in the input string.
+	pos psn      // The starting position, in bytes, of this item in the input string.
 	val string   // The value of this item.
 }
 
@@ -45,10 +45,10 @@ type lexer struct {
 	leftDelim  string    // start of action
 	rightDelim string    // end of action
 	state      stateFn   // the next lexing function to enter
-	pos        Pos       // current position in the input
-	start      Pos       // start position of this item
-	width      Pos       // width of last rune read from input
-	lastPos    Pos       // position of most recent item returned by nextItem
+	pos        psn       // current position in the input
+	start      psn       // start position of this item
+	width      psn       // width of last rune read from input
+	lastPos    psn       // position of most recent item returned by nextItem
 	items      chan item // channel of scanned items
 	previous   int       // previous depth
 	parenDepth int       // nesting depth
@@ -62,7 +62,7 @@ func (l *lexer) next() rune {
 		return eof
 	}
 	r, w := utf8.DecodeRuneInString(l.input[l.pos:])
-	l.width = Pos(w)
+	l.width = psn(w)
 	l.pos += l.width
 	return r
 }

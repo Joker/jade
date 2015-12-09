@@ -14,33 +14,33 @@ var textFormat = "%s" // Changed to "%q" in tests for better error messages.
 // A Node is an element in the parse tree. The interface is trivial.
 // The interface contains an unexported method so that only
 // types local to this package can satisfy it.
-type Node interface {
-	Type() NodeType
-	position() Pos // byte position of start of node in full original input string
+type node interface {
+	Type() nodeType
+	position() psn // byte position of start of node in full original input string
 	String() string
 
 	// Copy does a deep copy of the Node and all its components.
 	// To avoid type assertions, some XxxNodes also have specialized
 	// CopyXxx methods that return *XxxNode.
-	Copy() Node
+	Copy() node
 
 	// tree returns the containing *Tree.
 	// It is unexported so all implementations of Node are in this package.
-	tree() *Tree
+	tree() *tree
 	tp() itemType
 }
 
 // Type returns itself and provides an easy default implementation
 // for embedding in a Node. Embedded in all non-trivial Nodes.
-func (t NodeType) Type() NodeType {
+func (t nodeType) Type() nodeType {
 	return t
 }
 
 // Pos represents a byte position in the original input text from which
 // this template was parsed.
-type Pos int
+type psn int
 
-func (p Pos) position() Pos {
+func (p psn) position() psn {
 	return p
 }
 
@@ -53,21 +53,21 @@ func (p Pos) position() Pos {
 
 // listNode holds a sequence of nodes.
 type listNode struct {
-	NodeType
-	Pos
-	tr    *Tree
-	Nodes []Node // The element nodes in lexical order.
+	nodeType
+	psn
+	tr    *tree
+	Nodes []node // The element nodes in lexical order.
 }
 
-func (t *Tree) newList(pos Pos) *listNode {
-	return &listNode{tr: t, NodeType: nodeList, Pos: pos}
+func (t *tree) newList(pos psn) *listNode {
+	return &listNode{tr: t, nodeType: nodeList, psn: pos}
 }
 
-func (l *listNode) append(n Node) {
+func (l *listNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *listNode) tree() *Tree {
+func (l *listNode) tree() *tree {
 	return l.tr
 }
 func (l *listNode) tp() itemType {
@@ -86,13 +86,13 @@ func (l *listNode) CopyList() *listNode {
 	if l == nil {
 		return l
 	}
-	n := l.tr.newList(l.Pos)
+	n := l.tr.newList(l.psn)
 	for _, elem := range l.Nodes {
 		n.append(elem.Copy())
 	}
 	return n
 }
 
-func (l *listNode) Copy() Node {
+func (l *listNode) Copy() node {
 	return l.CopyList()
 }

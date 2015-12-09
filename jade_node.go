@@ -10,9 +10,10 @@ import (
 
 
 // NodeType identifies the type of a parse tree node.
-type NodeType int
+type nodeType int
+
 const (
-	nodeList    NodeType = iota
+	nodeList nodeType = iota
 	nodeText
 	nodeTag
 	nodeAttr
@@ -37,10 +38,10 @@ func indentToString(nesting, indent int, n_or_i bool) string {
 }
 
 type nestNode struct {
-	NodeType
-	Pos
-	tr    *Tree
-	Nodes []Node
+	nodeType
+	psn
+	tr    *tree
+	Nodes []node
 
 	typ 	itemType
 	Tag     string
@@ -51,14 +52,14 @@ type nestNode struct {
 	class 	[]string
 }
 
-func (t *Tree) newNest(pos Pos, tag string, tp itemType, idt, nst int) *nestNode {
-	return &nestNode{tr: t, NodeType: nodeTag, Pos: pos, Tag: tag, typ: tp, Indent: idt, Nesting: nst}
+func (t *tree) newNest(pos psn, tag string, tp itemType, idt, nst int) *nestNode {
+	return &nestNode{tr: t, nodeType: nodeTag, psn: pos, Tag: tag, typ: tp, Indent: idt, Nesting: nst}
 }
 
-func (nn *nestNode) append(n Node) {
+func (nn *nestNode) append(n node) {
 	nn.Nodes = append(nn.Nodes, n)
 }
-func (nn *nestNode) tree() *Tree {
+func (nn *nestNode) tree() *tree {
 	return nn.tr
 }
 func (nn *nestNode) tp() itemType {
@@ -125,13 +126,13 @@ func (nn *nestNode) CopyNest() *nestNode {
 	if nn == nil {
 		return nn
 	}
-	n := nn.tr.newNest(nn.Pos, nn.Tag, nn.typ, nn.Indent, nn.Nesting)
+	n := nn.tr.newNest(nn.psn, nn.Tag, nn.typ, nn.Indent, nn.Nesting)
 	for _, elem := range nn.Nodes {
 		n.append(elem.Copy())
 	}
 	return n
 }
-func (nn *nestNode) Copy() Node {
+func (nn *nestNode) Copy() node {
 	return nn.CopyNest()
 }
 
@@ -155,14 +156,14 @@ var doctype = map[string]string {
 }
 
 type doctypeNode struct {
-	NodeType
-	Pos
-	tr    *Tree
+	nodeType
+	psn
+	tr      *tree
 	Doctype string
 }
 
-func (t *Tree) newDoctype(pos Pos, dt string) *doctypeNode {
-	return &doctypeNode{tr: t, NodeType: nodeDoctype, Pos: pos, Doctype: dt}
+func (t *tree) newDoctype(pos psn, dt string) *doctypeNode {
+	return &doctypeNode{tr: t, nodeType: nodeDoctype, psn: pos, Doctype: dt}
 }
 
 func (d *doctypeNode) String() string {
@@ -175,20 +176,20 @@ func (d *doctypeNode) String() string {
 func (d *doctypeNode) tp() itemType {
 	return itemDoctype
 }
-func (d *doctypeNode) tree() *Tree {
+func (d *doctypeNode) tree() *tree {
 	return d.tr
 }
-func (d *doctypeNode) Copy() Node {
-	return &doctypeNode{tr: d.tr, NodeType: nodeDoctype, Pos: d.Pos, Doctype: d.Doctype}
+func (d *doctypeNode) Copy() node {
+	return &doctypeNode{tr: d.tr, nodeType: nodeDoctype, psn: d.psn, Doctype: d.Doctype}
 }
 
 
 
 // lineNode holds plain text.
 type lineNode struct {
-	NodeType
-	Pos
-	tr   *Tree
+	nodeType
+	psn
+	tr *tree
 
 	Text []byte // The text; may span newlines.
 	typ 	itemType
@@ -196,8 +197,8 @@ type lineNode struct {
 	Nesting int
 }
 
-func (t *Tree) newLine(pos Pos, text string, tp itemType, idt, nst int) *lineNode {
-	return &lineNode{tr: t, NodeType: nodeText, Pos: pos, Text: []byte(text), typ: tp, Indent: idt, Nesting: nst}
+func (t *tree) newLine(pos psn, text string, tp itemType, idt, nst int) *lineNode {
+	return &lineNode{tr: t, nodeType: nodeText, psn: pos, Text: []byte(text), typ: tp, Indent: idt, Nesting: nst}
 }
 
 func (l *lineNode) String() string {
@@ -217,24 +218,24 @@ func (l *lineNode) String() string {
 func (l *lineNode) tp() itemType {
 	return l.typ
 }
-func (l *lineNode) tree() *Tree {
+func (l *lineNode) tree() *tree {
 	return l.tr
 }
-func (l *lineNode) Copy() Node {
-	return &lineNode{tr: l.tr, NodeType: nodeText, Pos: l.Pos, Text: append([]byte{}, l.Text...), typ: l.typ, Indent: l.Indent, Nesting: l.Nesting}
+func (l *lineNode) Copy() node {
+	return &lineNode{tr: l.tr, nodeType: nodeText, psn: l.psn, Text: append([]byte{}, l.Text...), typ: l.typ, Indent: l.Indent, Nesting: l.Nesting}
 }
 
 
 type attrNode struct {
-	NodeType
-	Pos
-	tr    *Tree
-	Attr  string
-	typ   itemType
+	nodeType
+	psn
+	tr   *tree
+	Attr string
+	typ  itemType
 }
 
-func (t *Tree) newAttr(pos Pos, attr string, tp itemType) *attrNode {
-	return &attrNode{tr: t, NodeType: nodeAttr, Pos: pos, Attr: attr, typ: tp}
+func (t *tree) newAttr(pos psn, attr string, tp itemType) *attrNode {
+	return &attrNode{tr: t, nodeType: nodeAttr, psn: pos, Attr: attr, typ: tp}
 }
 
 func (a *attrNode) String() string {
@@ -255,9 +256,10 @@ func (a *attrNode) String() string {
 func (a *attrNode) tp() itemType {
 	return a.typ
 }
-func (a *attrNode) tree() *Tree {
+func (a *attrNode) tree() *tree {
 	return a.tr
 }
-func (a *attrNode) Copy() Node {
-	return &attrNode{tr: a.tr, NodeType: nodeAttr, Pos: a.Pos, Attr: a.Attr, typ: a.typ}
+
+func (a *attrNode) Copy() node {
+	return &attrNode{tr: a.tr, nodeType: nodeAttr, psn: a.psn, Attr: a.Attr, typ: a.typ}
 }
