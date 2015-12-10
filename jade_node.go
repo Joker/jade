@@ -20,10 +20,10 @@ const (
 	nodeDoctype
 )
 
-func indentToString(nesting, indent int, n_or_i bool) string {
+func indentToString(nesting, indent int, fromConf bool) string {
 	if prettyOutput {
 		idt := new(bytes.Buffer)
-		if n_or_i {
+		if fromConf {
 			for i := 0; i < nesting; i++ {
 				idt.WriteString(outputIndent)
 			}

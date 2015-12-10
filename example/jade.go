@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"github.com/Joker/jade"
+	"github.com/joker/jade"
 )
 
 
@@ -20,6 +20,5 @@ func main() {
 		return
 	}
 
-	fmt.Printf( "\nOutput:\n\n"  )
-	fmt.Printf( "%s", tmpl )
+	fmt.Printf( "\nOutput:\n\n%s", tmpl )
 }

@@ -1,5 +1,5 @@
 # Jade.go - template engine for Go (golang)
-Package jade (github.com/Joker/jade) implements Jade-lang templates for generating Go html/template output.
+Package jade (github.com/joker/jade) implements Jade-lang templates for generating Go html/template output.
 
 ## Jade syntax
 example:

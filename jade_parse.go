@@ -1,3 +1,6 @@
+// Jade.go - template engine.
+//
+// Package jade implements Jade-lang templates for generating Go html/template output.
 package jade
 
 import (
