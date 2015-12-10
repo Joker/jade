@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"github.com/joker/jade"
+	"io/ioutil"
 )
-
 
 func main() {
 	dat, err := ioutil.ReadFile("template.jade")
@@ -20,5 +19,5 @@ func main() {
 		return
 	}
 
-	fmt.Printf( "\nOutput:\n\n%s", tmpl )
+	fmt.Printf("\nOutput:\n\n%s", tmpl)
 }

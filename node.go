@@ -44,13 +44,6 @@ func (p psn) position() psn {
 	return p
 }
 
-
-
-
-
-
-
-
 // listNode holds a sequence of nodes.
 type listNode struct {
 	nodeType

@@ -3,11 +3,9 @@ package jade
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"regexp"
+	"strings"
 )
-
-
 
 // NodeType identifies the type of a parse tree node.
 type nodeType int
@@ -43,13 +41,13 @@ type nestNode struct {
 	tr    *tree
 	Nodes []node
 
-	typ 	itemType
+	typ     itemType
 	Tag     string
 	Indent  int
 	Nesting int
 
-	id 		string
-	class 	[]string
+	id    string
+	class []string
 }
 
 func (t *tree) newNest(pos psn, tag string, tp itemType, idt, nst int) *nestNode {
@@ -67,17 +65,15 @@ func (nn *nestNode) tp() itemType {
 }
 
 func (nn *nestNode) String() string {
-	// fmt.Printf("%s\t%s\t%d\t\t%s\n", itemToStr[nn.typ], nn.Tag, len(nn.Nodes), itemToStr[nn.Nodes[0].tp()])
-	b   := new(bytes.Buffer)
-	// idt := new(bytes.Buffer)
+	b := new(bytes.Buffer)
 	idt := indentToString(nn.Nesting, nn.Indent, nestIndent)
 
 	if prettyOutput && nn.typ != itemInlineTag && nn.typ != itemInlineVoidTag {
 		idt = "\n" + idt
 	}
 
-	beginFormat := idt+"<%s"
-	endFormat   := "</%s>"
+	beginFormat := idt + "<%s"
+	endFormat := "</%s>"
 
 	switch nn.typ {
 	case itemDiv:
@@ -86,23 +82,22 @@ func (nn *nestNode) String() string {
 		beginFormat = "<%s"
 	case itemComment:
 		nn.Tag = "--"
-		beginFormat = idt+"<!%s "
+		beginFormat = idt + "<!%s "
 		endFormat = " %s>"
 	case itemAction, itemActionEnd:
-		beginFormat = idt+"{{ %s }}"
+		beginFormat = idt + "{{ %s }}"
 	case itemTemplate:
-		beginFormat = idt+"{{ template %s }}"
+		beginFormat = idt + "{{ template %s }}"
 	}
 
-	if len(nn.Nodes) > 1 || ( len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr ) {
+	if len(nn.Nodes) > 1 || (len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr) {
 		endEl := nn.Nodes[len(nn.Nodes)-1].tp()
 		if endEl != itemInlineText && endEl != itemInlineAction && endEl != itemInlineTag {
-			endFormat = idt+endFormat
+			endFormat = idt + endFormat
 		}
 	}
 
-
-		fmt.Fprintf(b, beginFormat, nn.Tag)
+	fmt.Fprintf(b, beginFormat, nn.Tag)
 
 	if len(nn.id) > 0 {
 		fmt.Fprintf(b, " id=\"%s\"", nn.id)
@@ -136,23 +131,21 @@ func (nn *nestNode) Copy() node {
 	return nn.CopyNest()
 }
 
-
-
-var doctype = map[string]string {
-	"xml" 			: `<?xml version="1.0" encoding="utf-8" ?>`,
-	"html" 			: `<!DOCTYPE html>`,
-	"5" 			: `<!DOCTYPE html>`,
-	"1.1" 			: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">`,
-	"xhtml" 		: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">`,
-	"basic" 		: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">`,
-	"mobile" 		: `<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">`,
-	"strict" 		: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">`,
-	"frameset" 		: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">`,
-	"transitional" 	: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">`,
-	"4" 			: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
-	"4strict" 		: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
-	"4frameset"		: `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"> `,
-	"4transitional" : `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">`,
+var doctype = map[string]string{
+	"xml":           `<?xml version="1.0" encoding="utf-8" ?>`,
+	"html":          `<!DOCTYPE html>`,
+	"5":             `<!DOCTYPE html>`,
+	"1.1":           `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">`,
+	"xhtml":         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">`,
+	"basic":         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">`,
+	"mobile":        `<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">`,
+	"strict":        `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">`,
+	"frameset":      `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">`,
+	"transitional":  `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">`,
+	"4":             `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
+	"4strict":       `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">`,
+	"4frameset":     `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"> `,
+	"4transitional": `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">`,
 }
 
 type doctypeNode struct {
@@ -183,16 +176,14 @@ func (d *doctypeNode) Copy() node {
 	return &doctypeNode{tr: d.tr, nodeType: nodeDoctype, psn: d.psn, Doctype: d.Doctype}
 }
 
-
-
 // lineNode holds plain text.
 type lineNode struct {
 	nodeType
 	psn
 	tr *tree
 
-	Text []byte // The text; may span newlines.
-	typ 	itemType
+	Text    []byte // The text; may span newlines.
+	typ     itemType
 	Indent  int
 	Nesting int
 }
@@ -207,11 +198,11 @@ func (l *lineNode) String() string {
 
 	switch l.typ {
 	case itemInlineAction:
-		return fmt.Sprintf( "{{%s }}", l.Text )
+		return fmt.Sprintf("{{%s }}", l.Text)
 	case itemInlineText:
-		return fmt.Sprintf( "%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
+		return fmt.Sprintf("%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")))
 	default:
-		return fmt.Sprintf( "\n"+idt+"%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")) )
+		return fmt.Sprintf("\n"+idt+"%s", rex.ReplaceAll(l.Text, []byte("{{$1}}")))
 	}
 }
 
@@ -224,7 +215,6 @@ func (l *lineNode) tree() *tree {
 func (l *lineNode) Copy() node {
 	return &lineNode{tr: l.tr, nodeType: nodeText, psn: l.psn, Text: append([]byte{}, l.Text...), typ: l.typ, Indent: l.Indent, Nesting: l.Nesting}
 }
-
 
 type attrNode struct {
 	nodeType
@@ -241,15 +231,15 @@ func (t *tree) newAttr(pos psn, attr string, tp itemType) *attrNode {
 func (a *attrNode) String() string {
 	switch a.typ {
 	case itemEndAttr:
-		return fmt.Sprintf( "%s", a.Attr )
+		return fmt.Sprintf("%s", a.Attr)
 	case itemAttr:
-		return fmt.Sprintf( "=%s", a.Attr )
+		return fmt.Sprintf("=%s", a.Attr)
 	case itemAttrN:
-		return fmt.Sprintf( "=\"%s\"", a.Attr )
+		return fmt.Sprintf("=\"%s\"", a.Attr)
 	case itemAttrVoid:
-		return fmt.Sprintf( " %s=\"%s\"", a.Attr, a.Attr )
+		return fmt.Sprintf(" %s=\"%s\"", a.Attr, a.Attr)
 	default:
-		return fmt.Sprintf( " %s", a.Attr )
+		return fmt.Sprintf(" %s", a.Attr)
 	}
 }
 

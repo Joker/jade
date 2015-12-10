@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/joker/jade"
+	"html/template"
 	"io/ioutil"
 	"net/http"
-	"html/template"
-	"github.com/joker/jade"
 )
 
 type Person struct {
@@ -33,7 +33,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf( "%s", tmpl )
+	fmt.Printf("%s", tmpl)
 
 	job1 := Job{Employer: "Monash", Role: "Honorary"}
 	job2 := Job{Employer: "Box Hill", Role: "Head of HE"}
@@ -45,18 +45,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Jobs:   []*Job{&job1, &job2},
 	}
 
+	t, err := template.New("html").Parse(tmpl.String())
+	if err != nil {
+		fmt.Printf("\nTemplate parse error: %v", err)
+		return
+	}
 
-    t, err := template.New("html").Parse(tmpl.String())
-    if err != nil {
-        fmt.Printf("\nTemplate parse error: %v", err)
-        return
-    }
-
-    err = t.Execute(w, person)
-    if err != nil {
-        fmt.Printf("\nExecute error: %v", err)
-        return
-    }   
+	err = t.Execute(w, person)
+	if err != nil {
+		fmt.Printf("\nExecute error: %v", err)
+		return
+	}
 }
 
 func main() {

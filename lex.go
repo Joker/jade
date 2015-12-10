@@ -11,7 +11,6 @@ import (
 	"unicode/utf8"
 )
 
-
 // item represents a token or text string returned from the scanner.
 type item struct {
 	typ itemType // The type of this item.
@@ -30,8 +29,6 @@ func (i item) String() string {
 	}
 	return fmt.Sprintf("%q", i.val)
 }
-
-
 
 const eof = -1
 
@@ -146,7 +143,6 @@ func lex(name, input, left, right string) *lexer {
 	go l.run()
 	return l
 }
-
 
 // isSpace reports whether r is a space character.
 func isSpace(r rune) bool {
