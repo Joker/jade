@@ -56,7 +56,34 @@ becomes
 </html>
 ```
 
+### Example usage
 
+```go
+package main
 
+import (
+    "fmt"
+    "github.com/joker/jade"
+)
 
+func main() {
+    tpl, err := jade.Parse("name_of_tpl", "doctype 5: html: body: p Hello world!")
+    if err != nil {
+        fmt.Printf("Parse error: %v", err)
+        return
+    }
 
+    fmt.Printf( "Output:\n\n%s", tpl  )
+}
+```
+
+Output:
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>Hello world!</p>
+    </body>
+</html>
+```

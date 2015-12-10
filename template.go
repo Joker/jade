@@ -13,13 +13,13 @@ Trivial usage:
 	)
 
 	func main() {
-		tmpl, err := jade.Parse("name_of_tpl", "doctype 5: html: body: p Hello world!")
+		tpl, err := jade.Parse("name_of_tpl", "doctype 5: html: body: p Hello world!")
 		if err != nil {
 			fmt.Printf("Parse error: %v", err)
 			return
 		}
 
-		fmt.Printf( "\nOutput:\n\n%s", tmpl  )
+		fmt.Printf( "\nOutput:\n\n%s", tpl  )
 	}
 
 Output:
