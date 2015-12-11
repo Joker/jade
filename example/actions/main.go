@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/joker/jade"
+	"github.com/Joker/jade"
 	"html/template"
 	"io/ioutil"
 	"net/http"

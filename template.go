@@ -1,3 +1,4 @@
+// Jade.go - template engine. Package implements Jade-lang templates for generating Go html/template output.
 package jade
 
 /*
@@ -9,17 +10,17 @@ Trivial usage:
 
 	import (
 		"fmt"
-		"github.com/joker/jade"
+		"github.com/Joker/jade"
 	)
 
 	func main() {
-		tpl, err := jade.Parse("name_of_tpl", "doctype 5: html: body: p Hello world!")
+		tpl, err := jade.Parse("tpl_name", "doctype 5: html: body: p Hello world!")
 		if err != nil {
 			fmt.Printf("Parse error: %v", err)
 			return
 		}
 
-		fmt.Printf( "\nOutput:\n\n%s", tpl  )
+		fmt.Printf( "Output:\n\n%s", tpl  )
 	}
 
 Output:
