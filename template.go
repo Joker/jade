@@ -34,7 +34,10 @@ Output:
 */
 func Parse(name, text string) (string, error) {
 	outTpl, err := newTree(name).Parse(text, leftDelim, rightDelim, make(map[string]*tree))
-	return outTpl.String(), err
+	if err != nil {
+		return "", err
+	}
+	return outTpl.String(), nil
 }
 
 func (t *tree) String() string {
