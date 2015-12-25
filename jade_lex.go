@@ -75,28 +75,46 @@ func (l *lexer) run() {
 
 func lexDoc(l *lexer) stateFn {
 	lexIndents(l)
-	var flag = false
+	var skip psn
 	if strings.HasPrefix(l.input[l.pos:], "doctype") {
-		l.start += 8
-		l.pos = l.start
-		l.pos++
-		flag = true
+		skip = 7
+	} else if strings.HasPrefix(l.input[l.pos:], "!!!") {
+		skip = 3
 	}
-	if strings.HasPrefix(l.input[l.pos:], "!!!") {
-		l.start += 4
+
+	if skip > 0 {
+		l.start += skip
 		l.pos = l.start
-		l.pos++
-		flag = true
-	}
-	if flag {
-		for {
-			switch r := l.next(); {
-			case isAlphaNumeric(r):
-				// absorb.
-			default:
+
+		switch r := l.next(); {
+		case r == eof:
+			l.backup()
+			l.emit(itemDoctype)
+			l.next()
+			l.emit(itemEOF)
+			return nil
+		case r == '\r', r == '\n':
+			l.backup()
+			l.emit(itemDoctype)
+		default:
+			if r == ' ' {
+				skip = 1
+				for l.next() == ' ' {
+					skip++
+				}
+				l.start += skip
+				l.pos = l.start
+				r = l.peek()
+			}
+			if isAlphaNumeric(r) {
+				for isAlphaNumeric(r) {
+					r = l.next()
+				}
 				l.backup()
 				l.emit(itemDoctype)
 				return lexAfterTag
+			} else {
+				return l.errorf("lexDoc: expected Letter or Digit : %#U", r)
 			}
 		}
 	}

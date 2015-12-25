@@ -1,6 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://godoc.org/github.com/Joker/jade)
-
-# Jade.go - template engine for Go (golang)
+# Jade.go - template engine for Go (golang)  [![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://godoc.org/github.com/Joker/jade)
 Package jade (github.com/Joker/jade) implements Jade-lang templates for generating Go html/template output.
 
 ## Jade syntax
