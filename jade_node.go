@@ -86,8 +86,10 @@ func (nn *nestNode) String() string {
 		endFormat = " %s>"
 	case itemAction, itemActionEnd:
 		beginFormat = idt + "{{ %s }}"
+	case itemDefine:
+		beginFormat = idt + "{{ define \"%s\" }}"
 	case itemTemplate:
-		beginFormat = idt + "{{ template %s }}"
+		beginFormat = idt + "{{ template \"%s\" }}"
 	}
 
 	if len(nn.Nodes) > 1 || (len(nn.Nodes) == 1 && nn.Nodes[0].tp() != itemEndAttr) {
@@ -109,7 +111,7 @@ func (nn *nestNode) String() string {
 		fmt.Fprint(b, n)
 	}
 	switch nn.typ {
-	case itemActionEnd:
+	case itemActionEnd, itemDefine:
 		fmt.Fprint(b, idt+"{{ end }}")
 	case itemTag, itemDiv, itemInlineTag, itemComment:
 		fmt.Fprintf(b, endFormat, nn.Tag)

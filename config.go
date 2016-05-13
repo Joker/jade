@@ -68,7 +68,6 @@ var key = map[string]itemType{
 
 	"include": itemAction,
 	"extends": itemAction,
-	"mixin":   itemAction,
 	"block":   itemAction,
 	"for":     itemAction,
 	"each":    itemAction,
@@ -77,6 +76,9 @@ var key = map[string]itemType{
 	"case":    itemAction,
 	"when":    itemAction,
 	"default": itemAction,
+
+	// "mixin":   itemAction,
+	"mixin": 	itemDefine,
 
 	"end":      itemAction,
 	"template": itemAction,

@@ -345,6 +345,14 @@ func lexTagName(l *lexer) stateFn {
 			l.backup()
 			word := l.input[l.start:l.pos]
 			switch key[word] {
+			case itemDefine:
+				if l.env[mInterpolation] > 0 {
+					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
+				}
+				if l.ignore(); l.toEndL(itemDefine) {
+					return lexIndents
+				}
+				return nil
 			case itemAction:
 				if l.env[mInterpolation] > 0 {
 					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
