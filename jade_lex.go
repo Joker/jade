@@ -46,6 +46,7 @@ const (
 	itemParentIdent // Ident for 'tag:'
 	itemChildIdent  // Ident for ']'
 	itemText        // plain text
+	itemEmptyLine   // empty line
 	itemInlineText
 	itemHTMLTag // html <tag>
 
@@ -153,7 +154,7 @@ Loop:
 				l.parenDepth = l.previous
 			}
 			l.backup()
-			l.emit(itemText)
+			l.emit(itemEmptyLine)
 			break Loop
 		default:
 			l.backup()
@@ -178,6 +179,9 @@ func lexTags(l *lexer) stateFn {
 	if strings.HasPrefix(l.input[l.pos:], htmlComment) {
 		return lexComment
 	}
+	// if strings.HasPrefix(l.input[l.pos:], "doctype") || strings.HasPrefix(l.input[l.pos:], "!!!") {
+	// 	return lexDoc
+	// }
 
 	switch r := l.next(); {
 	case r == eof:
@@ -472,9 +476,21 @@ func (l *lexer) toStopCh(stopCh rune, item itemType, backup bool) {
 	}
 }
 func (l *lexer) toStopSpace(item itemType) {
+	var bracket int
 	for {
 		switch r := l.next(); {
-		case r == ' ' || r == ',' || r == ')' || r == '\r' || r == '\n':
+		case r == '(':
+			bracket++
+		case r == ')':
+			if bracket == 0 {
+				l.backup()
+				l.emit(item)
+				return
+			}
+			if bracket > 0 {
+				bracket--
+			}
+		case r == ' ' || r == ',' || r == '\r' || r == '\n':
 			l.backup()
 			l.emit(item)
 			return
