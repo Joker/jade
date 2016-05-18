@@ -57,6 +57,9 @@ func (t *tree) parseInside(outTag *nestNode) int {
 		case itemChildIdent:
 			return indentCount // for  "]"
 
+		case itemDoctype:
+			t.backup()
+			return indentCount
 		case itemInlineText, itemInlineAction:
 			outTag.append(t.newLine(token.pos, token.val, token.typ, indentCount, outTag.Nesting+1))
 

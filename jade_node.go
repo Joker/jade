@@ -163,9 +163,9 @@ func (t *tree) newDoctype(pos psn, dt string) *doctypeNode {
 
 func (d *doctypeNode) String() string {
 	if dt, ok := doctype[d.Doctype]; ok {
-		return fmt.Sprintf("%s", dt)
+		return fmt.Sprintf("\n%s", dt)
 	}
-	return fmt.Sprintf("<!DOCTYPE html>")
+	return fmt.Sprintf("\n<!DOCTYPE html>")
 }
 
 func (d *doctypeNode) tp() itemType {

@@ -69,57 +69,50 @@ const (
 
 // run runs the state machine for the lexer.
 func (l *lexer) run() {
-	for l.state = lexDoc; l.state != nil; {
+	for l.state = lexTags; l.state != nil; {
 		l.state = l.state(l)
 	}
 }
 
 func lexDoc(l *lexer) stateFn {
-	lexIndents(l)
-	var skip psn
-	if strings.HasPrefix(l.input[l.pos:], "doctype") {
-		skip = 7
-	} else if strings.HasPrefix(l.input[l.pos:], "!!!") {
-		skip = 3
-	}
-
-	if skip > 0 {
-		l.start += skip
-		l.pos = l.start
-
-		switch r := l.next(); {
-		case r == eof:
+	switch l.next() {
+	case eof:
+		l.backup()
+		l.emit(itemDoctype)
+		l.next()
+		l.emit(itemEOF)
+		return nil
+	case '\r', '\n':
+		l.backup()
+		l.emit(itemDoctype)
+		return lexTags
+	default:
+		l.toFirstCh()
+		r := l.peek()
+		if isAlphaNumeric(r) {
+			for isAlphaNumeric(r) {
+				r = l.next()
+			}
 			l.backup()
 			l.emit(itemDoctype)
-			l.next()
-			l.emit(itemEOF)
-			return nil
-		case r == '\r', r == '\n':
-			l.backup()
-			l.emit(itemDoctype)
-		default:
-			if r == ' ' {
-				skip = 1
-				for l.next() == ' ' {
-					skip++
-				}
-				l.start += skip
-				l.pos = l.start
-				r = l.peek()
-			}
-			if isAlphaNumeric(r) {
-				for isAlphaNumeric(r) {
-					r = l.next()
-				}
-				l.backup()
-				l.emit(itemDoctype)
-				return lexAfterTag
-			} else {
-				return l.errorf("lexDoc: expected Letter or Digit : %#U", r)
-			}
+			return lexAfterTag
+		} else {
+			return l.errorf("lexDoc: expected Letter or Digit : %#U", r)
 		}
 	}
-	return lexTags
+}
+
+func (l *lexer) toFirstCh() {
+	for {
+		switch l.next() {
+		case ' ', '\t':
+
+		default:
+			l.backup()
+			l.ignore()
+			return
+		}
+	}
 }
 
 func lexComment(l *lexer) stateFn {
@@ -179,9 +172,16 @@ func lexTags(l *lexer) stateFn {
 	if strings.HasPrefix(l.input[l.pos:], htmlComment) {
 		return lexComment
 	}
-	// if strings.HasPrefix(l.input[l.pos:], "doctype") || strings.HasPrefix(l.input[l.pos:], "!!!") {
-	// 	return lexDoc
-	// }
+	if strings.HasPrefix(l.input[l.pos:], "doctype") {
+		l.start += 7
+		l.pos = l.start
+		return lexDoc
+	}
+	if strings.HasPrefix(l.input[l.pos:], "!!!") {
+		l.start += 3
+		l.pos = l.start
+		return lexDoc
+	}
 
 	switch r := l.next(); {
 	case r == eof:
