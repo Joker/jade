@@ -18,16 +18,21 @@ func (t *tree) parse(treeSet map[string]*tree) (next node) {
 		case itemHTMLTag:
 			t.Root.append(t.newLine(token.pos, token.val, token.typ, 0, 0))
 
-		case itemTag, itemDiv, itemInlineTag, itemAction, itemComment, itemBlank:
+		case itemTag, itemDiv, itemInlineTag, itemAction, itemActionEnd, itemDefine, itemComment:
 			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
 			if token.typ < itemComment {
 				t.parseAttr(nest)
 			}
 			t.Root.append(nest)
 			t.parseInside(nest)
+
+		case itemBlank:
+			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
+			t.parseInside(nest)
 		}
 
 		token = t.next()
+
 	}
 	return nil
 }
