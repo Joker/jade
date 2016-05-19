@@ -88,17 +88,11 @@ func lexDoc(l *lexer) stateFn {
 		return lexTags
 	default:
 		l.toFirstCh()
-		r := l.peek()
-		if isAlphaNumeric(r) {
-			for isAlphaNumeric(r) {
-				r = l.next()
-			}
-			l.backup()
-			l.emit(itemDoctype)
-			return lexAfterTag
-		} else {
-			return l.errorf("lexDoc: expected Letter or Digit : %#U", r)
+		if !isAlphaNumeric(l.peek()) {
+			return l.errorf("lexDoc: expected Letter or Digit")
 		}
+		l.toWordEmit(itemDoctype)
+		return lexAfterTag
 	}
 }
 
@@ -299,44 +293,26 @@ func lexAfterTag(l *lexer) stateFn {
 }
 
 func lexID(l *lexer) stateFn {
-	var r rune
-	for {
-		r = l.next()
-		if !isAlphaNumeric(r) {
-			if r == '#' {
-				return l.errorf("lexID: unexpected #")
-			}
-			l.backup()
-			break
-		}
+	if !isAlphaNumeric(l.peek()) {
+		return l.errorf("lexID: expect id name")
 	}
-	l.emit(itemID)
+	l.toWordEmit(itemID)
 	return lexAfterTag
 }
 
 func lexClass(l *lexer) stateFn {
-	var r rune
-	for {
-		r = l.next()
-		if !isAlphaNumeric(r) {
-			l.backup()
-			break
-		}
+	if !isAlphaNumeric(l.peek()) {
+		return l.errorf("lexClass: expect class name")
 	}
-	l.emit(itemClass)
+	l.toWordEmit(itemClass)
 	return lexAfterTag
 }
 
 func lexFilter(l *lexer) stateFn {
-	var r rune
-	for {
-		r = l.next()
-		if !isAlphaNumeric(r) {
-			l.backup()
-			break
-		}
+	if !isAlphaNumeric(l.peek()) {
+		return l.errorf("lexFilter: expect filter name")
 	}
-	l.emit(itemFilter)
+	l.toWordEmit(itemFilter)
 	return lexLongText
 }
 
@@ -499,6 +475,15 @@ func (l *lexer) toStopSpace(item itemType) {
 			return
 		}
 	}
+}
+func (l *lexer) toWordEmit(item itemType) {
+	for {
+		if !isAlphaNumeric(l.next()) {
+			l.backup()
+			break
+		}
+	}
+	l.emit(item)
 }
 
 func lexLongText(l *lexer) stateFn {
