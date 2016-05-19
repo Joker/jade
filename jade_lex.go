@@ -204,10 +204,10 @@ func lexTags(l *lexer) stateFn {
 		return lexHTMLTag
 	case r == '+':
 		l.ignore()
-		if l.toEndL(itemTemplate) {
-			return lexIndents
-		}
-		return nil
+		l.toFirstCh()
+		l.toWordEmit(itemTemplate)
+		l.toEndL(itemEmptyLine)
+		return lexIndents
 	case r == '=' || r == '-' || r == '$':
 		l.ignore()
 		return lexActionEndL
@@ -327,12 +327,11 @@ func lexTagName(l *lexer) stateFn {
 			switch key[word] {
 			case itemDefine:
 				if l.env[mInterpolation] > 0 {
-					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
+					l.errorf("lexTagName: Tag Interpolation error (no itemDefine)")
 				}
-				if l.ignore(); l.toEndL(itemDefine) {
-					return lexIndents
-				}
-				return nil
+				l.toFirstCh()
+				l.toWordEmit(itemDefine)
+				return lexIndents
 			case itemAction:
 				if l.env[mInterpolation] > 0 {
 					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
@@ -343,7 +342,7 @@ func lexTagName(l *lexer) stateFn {
 				return nil
 			case itemActionEnd:
 				if l.env[mInterpolation] > 0 {
-					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
+					l.errorf("lexTagName: Tag Interpolation error (no itemActionEnd)")
 				}
 				if l.toEndL(itemActionEnd) {
 					return lexIndents

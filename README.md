@@ -89,3 +89,9 @@ Output:
     </body>
 </html>
 ```
+
+### Installation
+
+```sh
+$ go get github.com/Joker/jade
+```
