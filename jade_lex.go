@@ -186,6 +186,9 @@ func lexTags(l *lexer) stateFn {
 	case r == '\n':
 		l.emit(itemEndL)
 		return lexIndents
+	case r == ' ' || r == '\t':
+		l.backup()
+		return lexIndents
 
 	case r == '.':
 		l.emit(itemDiv)
@@ -331,7 +334,8 @@ func lexTagName(l *lexer) stateFn {
 				}
 				l.toFirstCh()
 				l.toWordEmit(itemDefine)
-				return lexIndents
+
+				return lexAfterTag
 			case itemAction:
 				if l.env[mInterpolation] > 0 {
 					l.errorf("lexTagName: Tag Interpolation error (no itemAction)")
