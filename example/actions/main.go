@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/Joker/jade"
 	"html/template"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/Joker/jade"
 )
 
 type Person struct {
@@ -22,20 +23,21 @@ type Job struct {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-	dat, err := ioutil.ReadFile("template.jade")
+	buf, err := ioutil.ReadFile("template.jade")
 	if err != nil {
 		fmt.Printf("\nReadFile error: %v", err)
 		return
 	}
-	tmpl, err := jade.Parse("jade_tpl", string(dat))
+	jadeTpl, err := jade.Parse("jade_tp", string(buf))
 	if err != nil {
 		fmt.Printf("\nParse error: %v", err)
 		return
 	}
+	fmt.Printf("%s", jadeTpl)
 
-	fmt.Printf("%s", tmpl)
+	//
 
-	job1 := Job{Employer: "Monash", Role: "Honorary"}
+	job1 := Job{Employer: "Monash B", Role: "Honorary"}
 	job2 := Job{Employer: "Box Hill", Role: "Head of HE"}
 
 	person := Person{
@@ -45,13 +47,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Jobs:   []*Job{&job1, &job2},
 	}
 
-	t, err := template.New("html").Parse(tmpl.String())
+	//
+
+	goTpl, err := template.New("html").Parse(jadeTpl)
 	if err != nil {
 		fmt.Printf("\nTemplate parse error: %v", err)
 		return
 	}
-
-	err = t.Execute(w, person)
+	err = goTpl.Execute(w, person)
 	if err != nil {
 		fmt.Printf("\nExecute error: %v", err)
 		return
