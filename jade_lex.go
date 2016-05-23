@@ -491,6 +491,10 @@ func (l *lexer) toWordEmit(item itemType) {
 
 func lexLongText(l *lexer) stateFn {
 	if l.env[mInText] == 0 {
+		if l.parenDepth == 0 { // for tags indent = 0
+			l.env[mInText] = 1
+			return lexText
+		}
 		l.env[mInText] = l.parenDepth
 		l.env[mBrText] = stInlineText
 		return lexText

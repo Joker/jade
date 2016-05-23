@@ -26,6 +26,10 @@ html(lang="en")
         templating language with a
         #[strong focus] on performance
         and powerful features.
+      + withGo
+
+mixin withGo
+  |Generating Go html/template output.
 ```
 becomes
 ```html
@@ -53,9 +57,14 @@ becomes
                 <strong>focus</strong> on performance
                 and powerful features.
             </p>
+            {{ template "withGo" }}
         </div>
     </body>
 </html>
+
+{{ define "withGo" }}
+  Generating Go html/template output.
+{{ end }}
 ```
 
 ### Example usage

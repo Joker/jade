@@ -3,34 +3,27 @@ package main
 import (
 	"bytes"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/Joker/jade"
 )
 
-func ReadAndParse(path string) string {
-	dat, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Printf("\nReadFile error: %v", err)
-	}
-	tpl, err := jade.Parse("jade_tp", string(dat))
-	if err != nil {
-		log.Printf("\nParse error: %v", err)
-	}
-	return tpl
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
-	jade_tpl := ReadAndParse("template.jade")
+	jade_tpl, err := jade.ParseFile("template.jade")
+	if err != nil {
+		log.Printf("\nParseFile error: %v", err)
+	}
 	log.Printf("%s\n\n", jade_tpl)
 
 	//
 
 	funcMap := template.FuncMap{
 		"include": func(includePath string) (template.HTML, error) {
-			include_tpl := ReadAndParse(includePath)
+			include_tpl, err := jade.ParseFile(includePath)
+			if err != nil {
+				log.Printf("\nParseFile error: %v", err)
+			}
 			log.Printf("%s\n\n", include_tpl)
 
 			go_partial_tpl, _ := template.New("partial").Parse(include_tpl)
@@ -58,8 +51,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func js(w http.ResponseWriter, r *http.Request) {}
+
 func main() {
 	log.Println("open  http://localhost:8080/")
+	http.HandleFunc("/javascripts/", js)
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
