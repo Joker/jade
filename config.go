@@ -1,15 +1,25 @@
 package jade
 
+var (
+	// Pretty print if true
+	PrettyOutput = true
+
+	// Output indent strring for pretty print
+	OutputIndent = "    "
+
+	// Tabulation size of parse file
+	TabSize = 4
+
+	// Left go-template delim
+	LeftDelim = "{{"
+
+	// Right go-template delim
+	RightDelim = "}}"
+)
+
 const (
-	tabSize = 4
-
-	prettyOutput = true
-	outputIndent = "    "
-	nestIndent   = true
-	lineIndent   = false
-
-	leftDelim  = "{{"
-	rightDelim = "}}"
+	nestIndent = true
+	lineIndent = false
 
 	tabComment  = "//-"
 	htmlComment = "//"

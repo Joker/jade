@@ -38,7 +38,7 @@ Output:
 	</html>
 */
 func Parse(name, text string) (string, error) {
-	outTpl, err := newTree(name).Parse(text, leftDelim, rightDelim, make(map[string]*tree))
+	outTpl, err := newTree(name).Parse(text, LeftDelim, RightDelim, make(map[string]*tree))
 	if err != nil {
 		return "", err
 	}

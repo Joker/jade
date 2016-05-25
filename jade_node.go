@@ -19,11 +19,11 @@ const (
 )
 
 func indentToString(nesting, indent int, fromConf bool) string {
-	if prettyOutput {
+	if PrettyOutput {
 		idt := new(bytes.Buffer)
 		if fromConf {
 			for i := 0; i < nesting; i++ {
-				idt.WriteString(outputIndent)
+				idt.WriteString(OutputIndent)
 			}
 		} else {
 			for i := 0; i < indent; i++ {
@@ -68,7 +68,7 @@ func (nn *nestNode) String() string {
 	b := new(bytes.Buffer)
 	idt := indentToString(nn.Nesting, nn.Indent, nestIndent)
 
-	if prettyOutput && nn.typ != itemInlineTag && nn.typ != itemInlineVoidTag {
+	if PrettyOutput && nn.typ != itemInlineTag && nn.typ != itemInlineVoidTag {
 		idt = "\n" + idt
 	}
 

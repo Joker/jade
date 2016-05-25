@@ -42,11 +42,11 @@ func (t *tree) Copy() *tree {
 // given the specified name. If an error is encountered, parsing stops and an
 // empty map is returned with the error.
 /*
-func Parse(name, text, leftDelim, rightDelim string, funcs ...map[string]interface{}) (treeSet map[string]*Tree, err error) {
+func Parse(name, text, LeftDelim, RightDelim string, funcs ...map[string]interface{}) (treeSet map[string]*Tree, err error) {
 	treeSet = make(map[string]*Tree)
 	t := New(name)
 	t.text = text
-	_, err = t.Parse(text, leftDelim, rightDelim, treeSet, funcs...)
+	_, err = t.Parse(text, LeftDelim, RightDelim, treeSet, funcs...)
 	return
 }
 // */
@@ -222,10 +222,10 @@ func (t *tree) stopParse() {
 // the template for execution. If either action delimiter string is empty, the
 // default ("{{" or "}}") is used. Embedded template definitions are added to
 // the treeSet map.
-func (t *tree) Parse(text, leftDelim, rightDelim string, treeSet map[string]*tree, funcs ...map[string]interface{}) (tree *tree, err error) {
+func (t *tree) Parse(text, LeftDelim, RightDelim string, treeSet map[string]*tree, funcs ...map[string]interface{}) (tree *tree, err error) {
 	defer t.recover(&err)
 	t.ParseName = t.Name
-	t.startParse(funcs, lex(t.Name, text, leftDelim, rightDelim))
+	t.startParse(funcs, lex(t.Name, text, LeftDelim, RightDelim))
 	t.text = text
 	t.parse(treeSet)
 	t.add(treeSet)

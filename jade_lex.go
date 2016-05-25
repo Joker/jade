@@ -135,7 +135,7 @@ Loop:
 			l.parenDepth++
 		case '\t':
 			l.emit(itemIdentTab)
-			l.parenDepth += tabSize
+			l.parenDepth += TabSize
 		case '\r', '\n':
 			if l.parenDepth < l.previous {
 				l.parenDepth = l.previous
