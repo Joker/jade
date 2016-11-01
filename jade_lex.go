@@ -10,6 +10,7 @@ const (
 	mInterpolation mode = iota
 	mInText
 	mBrText
+	mExtends
 )
 const (
 	stText int = iota
@@ -331,13 +332,23 @@ func lexTagName(l *lexer) stateFn {
 			l.backup()
 			word := l.input[l.start:l.pos]
 			switch key[word] {
+			case itemExtends:
+				if l.env[mInterpolation] > 0 {
+					l.errorf("lexTagName: Tag Interpolation error (no itemExtends)")
+				}
+				l.env[mExtends] = 1
+				l.toEndL(itemExtends)
+				return lexAfterTag
 			case itemBlock:
 				if l.env[mInterpolation] > 0 {
 					l.errorf("lexTagName: Tag Interpolation error (no itemBlock)")
 				}
 				l.toFirstCh()
-				l.toWordEmit(itemBlock)
-
+				if l.env[mExtends] == 1 {
+					l.toWordEmit(itemDefine)
+				} else {
+					l.toWordEmit(itemBlock)
+				}
 				return lexAfterTag
 			case itemDefine:
 				if l.env[mInterpolation] > 0 {
@@ -345,7 +356,6 @@ func lexTagName(l *lexer) stateFn {
 				}
 				l.toFirstCh()
 				l.toWordEmit(itemDefine)
-
 				return lexAfterTag
 			case itemAction:
 				if l.env[mInterpolation] > 0 {

@@ -81,9 +81,9 @@ var key = map[string]itemType{
 	"end":      itemAction,
 	"include":  itemAction,
 
-	"extends":  itemExtends,
-	"block": 	itemBlock,
-	"mixin": 	itemDefine,
+	"extends": itemExtends,
+	"block":   itemBlock,
+	"mixin":   itemDefine,
 
 	// "define": 	itemDefine,
 	// "block":  itemActionEnd,
@@ -106,7 +106,6 @@ var key = map[string]itemType{
 	// "with": 		itemWith,
 	// "nil": 		itemNil,
 	// "template": 	itemTemplate,
-
 
 	"a":       itemInlineTag,
 	"abbr":    itemInlineTag,
