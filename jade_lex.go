@@ -57,7 +57,10 @@ const (
 	itemActionEnd    // from go template {{...}} {{end}}
 	itemInlineAction // title= .titleName
 
+	itemExtends
 	itemDefine
+	itemBlock
+
 	itemElse
 	itemEnd
 	itemIf
@@ -328,6 +331,14 @@ func lexTagName(l *lexer) stateFn {
 			l.backup()
 			word := l.input[l.start:l.pos]
 			switch key[word] {
+			case itemBlock:
+				if l.env[mInterpolation] > 0 {
+					l.errorf("lexTagName: Tag Interpolation error (no itemBlock)")
+				}
+				l.toFirstCh()
+				l.toWordEmit(itemBlock)
+
+				return lexAfterTag
 			case itemDefine:
 				if l.env[mInterpolation] > 0 {
 					l.errorf("lexTagName: Tag Interpolation error (no itemDefine)")

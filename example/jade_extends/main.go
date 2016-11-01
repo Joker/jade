@@ -19,7 +19,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("\nParseFile error: %v", err)
 	}
-	log.Printf("%s\n\n", index)	
+	log.Printf("%s\n\n", index)
 
 	//
 
@@ -36,7 +36,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	log.Println("open  http://localhost:8080/")
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	// log.Println("open  http://localhost:8080/")
+	// http.HandleFunc("/", handler)
+	// http.ListenAndServe(":8080", nil)
+	layout, err := jade.ParseFile("layout.jade")
+	if err != nil {
+		log.Printf("\nParseFile error: %v", err)
+	}
+	log.Printf("%s\n\n", layout)
+
+	index, err := jade.ParseFile("index.jade")
+	if err != nil {
+		log.Printf("\nParseFile error: %v", err)
+	}
+	log.Printf("%s\n\n", index)
 }

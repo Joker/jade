@@ -86,6 +86,8 @@ func (nn *nestNode) String() string {
 		endFormat = " %s>"
 	case itemAction, itemActionEnd:
 		beginFormat = idt + "{{ %s }}"
+	case itemBlock:
+		beginFormat = idt + "{{ block \"%s\" . }}"
 	case itemDefine:
 		beginFormat = idt + "{{ define \"%s\" }}"
 	case itemTemplate:
@@ -111,7 +113,7 @@ func (nn *nestNode) String() string {
 		fmt.Fprint(b, n)
 	}
 	switch nn.typ {
-	case itemActionEnd, itemDefine:
+	case itemActionEnd, itemDefine, itemBlock:
 		fmt.Fprint(b, idt+"{{ end }}")
 	case itemTag, itemDiv, itemInlineTag, itemComment:
 		fmt.Fprintf(b, endFormat, nn.Tag)

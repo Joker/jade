@@ -58,6 +58,7 @@ var itemToStr = map[itemType]string{
 	itemParentIdent:   "itemParentIdent",
 	itemChildIdent:    "itemChildIdent",
 	itemText:          "itemText",
+	itemExtends:       "itemExtends",
 }
 
 var key = map[string]itemType{
@@ -79,14 +80,19 @@ var key = map[string]itemType{
 	"template": itemAction,
 	"end":      itemAction,
 	"include":  itemAction,
-	"extends":  itemAction,
+
+	"extends":  itemExtends,
+	"block": 	itemBlock,
+	"mixin": 	itemDefine,
+
+	// "define": 	itemDefine,
+	// "block":  itemActionEnd,
+	"define": itemActionEnd,
 
 	"if":     itemActionEnd,
 	"else":   itemActionEnd,
 	"range":  itemActionEnd,
 	"with":   itemActionEnd,
-	"block":  itemActionEnd,
-	"define": itemActionEnd,
 	"each":   itemActionEnd,
 	"for":    itemActionEnd,
 	"while":  itemActionEnd,
@@ -100,8 +106,7 @@ var key = map[string]itemType{
 	// "with": 		itemWith,
 	// "nil": 		itemNil,
 	// "template": 	itemTemplate,
-	// "define": 	itemDefine,
-	"mixin": itemDefine,
+
 
 	"a":       itemInlineTag,
 	"abbr":    itemInlineTag,

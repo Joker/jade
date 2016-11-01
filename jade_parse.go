@@ -18,7 +18,7 @@ func (t *tree) parse(treeSet map[string]*tree) (next node) {
 		case itemHTMLTag:
 			t.Root.append(t.newLine(token.pos, token.val, token.typ, 0, 0))
 
-		case itemTag, itemDiv, itemInlineTag, itemAction, itemActionEnd, itemDefine, itemComment:
+		case itemTag, itemDiv, itemInlineTag, itemAction, itemActionEnd, itemDefine, itemBlock, itemComment:
 			nest := t.newNest(token.pos, token.val, token.typ, 0, 0)
 			if token.typ < itemComment {
 				t.parseAttr(nest)
@@ -96,7 +96,7 @@ func (t *tree) parseInside(outTag *nestNode) int {
 				return indentCount
 			}
 
-		case itemAction, itemActionEnd, itemTemplate, itemDefine:
+		case itemAction, itemActionEnd, itemTemplate, itemDefine, itemBlock:
 			if indentCount > outTag.Indent {
 				nest := t.newNest(token.pos, token.val, token.typ, indentCount, outTag.Nesting+1)
 				outTag.append(nest)
