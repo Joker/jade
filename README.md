@@ -1,6 +1,7 @@
 # Jade.go - template engine for Go (golang)  
 Package jade (github.com/Joker/jade) implements Jade-lang templates for generating Go html/template output.  
-  
+Now Jade-lang renamed to [Pug template engine](https://pugjs.org/api/getting-started.html).  
+
 [![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://godoc.org/github.com/Joker/jade) [![Go Report Card](https://goreportcard.com/badge/github.com/Joker/jade)](https://goreportcard.com/report/github.com/Joker/jade)
 
 ## Jade syntax
