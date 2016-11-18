@@ -9,6 +9,42 @@ import (
 	"testing"
 )
 
+var fname = []string{
+	"attributes",
+	"code",
+	"dynamicscript",
+	"each",
+	"extend",
+	"extend-layout",
+	"form",
+	"includes",
+	"layout",
+	"mixins",
+	"pet",
+	"rss",
+	"text",
+	"whitespace",
+}
+
+func gen(t *testing.T) {
+	for _,name := range fname {
+		dat, err := ioutil.ReadFile("testdata/"+name+".jade")
+		if err != nil {
+			t.Error("ReadFile error: %v", err)
+			return
+		}
+
+		tpl, err := Parse("tpl_"+name, string(dat))
+		if err != nil {
+			t.Error("Parse error: %v", err)
+			return
+		}
+
+	    ioutil.WriteFile("testdata/"+name+".tmpl", []byte(tpl), 0644)
+	}
+}
+
+
 func TestAttributes(t *testing.T) {
 	dat, err := ioutil.ReadFile("testdata/attributes.jade")
 	if err != nil {
