@@ -28,18 +28,18 @@ var fname = []string{
 
 func TestJadeExamples(t *testing.T) {
 	for _, name := range fname {
-		fmt.Println("========= testing: " + name + ".jade")
+		fmt.Println("_________" + name + ".jade")
 
 		dat, err := ioutil.ReadFile("testdata/" + name + ".jade")
 		if err != nil {
-			fmt.Printf("--- FAIL: ReadFile error: %v\n", err)
+			fmt.Printf("--- FAIL: ReadFile error: %v\n\n", err)
 			t.Fail()
 			continue
 		}
 
-		tpl, err := Parse("tpl"+name, string(dat))
+		tpl, err := Parse(name+".jade", string(dat))
 		if err != nil {
-			fmt.Printf("--- FAIL: Parse error: %v\n", err)
+			fmt.Printf("--- FAIL: Parse error: %v\n\n", err)
 			t.Fail()
 			continue
 		}
@@ -48,32 +48,34 @@ func TestJadeExamples(t *testing.T) {
 
 		inFile, err := os.Open("testdata/" + name + ".html")
 		if err != nil {
-			fmt.Printf("--- FAIL: OpenFile error: %v\n", err)
+			fmt.Printf("--- FAIL: OpenFile error: %v\n\n", err)
 			t.Fail()
 			continue
 		}
 		file := bufio.NewScanner(inFile)
 		file.Split(bufio.ScanLines)
 
-		nilerr := true
+		nilerr := 0
+		line := 0
 		for tmpl.Scan() {
 			file.Scan()
 
 			a := tmpl.Text()
 			b := file.Text()
+			line += 1
 
-			if strings.Compare(a, b) != 0 {
-				fmt.Printf("%s\n%s\n___________________________\n", a, b)
-				nilerr = false
+			if strings.Compare(a, b) != 0 && nilerr < 4 {
+				fmt.Printf("%s\n%s\n%d^___________________________\n", a, b, line)
+				nilerr += 1
 				t.Fail()
 			}
 		}
 		inFile.Close()
 
-		if nilerr {
-			fmt.Println("--- PASS")
+		if nilerr == 0 {
+			fmt.Println("    PASS\n")
 		} else {
-			fmt.Println("--- FAIL")
+			fmt.Println("--- FAIL\n")
 		}
 	}
 	// ioutil.WriteFile("testdata/"+name+".html", []byte(tpl), 0644)
