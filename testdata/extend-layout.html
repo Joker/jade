@@ -1,0 +1,19 @@
+
+<html>
+    <head>
+        <h1>My Site - {{title}}</h1>
+        {{ block "scripts" . }}
+            <script src='/jquery.js'>
+            </script>
+        {{ end }}
+    </head>
+    <body>
+        {{ block "content" . }}
+        {{ end }}
+        {{ block "foot" . }}
+            <div id="footer">
+                <p>some footer content</p>
+            </div>
+        {{ end }}
+    </body>
+</html>

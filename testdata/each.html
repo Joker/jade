@@ -1,0 +1,6 @@
+
+<ul id="users">
+    {{ each user, name in users }}
+        <li class="user-" name="name">{{name}} {{user.email}}</li>
+    {{ end }}
+</ul>

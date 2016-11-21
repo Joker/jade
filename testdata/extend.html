@@ -1,0 +1,13 @@
+
+{{ define "scripts" }}
+    <script src='/jquery.js'>
+    </script>
+    <script src='/pets.js'>
+    </script>
+{{ end }}
+{{ define "content" }}
+    <h1>{{ title }}</h1>
+    {{ each pet in pets }}
+        {{ include pet.pug }}
+    {{ end }}
+{{ end }}

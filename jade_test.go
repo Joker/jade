@@ -26,55 +26,55 @@ var fname = []string{
 	"whitespace",
 }
 
-func gen(t *testing.T) {
-	for _,name := range fname {
-		dat, err := ioutil.ReadFile("testdata/"+name+".jade")
+func TestJadeExamples(t *testing.T) {
+	for _, name := range fname {
+		fmt.Println("========= testing: " + name + ".jade")
+
+		dat, err := ioutil.ReadFile("testdata/" + name + ".jade")
 		if err != nil {
-			t.Error("ReadFile error: %v", err)
-			return
-		}
-
-		tpl, err := Parse("tpl_"+name, string(dat))
-		if err != nil {
-			t.Error("Parse error: %v", err)
-			return
-		}
-
-	    ioutil.WriteFile("testdata/"+name+".tmpl", []byte(tpl), 0644)
-	}
-}
-
-
-func TestAttributes(t *testing.T) {
-	dat, err := ioutil.ReadFile("testdata/attributes.jade")
-	if err != nil {
-		t.Error("ReadFile error: %v", err)
-		return
-	}
-
-	tpl, err := Parse("tpl", string(dat))
-	if err != nil {
-		t.Error("Parse error: %v", err)
-		return
-	}
-
-	tmpl := bufio.NewScanner(strings.NewReader(tpl))
-	tmpl.Split(bufio.ScanLines)
-
-	inFile, _ := os.Open("testdata/attributes.tmpl")
-	defer inFile.Close()
-	file := bufio.NewScanner(inFile)
-	file.Split(bufio.ScanLines)
-
-	for tmpl.Scan() {
-		file.Scan()
-
-		a := tmpl.Text()
-		b := file.Text()
-
-		if strings.Compare(a, b) != 0 {
-			fmt.Printf("%s\n%s\n________________________\n", a, b)
+			fmt.Printf("--- FAIL: ReadFile error: %v\n", err)
 			t.Fail()
+			continue
+		}
+
+		tpl, err := Parse("tpl"+name, string(dat))
+		if err != nil {
+			fmt.Printf("--- FAIL: Parse error: %v\n", err)
+			t.Fail()
+			continue
+		}
+		tmpl := bufio.NewScanner(strings.NewReader(tpl))
+		tmpl.Split(bufio.ScanLines)
+
+		inFile, err := os.Open("testdata/" + name + ".html")
+		if err != nil {
+			fmt.Printf("--- FAIL: OpenFile error: %v\n", err)
+			t.Fail()
+			continue
+		}
+		file := bufio.NewScanner(inFile)
+		file.Split(bufio.ScanLines)
+
+		nilerr := true
+		for tmpl.Scan() {
+			file.Scan()
+
+			a := tmpl.Text()
+			b := file.Text()
+
+			if strings.Compare(a, b) != 0 {
+				fmt.Printf("%s\n%s\n___________________________\n", a, b)
+				nilerr = false
+				t.Fail()
+			}
+		}
+		inFile.Close()
+
+		if nilerr {
+			fmt.Println("--- PASS")
+		} else {
+			fmt.Println("--- FAIL")
 		}
 	}
+	// ioutil.WriteFile("testdata/"+name+".html", []byte(tpl), 0644)
 }
