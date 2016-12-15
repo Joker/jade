@@ -5,39 +5,34 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
-var fname = []string{
-	"attributes",
-	"code",
-	"dynamicscript",
-	"each",
-	"extend",
-	"extend-layout",
-	"form",
-	"includes",
-	"layout",
-	"mixins",
-	"pet",
-	"rss",
-	"text",
-	"whitespace",
-}
-
 func TestJadeExamples(t *testing.T) {
-	for _, name := range fname {
-		fmt.Println("_________" + name + ".jade")
 
-		dat, err := ioutil.ReadFile("testdata/" + name + ".jade")
+	files, _ := ioutil.ReadDir("./testdata")
+	var name, fext string
+
+	for _, file := range files {
+		name = file.Name()
+		fext = filepath.Ext(name)
+
+		if fext != ".jade" && fext != ".pug" {
+			continue
+		}
+
+		fmt.Println("_________" + name)
+
+		dat, err := ioutil.ReadFile("testdata/" + name)
 		if err != nil {
 			fmt.Printf("--- FAIL: ReadFile error: %v\n\n", err)
 			t.Fail()
 			continue
 		}
 
-		tpl, err := Parse(name+".jade", string(dat))
+		tpl, err := Parse(name, string(dat))
 		if err != nil {
 			fmt.Printf("--- FAIL: Parse error: %v\n\n", err)
 			t.Fail()
@@ -46,22 +41,21 @@ func TestJadeExamples(t *testing.T) {
 		tmpl := bufio.NewScanner(strings.NewReader(tpl))
 		tmpl.Split(bufio.ScanLines)
 
-		inFile, err := os.Open("testdata/" + name + ".html")
+		inFile, err := os.Open("testdata/" + strings.TrimSuffix(name, fext) + ".html")
 		if err != nil {
-			fmt.Printf("--- FAIL: OpenFile error: %v\n\n", err)
-			t.Fail()
+			fmt.Println("```", tpl, "\n\n```")
 			continue
 		}
-		file := bufio.NewScanner(inFile)
-		file.Split(bufio.ScanLines)
+		html := bufio.NewScanner(inFile)
+		html.Split(bufio.ScanLines)
 
-		nilerr := 0
-		line := 0
+		nilerr, line := 0, 0
+
 		for tmpl.Scan() {
-			file.Scan()
+			html.Scan()
 
 			a := tmpl.Text()
-			b := file.Text()
+			b := html.Text()
 			line += 1
 
 			if strings.Compare(a, b) != 0 && nilerr < 4 {
