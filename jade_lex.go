@@ -215,7 +215,16 @@ func lexTags(l *lexer) stateFn {
 		l.toWordEmit(itemTemplate)
 		l.toEndL(itemEmptyLine)
 		return lexIndents
-	case r == '=' || r == '-' || r == '$':
+	case r == '-':
+		// l.toFirstCh()
+		sp := l.peek()
+		if sp == '\r' || sp == '\n' {
+			l.emit(itemComment)
+			return lexLongText
+		}
+		l.ignore()
+		return lexActionEndL
+	case r == '=' || r == '$':
 		l.ignore()
 		return lexActionEndL
 	case r == '!':
