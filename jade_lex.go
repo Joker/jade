@@ -218,7 +218,12 @@ func lexTags(l *lexer) stateFn {
 	case r == '=' || r == '-' || r == '$':
 		l.ignore()
 		return lexActionEndL
-
+	case r == '!':
+		if l.next() == '=' {
+			l.ignore()
+			return lexActionEndL
+		}
+		return l.errorf("expect '=' after '!'")
 	case isAlphaNumeric(r):
 		l.backup()
 		return lexTagName
@@ -264,10 +269,7 @@ func lexAfterTag(l *lexer) stateFn {
 		l.ignore()
 		return lexInlineAction
 	case r == '!':
-		sp := l.peek()
-		l.ignore()
-		if sp == '=' {
-			l.next()
+		if l.next() == '=' {
 			l.ignore()
 			return lexInlineAction
 		}
