@@ -2,16 +2,18 @@ package jade
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"./hpp"
 )
 
 func TestJadeExamples(t *testing.T) {
-
 	files, _ := ioutil.ReadDir("./testdata")
 	var name, fext string
 
@@ -38,12 +40,13 @@ func TestJadeExamples(t *testing.T) {
 			t.Fail()
 			continue
 		}
-		tmpl := bufio.NewScanner(strings.NewReader(tpl))
+		tmpl := bufio.NewScanner(bytes.NewReader(hpp.Print(strings.NewReader(tpl))))
 		tmpl.Split(bufio.ScanLines)
 
 		inFile, err := os.Open("testdata/" + strings.TrimSuffix(name, fext) + ".html")
 		if err != nil {
 			fmt.Println("```", tpl, "\n\n```")
+			ioutil.WriteFile("testdata/"+strings.TrimSuffix(name, fext)+".html", hpp.Print(strings.NewReader(tpl)), 0644)
 			continue
 		}
 		html := bufio.NewScanner(inFile)
@@ -67,10 +70,9 @@ func TestJadeExamples(t *testing.T) {
 		inFile.Close()
 
 		if nilerr == 0 {
-			fmt.Println("    PASS\n")
+			fmt.Println("    PASS\n ")
 		} else {
-			fmt.Println("--- FAIL\n")
+			fmt.Println("--- FAIL\n ")
 		}
 	}
-	// ioutil.WriteFile("testdata/"+name+".html", []byte(tpl), 0644)
 }

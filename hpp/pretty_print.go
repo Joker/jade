@@ -130,8 +130,7 @@ func txtFmt(txt []byte, depth int) []byte {
 		f   = func(c rune) bool { return '\n' != c && ' ' != c }
 	)
 	for _, v := range bytes.FieldsFunc(txt, f) {
-		t := bytes.TrimLeft(v, " ")
-		ln = len(t)
+		ln = len(bytes.TrimLeft(v, " "))
 		if ln > 0 && ln < min {
 			min = ln
 		}
