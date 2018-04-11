@@ -5,10 +5,7 @@
         <script src='/jquery.js'></script>
         {{ end }}
     </head>
-    <body>
-        {{ block "content" . }}
-        {{ end }}
-        {{ block "foot" . }}
+    <body>{{ block "content" . }}{{ end }}{{ block "foot" . }}
         <div id="footer">
             <p>some footer content</p>
         </div>

@@ -14,6 +14,8 @@ import (
 )
 
 func TestJadeExamples(t *testing.T) {
+	PrettyOutput = false
+
 	files, _ := ioutil.ReadDir("./testdata")
 	var name, fext string
 

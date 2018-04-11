@@ -120,6 +120,7 @@ Loop:
 		prevType = nowType
 	}
 
+	b.WriteByte('\n')
 	return bytes.TrimLeft(b.Bytes(), "\n\r\t ")
 }
 
