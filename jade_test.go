@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"./hpp"
+	"github.com/Joker/hpp"
 )
 
 func TestJadeExamples(t *testing.T) {
