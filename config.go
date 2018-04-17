@@ -18,11 +18,11 @@ var (
 	cond__if     = "{{ if %s }}"
 	cond__unless = "{{ if !%s }}"
 	cond__case   = "{{ switch %s }}"
-	cond__while  = "{{ for %s }}"
-	cond__for    = "{{ for %s, %s := range %s }}"
+	cond__while  = "{{ range %s }}"
+	cond__for    = "{{/* %s, %s */}}{{ range %s }}"
 	cond__end    = "{{ end }}"
 
-	cond__for_if   = "{{ if len(%s) > 0 }}{{ for %s, %s := range %s }}"
+	cond__for_if   = "{{ if len(%s) > 0 }}{{/* %s, %s */}}{{ range %s }}"
 	code__for_else = "{{ end }}{{ else }}"
 
 	code__longcode  = "{{/* %s */}}"
