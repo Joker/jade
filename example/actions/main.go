@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Joker/hpp"
 	"github.com/Joker/jade"
 )
 
@@ -33,7 +34,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("\nParse error: %v", err)
 		return
 	}
-	fmt.Printf("%s", jadeTpl)
+	fmt.Printf("%s", hpp.PrPrint(jadeTpl))
 
 	//
 

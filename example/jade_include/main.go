@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"html/template"
 	"log"
 	"net/http"
 
+	"github.com/Joker/hpp"
 	"github.com/Joker/jade"
 )
 
@@ -14,25 +14,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("\nParseFile error: %v", err)
 	}
-	log.Printf("%s\n\n", jade_tpl)
+	log.Printf("%s\n\n", hpp.PrPrint(jade_tpl))
 
 	//
 
 	funcMap := template.FuncMap{
-		"include": func(includePath string) (template.HTML, error) {
-			include_tpl, err := jade.ParseFile(includePath)
-			if err != nil {
-				log.Printf("\nParseFile error: %v", err)
-			}
-			log.Printf("%s\n\n", include_tpl)
-
-			go_partial_tpl, _ := template.New("partial").Parse(include_tpl)
-
-			buf := new(bytes.Buffer)
-			go_partial_tpl.Execute(buf, "")
-			return template.HTML(buf.String()), nil
-
-		},
 		"bold": func(content string) (template.HTML, error) {
 			return template.HTML("<b>" + content + "</b>"), nil
 		},

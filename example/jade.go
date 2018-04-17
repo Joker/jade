@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/Joker/jade"
 	"io/ioutil"
+
+	"github.com/Joker/hpp"
+	"github.com/Joker/jade"
 )
 
 func main() {
@@ -19,5 +21,5 @@ func main() {
 		return
 	}
 
-	fmt.Printf("\nOutput:\n\n%s", tmpl)
+	fmt.Printf("\nOutput:\n\n%s", hpp.PrPrint(tmpl))
 }
