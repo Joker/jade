@@ -1,15 +1,14 @@
-{{  var title = "Things" }}
-<!-- 
+{{/* var title = "Things" */}}{{/* 
 var subtitle = ["Really",  "long",
-"list", "of",
-"words"] -->
+                "list", "of",
+                "words"] */}}
 <h1>{{ title }}</h1>
 <h2>{{ subtitle.join(" ") }}</h2>
-<ul id="users">{{ each user, name in users }}
+<ul id="users">{{/* name, user */}}{{ range users }}
     <!-- expands to if (user.isA == 'ferret') -->
     {{ if user.isA == 'ferret' }}
-    <li class="user-" name="name">{{name}} is just a ferret</li>
+    <li class="{{ 'user-' + name }}">{{ name }} is just a ferret</li>
     {{ else }}
-    <li class="user-" name="name">{{name}} {{user.email}}</li>
+    <li class="{{ 'user-' + name }}">{{ name }} {{ user.email }}</li>
     {{ end }}{{ end }}
 </ul>

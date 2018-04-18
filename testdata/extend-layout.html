@@ -1,14 +1,11 @@
 <html>
     <head>
-        <h1>My Site - {{title}}</h1>
-        {{ block "scripts" . }}
-        <script src='/jquery.js'></script>
-        {{ end }}
+        <h1>My Site - {{ title }}</h1>
+        <script src="/jquery.js"></script>
     </head>
-    <body>{{ block "content" . }}{{ end }}{{ block "foot" . }}
+    <body>
         <div id="footer">
             <p>some footer content</p>
         </div>
-        {{ end }}
     </body>
 </html>

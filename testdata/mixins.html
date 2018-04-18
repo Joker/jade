@@ -1,5 +1,27 @@
-{{ include mixins/dialog.pug }}{{ include mixins/profile.pug }}
-<div class="one">{{ template "dialog" }}</div>
-<div class="two">{{ template "dialog-title" }}</div>
-<div class="three">{{ template "dialog-title-desc" }}</div>
-<div id="profile">{{ template "profile" }}</div>
+<div class="one">
+    <div class="dialog">
+        <h1>Whoop</h1>
+        <p>stuff</p>
+    </div>
+</div>
+<div class="two">{{/* var ( block = ``  title = "'Whoop'" ) */}} 
+    <div class="dialog">
+        <h1>{{ title }}</h1>
+        <p>stuff</p>
+    </div>
+</div>
+<div class="three">{{/* var ( block = ``  title = "'Whoop'"  desc = "'Just a mixin'" ) */}} 
+    <div class="dialog">
+        <h1>{{ title }}</h1>
+        <p>{{ desc }}</p>
+    </div>
+</div>
+<div id="profile">{{/* var ( block = ``  user = "user" ) */}} 
+    <div class="user">
+        <h2>{{ user.name }}</h2>
+        <ul class="pets">{{/* _, pet */}}{{ range pets }}
+            <li>{{ pet }}</li>
+            {{ end }}
+        </ul>
+    </div>
+</div>
