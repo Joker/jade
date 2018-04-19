@@ -9,20 +9,20 @@ var (
 	tag__bgn     = "<%s%s>"
 	tag__end     = "</%s>"
 	tag__void    = "<%s%s/>"
-	tag__arg     = " %s=\"{{ %s }}\""
-	tag__arg_str = " %s=\"%s\""
-	tag__arg_add = "%s %s"
+	tag__arg     = ` %s="{{ print %s }}"`
+	tag__arg_str = ` %s="%s"`
+	tag__arg_add = `%s " " %s`
 	tag__arg_bgn = ""
 	tag__arg_end = ""
 
 	cond__if     = "{{ if %s }}"
-	cond__unless = "{{ if !%s }}"
-	cond__case   = "{{ switch %s }}"
+	cond__unless = "{{ if not %s }}"
+	cond__case   = "{{/* switch %s */}}"
 	cond__while  = "{{ range %s }}"
 	cond__for    = "{{/* %s, %s */}}{{ range %s }}"
 	cond__end    = "{{ end }}"
 
-	cond__for_if   = "{{ if len(%s) > 0 }}{{/* %s, %s */}}{{ range %s }}"
+	cond__for_if   = "{{ if gt len %s 0 }}{{/* %s, %s */}}{{ range %s }}"
 	code__for_else = "{{ end }}{{ else }}"
 
 	code__longcode  = "{{/* %s */}}"
@@ -30,9 +30,9 @@ var (
 	code__unescaped = "{{ %s }}"
 	code__else      = "{{ else }}"
 	code__else_if   = "{{ else if %s }}"
-	code__case_when = "{{ case %s: }}"
-	code__case_def  = "{{ default: }}"
-	code__mix_block = "{{ block }}"
+	code__case_when = "{{/* case %s: */}}"
+	code__case_def  = "{{/* default: */}}"
+	code__mix_block = "{{/* block */}}"
 
 	text__str     = "%s"
 	text__comment = "<!--%s -->"
