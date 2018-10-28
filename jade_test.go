@@ -13,7 +13,7 @@ import (
 	"github.com/Joker/hpp"
 )
 
-func examination(test func(dat string) (string, error), ext, path string, t *testing.T) {
+func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
 
 	files, _ := ioutil.ReadDir(path)
 
@@ -34,7 +34,7 @@ func examination(test func(dat string) (string, error), ext, path string, t *tes
 			continue
 		}
 
-		tpl, err := test(string(dat))
+		tpl, err := test(dat)
 		if err != nil {
 			fmt.Println("_________" + name)
 			fmt.Printf("--- FAIL: test run() error: \n%s\n\n", err)
@@ -69,7 +69,7 @@ func examination(test func(dat string) (string, error), ext, path string, t *tes
 
 			if strings.Compare(a, b) != 0 && nilerr < 4 {
 				if nilerr == 0 {
-					fmt.Println("_________" + name)
+					fmt.Println("_________" + name + "\n")
 				}
 				fmt.Printf("%s\n%s\n%d^___________________________\n", a, b, line)
 				nilerr += 1
@@ -79,13 +79,13 @@ func examination(test func(dat string) (string, error), ext, path string, t *tes
 		inFile.Close()
 
 		if nilerr != 0 {
-			fmt.Print("--- FAIL\n\n")
+			fmt.Print("--- FAIL\n\n\n\n")
 		}
 		// } else { fmt.Print("    PASS\n\n") }
 	}
 }
 
-func lexerTest(dat string) (string, error) {
+func lexerTest(dat []byte) (string, error) {
 	var buf bytes.Buffer
 
 	l := lex("test", dat)
@@ -117,7 +117,7 @@ func xTestJadeLex(t *testing.T) {
 
 //
 
-func parserTest(text string) (string, error) {
+func parserTest(text []byte) (string, error) {
 	outTpl, err := New("test").Parse(text)
 	if err != nil {
 		return "", err
