@@ -1,0 +1,12 @@
+//- page-a.pug
+extends layout.pug
+
+block scripts
+  script(src='/jquery.js')
+  script(src='/pets.js')
+
+block content
+  h1= title
+  - var pets = []string{"cat", "dog"}
+  each petName in pets
+    include pet.pug

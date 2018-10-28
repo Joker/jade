@@ -1,0 +1,60 @@
+
+p This is plain old <em>text</em> content.
+
+
+<html>
+
+body
+  p Indenting the body tag here would make no difference.
+  p HTML itself isn't whitespace-sensitive.
+
+</html>
+
+
+p
+  | The pipe always goes at the beginning of its own line,
+  | not counting indentation.
+
+
+script.
+  if (usingPug)
+    console.log('you are awesome')
+  else
+    console.log('use pug')
+
+
+div
+  p This text belongs to the paragraph tag.
+  br
+  .
+    This text belongs to the div tag.
+
+
+| You put the em
+em pha
+| sis on the wrong syl
+em la
+| ble.
+
+
+a ...sentence ending with a link
+| .
+
+
+| Don't
+|
+button#self-destruct touch
+|
+| me!
+
+
+p.
+  Using regular tags can help keep your lines short,
+  but interpolated tags may be easier to #[em visualize]
+  whether the tags and text are whitespace-separated.
+
+
+| Hey, check out 
+a(href="http://example.biz/kitteh.png") this picture
+|  of my cat!
+

@@ -1,0 +1,28 @@
+
+- 
+  var user = struct{
+                  description, name string
+                  isAnonymous bool
+                    }{ description: "foo bar baz", name: "zxc" }
+- var authorised = false
+#user
+  if len(user.description) > 0
+    h2.green Description
+    p.description= user.description
+  else if authorised
+    h2.blue Description
+    p.description.
+      User has no description,
+      why not add one...
+  else
+    h2.red Description
+    p.description User has no description
+
+
+//- \\\\\\\\\\ a.pug <
+unless user.isAnonymous
+  p You're logged in as #{user.name}
+//- \\\\\\\\\\ b.pug >
+if !user.isAnonymous
+  p You're logged in as #{user.name}
+

@@ -13,14 +13,18 @@ import (
 	"github.com/Joker/hpp"
 )
 
-func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
+var dir string
 
+func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
+	os.Chdir(path)
+	// fmt.Println("cd " + path)
 	files, _ := ioutil.ReadDir(path)
 
 	var name, fext string
 	for _, file := range files {
 		name = file.Name()
 		fext = filepath.Ext(name)
+		// pp.Println(name, fext)
 
 		if fext != ".jade" && fext != ".pug" {
 			continue
@@ -112,7 +116,9 @@ func lexerTest(dat []byte) (string, error) {
 }
 
 func xTestJadeLex(t *testing.T) {
-	examination(lexerTest, ".lex", "./testdata/", t)
+	wdir, _ := os.Getwd()
+	examination(lexerTest, ".lex", wdir+"/testdata/v1/", t)
+	examination(lexerTest, ".lex", wdir+"/testdata/v2/", t)
 }
 
 //
@@ -128,5 +134,9 @@ func parserTest(text []byte) (string, error) {
 }
 
 func TestJadeParse(t *testing.T) {
-	examination(parserTest, ".html", "./testdata/", t)
+	wdir, _ := os.Getwd()
+	examination(parserTest, ".html", wdir+"/testdata/v1/", t)
+	examination(parserTest, ".html", wdir+"/testdata/v2/", t)
+	examination(parserTest, ".html", wdir+"/testdata/v2/includes/", t)
+	examination(parserTest, ".html", wdir+"/testdata/v2/inheritance/", t)
 }

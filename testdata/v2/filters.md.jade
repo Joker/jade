@@ -1,0 +1,36 @@
+  p
+    :markdown-it(inline) **BOLD TEXT**
+
+  p.
+    In the midst of a large amount of plain
+    text, suddenly a wild #[:markdown-it(inline) *Markdown*]
+    appeared.
+
+
+  script
+    :cdata-js:babel(presets=['es2015'])
+      const myFunc = () => `This is ES2015 in a CD${'ATA'}`;
+
+//- 
+  \\\\\\\\\\ options.js <
+  options.filters = {
+    'my-own-filter': function (text, options) {
+      if (options.addStart) text = 'Start\n' + text;
+      if (options.addEnd)   text = text + '\nEnd';
+      return text;
+    }
+  };
+  \\\\\\\\\\ index.pug <
+p
+  :my-own-filter(addStart addEnd)
+    Filter
+    Body
+//- 
+  \\\\\\\\\\ output.html >
+  <p>
+    Start
+    Filter
+    Body
+    End
+  </p>
+

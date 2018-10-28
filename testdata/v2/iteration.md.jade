@@ -1,0 +1,44 @@
+
+ul
+  each val in []int{1, 2, 3, 4, 5}
+    li= val
+
+
+ul
+  each val, index in []string{"zero", "one", "two"}
+    li= strconv.Itoa(index) + ": " + val
+
+
+ul
+  each val, index in map[int]string{1:"one",2:"two",3:"three"}
+    li= strconv.Itoa(index) + ": " + val
+
+
+- 
+  qfs := func (condition bool, iftrue, iffalse []string) []string {
+		if condition {
+			return iftrue
+		} else {
+			return iffalse
+		}
+	}
+  var values = []string{}
+
+ul
+  each val in qfs(len(values)>0, values, []string{"There are no values"})
+    li= val
+
+
+- var values1 = []string{}
+ul
+  each val in values1
+    li= val
+  else
+    li There are no values1
+
+
+- var n = 0;
+ul
+  while n < 4
+    li= n ; n++
+

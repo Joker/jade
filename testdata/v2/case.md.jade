@@ -1,0 +1,37 @@
+
+- var friends1 = 10
+case friends1
+  when 0
+    p you have no friends1
+  when 1
+    p you have a friend
+  default
+    p you have #{friends1} friends1
+
+
+- var friends2 = 0
+case friends2
+  when 0
+    - fallthrough
+  when 1
+    p you have very few friends2
+  default
+    p you have #{friends2} friends2
+
+
+- var friends3 = 0
+case friends3
+  when 0
+    - break
+  when 1
+    p you have very few friends3
+  default
+    p you have #{friends3} friends3
+
+
+- var friends = 1
+case friends
+  when 0: p you have no friends
+  when 1: p you have a friend
+  default: p you have #{friends} friends
+

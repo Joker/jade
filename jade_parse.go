@@ -414,7 +414,7 @@ func (t *Tree) read(path string) []byte {
 	case "":
 		if _, err = os.Stat(path + ".jade"); os.IsNotExist(err) {
 			if _, err = os.Stat(path + ".pug"); os.IsNotExist(err) {
-				t.errorf(`".jade" or ".pug" file required`)
+				t.errorf("try " + path + `.*: ".jade" or ".pug" file required`)
 			} else {
 				ext = ".pug"
 			}

@@ -1,0 +1,129 @@
+
+a(href=`google.com`+`google.com`) Google
+|
+|
+a(class='button' href='google.com') Google
+|
+|
+a(class='button', href='google.com') Google
+
+
+- var authenticated = true
+body(class=authenticated ? "authed" : "anon")
+
+
+input(
+  type='checkbox'
+  name='agreement'
+  checked
+)
+
+
+input(data-json=`
+  {
+    "very-long": "piece of ",
+    "data": true
+  }
+`)
+
+
+//- In this case, `(click)` is treated as a
+//- function call instead of a attribute name,
+//- resulting in the unusual error.
+// pug error
+div(class='div-class' (click)='play()')
+
+
+div(class='div-class', (click)='play()')
+div(class='div-class' '(click)'='play()')
+
+
+a(href="/#{url}") Link
+
+   
+   - var url = "pug-test.html"
+   a(href="/" + url) Link
+   |
+   |
+   - url = "https://example.com/"
+   a(href=url) Another link
+   
+   
+   - var btnType = "info"
+   - var btnSize = "lg"
+   button(type='button' class="btn btn-" + btnType + " btn-" + btnSize)
+   |
+   |
+   button(type='button' class=`btn btn-${btnType} btn-${btnSize}`)
+   
+
+div(escaped="<code>")
+div(unescaped!="<code>")
+
+
+input(type='checkbox', checked)
+|
+|
+input(type='checkbox' checked=true)
+|
+|
+input(type='checkbox' checked=false)
+|
+|
+input(type='checkbox' checked="true")
+
+
+doctype html
+|
+|
+input(type='checkbox', checked)
+|
+|
+input(type='checkbox' checked=true)
+|
+|
+input(type='checkbox' checked=false)
+|
+|
+input(type='checkbox' checked=true && "checked" == "checked")
+
+
+a(style=map[string]string{"color": "red", "background": "green"})
+
+
+- var classes = []string{"foo", "bar", "baz"}
+a(class=classes)
+|
+|
+//- the class attribute may also be repeated to merge arrays
+a.bang(class="classes" class="['bing']")
+
+
+- var currentUrl = "/about"
+a(class= currentUrl == "/" ? "active" : "" href='/') Home
+|
+|
+a(class= currentUrl == "/about" ? "active" : "" href='/about') About
+
+
+a.button
+
+
+.content
+
+
+a#main-link
+
+
+#content
+
+
+div#foo(data-bar="foo")&attributes({'data-foo': 'bar'})
+
+//-
+- var attributes = struct{class string}{};
+- attributes.class = "baz";
+div#foo(data-bar="foo")&attributes(attributes)
+
+zxc.asd(num=1 class="qwe").zxc
+zxc(num=1.1)

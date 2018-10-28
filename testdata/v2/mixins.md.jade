@@ -1,0 +1,56 @@
+
+//- Declaration
+mixin list
+  ul
+    li foo
+    li bar
+    li baz
+//- Use
++list
++list
+
+
+mixin pet(name)
+  li.pet= name
+ul
+  +pet('cat')
+  +pet('dog')
+  +pet('pig')
+
+
+mixin article(title)
+  .article
+    .article-wrapper
+      h1= title
+      if len(block) > 0
+        block
+      else
+        p No content provided
+
++article('Hello world')
+
++article('Hello world')
+  p This is my
+  p Amazing article
+
+
+mixin link(href, name)
+  - attributes := struct{class string}{class: "btn"}
+  a(class!=attributes.class href=href)= name
+
++link('/foo', 'foo')(class="btn")
+
+
+mixin link(href, name)
+  a(href=href)&attributes(attributes)= name
+
++link('/foo', 'foo')(class="btn")
+
+
+mixin list(id, ...items)
+  ul(id=id)
+    each item in items
+      li= item
+
++list('my-list', 1, 2, 3, 4)
+
