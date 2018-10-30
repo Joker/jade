@@ -29,7 +29,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("\nReadFile error: %v", err)
 		return
 	}
-	jadeTpl, err := jade.Parse("jade_tp", string(buf))
+	jadeTpl, err := jade.Parse("jade_tp", buf)
 	if err != nil {
 		fmt.Printf("\nParse error: %v", err)
 		return

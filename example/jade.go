@@ -15,7 +15,7 @@ func main() {
 		return
 	}
 
-	tmpl, err := jade.Parse("name_of_tpl", string(dat))
+	tmpl, err := jade.Parse("name_of_tpl", dat)
 	if err != nil {
 		fmt.Printf("Parse error: %v", err)
 		return
