@@ -49,6 +49,52 @@ var (
 	mixin__var_block_end = ""
 )
 
+func ConfigOtputGo() {
+	golang_mode = true
+	tag__bgn = "\nbuffer.WriteString(`<%s%s>`)"
+	tag__end = "\nbuffer.WriteString(`</%s>`)"
+	tag__void = "\nbuffer.WriteString(`<%s%s/>`)"
+	tag__arg_esc = " buffer.WriteString(` %s=\"`)\n var esc%d = %s\n buffer.WriteString(`\"`);"
+	tag__arg_une = " buffer.WriteString(` %s=\"`)\n var unesc%d = %s\n buffer.WriteString(`\"`);"
+	tag__arg_str = " buffer.WriteString(` %s=\"%s\"`);"
+	tag__arg_add = `%s + " " + %s`
+	tag__arg_bgn = "`);"
+	tag__arg_end = "buffer.WriteString(`"
+
+	cond__if = "\nif %s {"
+	cond__unless = "\nif !%s {"
+	cond__case = "\nswitch %s {"
+	cond__while = "\nfor %s {"
+	cond__for = "\nfor %s, %s := range %s {"
+	cond__end = "\n}"
+
+	cond__for_if = "\nif len(%s) > 0 { for %s, %s := range %s {"
+	code__for_else = "\n}\n} else {"
+
+	code__longcode = "\n%s"
+	code__buffered = "\n var esc%d = %s"
+	code__unescaped = "\n var unesc%d = %s"
+	code__else = "\n} else {"
+	code__else_if = "\n} else if %s {"
+	code__case_when = "\ncase %s:"
+	code__case_def = "\ndefault:"
+	code__mix_block = "\nbuffer.Write(block)"
+
+	text__str = "\nbuffer.WriteString(`%s`)"
+	text__comment = "\nbuffer.WriteString(`<!-- %s -->`)"
+
+	mixin__bgn = "\n{ %s"
+	mixin__end = "}\n"
+	mixin__var_bgn = "\nvar ("
+	mixin__var = "\n%s = %s"
+	mixin__var_rest = "\n%s = %#v"
+	mixin__var_end = "\n)\n"
+	mixin__var_block_bgn = "var block []byte\n{\nbuffer := new(bytes.Buffer)"
+	mixin__var_block = "var block []byte"
+	mixin__var_block_end = "\nblock = buffer.Bytes()\n}\n"
+}
+func ConfigOtputPHP() {}
+
 type itemType int8
 
 const (

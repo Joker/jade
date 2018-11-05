@@ -13,18 +13,24 @@ import (
 	"github.com/Joker/hpp"
 )
 
-var dir string
+var wdir string
+
+func init() {
+	wdir, _ = os.Getwd()
+}
 
 func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
 	os.Chdir(path)
-	// fmt.Println("cd " + path)
-	files, _ := ioutil.ReadDir(path)
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		fmt.Printf("--- FAIL: ReadDir error: %v\n\n", err)
+		t.Fail()
+	}
 
 	var name, fext string
 	for _, file := range files {
 		name = file.Name()
 		fext = filepath.Ext(name)
-		// pp.Println(name, fext)
 
 		if fext != ".jade" && fext != ".pug" {
 			continue
@@ -85,7 +91,6 @@ func examination(test func(dat []byte) (string, error), ext, path string, t *tes
 		if nilerr != 0 {
 			fmt.Print("--- FAIL\n\n\n\n")
 		}
-		// } else { fmt.Print("    PASS\n\n") }
 	}
 }
 
@@ -116,7 +121,6 @@ func lexerTest(dat []byte) (string, error) {
 }
 
 func xTestJadeLex(t *testing.T) {
-	wdir, _ := os.Getwd()
 	examination(lexerTest, ".lex", wdir+"/testdata/v1/", t)
 	examination(lexerTest, ".lex", wdir+"/testdata/v2/", t)
 }
@@ -134,7 +138,6 @@ func parserTest(text []byte) (string, error) {
 }
 
 func TestJadeParse(t *testing.T) {
-	wdir, _ := os.Getwd()
 	examination(parserTest, ".html", wdir+"/testdata/v1/", t)
 	examination(parserTest, ".html", wdir+"/testdata/v2/", t)
 	examination(parserTest, ".html", wdir+"/testdata/v2/includes/", t)
