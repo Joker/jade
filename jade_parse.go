@@ -72,7 +72,7 @@ func (t *Tree) hub(token item) (n Node) {
 			return t.parseInclude(token)
 		case itemDoctype:
 			return t.newDoctype(token.pos, token.val)
-		case itemFilter, itemFilterText:
+		case itemFilter:
 			return t.parseFilter(token)
 		case itemError:
 			t.errorf("Error lex: %s line: %d\n", token.val, token.line)
@@ -83,8 +83,34 @@ func (t *Tree) hub(token item) (n Node) {
 }
 
 func (t *Tree) parseFilter(tk item) Node {
-	// TODO add golang filters
-	return t.newList(tk.pos)
+	var subf, args, text string
+Loop:
+	for {
+		switch token := t.nextNonSpace(); token.typ {
+		case itemFilterSubf:
+			subf = token.val
+		case itemFilterArgs:
+			args = token.val
+		case itemFilterText:
+			text = token.val
+		default:
+			break Loop
+		}
+	}
+	t.backup()
+	switch tk.val {
+	case "go":
+		switch subf {
+		case "func":
+			Func = text
+		case "import":
+			Import = text
+		}
+	case "markdown", "markdown-it":
+		_ = args
+		// TODO: markdown filter
+	}
+	return t.newList(tk.pos) // for return nothing
 }
 
 func (t *Tree) parseTag(tk item) Node {

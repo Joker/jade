@@ -11,6 +11,9 @@
     :cdata-js:babel(presets=['es2015'])
       const myFunc = () => `This is ES2015 in a CD${'ATA'}`;
 
+:go:import
+  "github.com/Joker/jade"
+  "github.com/Joker/hpp"
 //- 
   \\\\\\\\\\ options.js <
   options.filters = {
@@ -25,12 +28,15 @@ p
   :my-own-filter(addStart addEnd)
     Filter
     Body
-//- 
-  \\\\\\\\\\ output.html >
-  <p>
-    Start
-    Filter
-    Body
-    End
-  </p>
+  //- 
+    \\\\\\\\\\ output.html >
+    <p>
+      Start
+      Filter
+      Body
+      End
+    </p>
 
+  div
+    #function
+      :go:func Output(user *in.User, buffer *bytes.Buffer)

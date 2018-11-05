@@ -4,9 +4,9 @@ package jade
 
 import "strconv"
 
-const _itemType_name = "ErrorEOFEndLIdentEmptyLineTextCommentHTMLTagDoctypeDivTagTagInlineTagEndTagVoidTagVoidInlineIDClassAttrStartAttrEndAttrAttrSpaceAttrCommaAttrEqualAttrEqualUnFilterFilterTextIncludeExtendsBlockBlockAppendBlockPrependMixinMixinCallMixinBlockCodeCodeBufferedCodeUnescapedIfElseElseIfUnlessEachWhileForForIfNotContainForElseCaseCaseWhenCaseDefault"
+const _itemType_name = "ErrorEOFEndLIdentEmptyLineTextCommentHTMLTagDoctypeDivTagTagInlineTagEndTagVoidTagVoidInlineIDClassAttrStartAttrEndAttrAttrSpaceAttrCommaAttrEqualAttrEqualUnFilterFilterSubfFilterArgsFilterTextIncludeExtendsBlockBlockAppendBlockPrependMixinMixinCallMixinBlockCodeCodeBufferedCodeUnescapedIfElseElseIfUnlessEachWhileForForIfNotContainForElseCaseCaseWhenCaseDefault"
 
-var _itemType_index = [...]uint16{0, 5, 8, 12, 17, 26, 30, 37, 44, 51, 54, 57, 66, 72, 79, 92, 94, 99, 108, 115, 119, 128, 137, 146, 157, 163, 173, 180, 187, 192, 203, 215, 220, 229, 239, 243, 255, 268, 270, 274, 280, 286, 290, 295, 298, 313, 320, 324, 332, 343}
+var _itemType_index = [...]uint16{0, 5, 8, 12, 17, 26, 30, 37, 44, 51, 54, 57, 66, 72, 79, 92, 94, 99, 108, 115, 119, 128, 137, 146, 157, 163, 173, 183, 193, 200, 207, 212, 223, 235, 240, 249, 259, 263, 275, 288, 290, 294, 300, 306, 310, 315, 318, 333, 340, 344, 352, 363}
 
 func (i itemType) String() string {
 	if i < 0 || i >= itemType(len(_itemType_index)-1) {

@@ -93,6 +93,10 @@ func ConfigOtputGo() {
 	mixin__var_block = "var block []byte"
 	mixin__var_block_end = "\nblock = buffer.Bytes()\n}\n"
 }
+
+var Import string
+var Func string
+
 func ConfigOtputPHP() {}
 
 type itemType int8
@@ -130,6 +134,8 @@ const (
 	itemAttrEqualUn
 
 	itemFilter
+	itemFilterSubf
+	itemFilterArgs
 	itemFilterText
 
 	// itemKeyword // used only to delimit the keywords

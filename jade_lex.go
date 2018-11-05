@@ -82,6 +82,21 @@ func lexTags(l *lexer) stateFn {
 	case r == ':':
 		l.ignore()
 		if l.emitWordByType(itemFilter) {
+			r = l.next()
+			if r == ':' {
+				l.ignore()
+				l.emitWordByType(itemFilterSubf)
+				r = l.next()
+			}
+			if r == '(' {
+				l.ignore()
+				l.toStopRune(')', true)
+				l.emit(itemFilterArgs)
+				l.next()
+				l.ignore()
+			} else {
+				l.backup()
+			}
 			return lexFilter
 		}
 		return l.errorf("lexTags: expect filter name")
