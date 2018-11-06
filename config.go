@@ -94,8 +94,11 @@ func ConfigOtputGo() {
 	mixin__var_block_end = "\nblock = buffer.Bytes()\n}\n"
 }
 
-var Import string
-var Func string
+type Out struct {
+	Name, Args, Import string
+}
+
+var Go Out
 
 func ConfigOtputPHP() {}
 
