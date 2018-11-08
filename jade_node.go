@@ -106,7 +106,7 @@ func query(a string) (string, bool) {
 				return "", false
 			}
 		}
-		return "qf(" + match[1] + ", " + match[2] + ", " + match[3] + ")", true
+		return "ternary(" + match[1] + ", " + match[2] + ", " + match[3] + ")", true
 	}
 	return "", false
 }
