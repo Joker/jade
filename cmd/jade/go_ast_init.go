@@ -67,7 +67,7 @@ func (data *layout) writeAfter(wr *bytes.Buffer) {
 func newLayout(constName string) layout {
 	var tpl layout
 	tpl.Package = pkg_name
-	tpl.Import = []string{`"bytes"`, `"fmt"`, `"html"`, `"strconv"`, `"github.com/valyala/bytebufferpool"`, `"github.com/Joker/hpp"`}
+	tpl.Import = []string{`"bytes"`, `"fmt"`, `"html"`, `"strconv"`, `pool "github.com/valyala/bytebufferpool"`, `"github.com/Joker/hpp"`}
 
 	if !inline {
 		tpl.Def = []string{"const ()"}
@@ -75,7 +75,7 @@ func newLayout(constName string) layout {
 	if stdbuf {
 		tpl.Bbuf = "*bytes.Buffer"
 	} else {
-		tpl.Bbuf = "*bytebufferpool.ByteBuffer"
+		tpl.Bbuf = "*pool.ByteBuffer"
 	}
 	if format {
 		tpl.After = constName + `__buffer := hpp.Print(bytes.NewReader(buffer.Bytes()))
