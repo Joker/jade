@@ -138,8 +138,8 @@ func parserTest(text []byte) (string, error) {
 }
 
 func TestJadeParse(t *testing.T) {
-	examination(parserTest, ".html", wdir+"/testdata/v1/", t)
-	examination(parserTest, ".html", wdir+"/testdata/v2/", t)
-	examination(parserTest, ".html", wdir+"/testdata/v2/includes/", t)
-	examination(parserTest, ".html", wdir+"/testdata/v2/inheritance/", t)
+	examination(parserTest, ".tpl", wdir+"/testdata/v1/", t)
+	examination(parserTest, ".tpl", wdir+"/testdata/v2/", t)
+	examination(parserTest, ".tpl", wdir+"/testdata/v2/includes/", t)
+	examination(parserTest, ".tpl", wdir+"/testdata/v2/inheritance/", t)
 }
