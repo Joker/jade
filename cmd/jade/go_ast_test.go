@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -21,7 +22,7 @@ func init() {
 	wdir, _ = os.Getwd()
 }
 
-func examination(test func(dat []byte) ([]byte, error), ext, path string, t *testing.T) {
+func examination(test func(dat []byte, fname string) ([]byte, error), ext, path string, t *testing.T) {
 	os.Chdir(path)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -46,7 +47,10 @@ func examination(test func(dat []byte) ([]byte, error), ext, path string, t *tes
 			continue
 		}
 
-		tpl, err := test(dat)
+		rx, _ := regexp.Compile("[^a-zA-Z0-9]+")
+		constName := rx.ReplaceAllString(name[:len(name)-4], "")
+
+		tpl, err := test(dat, constName)
 		if err != nil {
 			fmt.Println("_________" + name)
 			fmt.Printf("--- FAIL: test run() error: \n%s\n\n", err)
@@ -96,10 +100,9 @@ func examination(test func(dat []byte) ([]byte, error), ext, path string, t *tes
 	}
 }
 
-func astTest(text []byte) ([]byte, error) {
+func astTest(text []byte, fname string) ([]byte, error) {
 	jade.ConfigOtputGo()
 
-	constName := "test"
 	outPath := "test"
 	inline = true
 
@@ -112,7 +115,7 @@ func astTest(text []byte) ([]byte, error) {
 
 	var (
 		bb  = new(bytes.Buffer)
-		tpl = newLayout(constName)
+		tpl = newLayout(fname)
 	)
 	tpl.writeBefore(bb)
 	jst.WriteIn(bb)
@@ -123,7 +126,7 @@ func astTest(text []byte) ([]byte, error) {
 		log.Fatalln("jade: parseGoSrc(): ", err)
 	}
 
-	gst.collapseWriteString(inline, constName)
+	gst.collapseWriteString(inline, fname)
 	gst.checkType()
 	gst.checkUnresolvedBlock()
 
