@@ -10,57 +10,57 @@ example:
 :go:func Index(pageTitle string, youAreUsingJade bool)
 
 mixin for(golang)
-    #cmd Precompile jade templates to #{golang} code.
+	#cmd Precompile jade templates to #{golang} code.
 
 doctype html
 html(lang="en")
-  head
+	head
 		title= pageTitle
-    script(type='text/javascript').
+		script(type='text/javascript').
 			if(question){
 				answer(40 + 2)
-      }
-  body
-    h1 Jade - template engine
-            +for(Go)
+			}
+	body
+		h1 Jade - template engine
+			+for(Go)
 
-    #container.col
+		#container.col
 			if youAreUsingJade
-        p You are amazing
-      else
-        p Get on it!
-      p.
-                Jade/Pug is a terse and simple
-                templating language with
-                a #[strong focus] on performance 
-        and powerful features.
+				p You are amazing
+			else
+				p Get on it!
+			p.
+				Jade/Pug is a terse and simple
+				templating language with
+				a #[strong focus] on performance 
+				and powerful features.
 ```
 becomes
 ```html
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Jade.go</title>
-        <script type="text/javascript">
+	<head>
+		<title>Jade.go</title>
+		<script type="text/javascript">
 			if(question){
 				answer(40 + 2)
-            }
-        </script>
-    </head>
-    <body>
-        <h1>Jade - template engine
-            <div id="cmd">Precompile jade templates to go code.</div>
-        </h1>
-        <div id="container" class="col">
-                <p>You are amazing</p>
-            <p>
-                Jade/Pug is a terse and simple
-                templating language with
-                a <strong>focus</strong> on performance 
-                and powerful features.
-            </p>
-        </div>
-    </body>
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Jade - template engine
+			<div id="cmd">Precompile jade templates to go code.</div>
+		</h1>
+		<div id="container" class="col">
+				<p>You are amazing</p>
+			<p>
+				Jade/Pug is a terse and simple
+				templating language with
+				a <strong>focus</strong> on performance 
+				and powerful features.
+			</p>
+		</div>
+	</body>
 </html>
 ```
 
@@ -103,7 +103,7 @@ func tpl_hello(word string, buffer *pool.ByteBuffer) {
 package main
 
 import (
-    "fmt"
+	"fmt"
 	pool "github.com/valyala/bytebufferpool"
 )
 
@@ -127,19 +127,19 @@ or
 package main
 
 import (
-    "fmt"
-    "github.com/Joker/hpp"
-    "github.com/Joker/jade"
+	"fmt"
+	"github.com/Joker/hpp"
+	"github.com/Joker/jade"
 )
 
 func main() {
-    tpl, err := jade.Parse("name_of_tpl", "doctype 5\n html: body: p Hello world!")
-    if err != nil {
-        fmt.Printf("Parse error: %v", err)
-        return
-    }
+	tpl, err := jade.Parse("name_of_tpl", "doctype 5\n html: body: p Hello world!")
+	if err != nil {
+		fmt.Printf("Parse error: %v", err)
+		return
+	}
 
-    fmt.Printf( "Output:\n\n%s", hpp.PrPrint(tpl)  )
+	fmt.Printf( "Output:\n\n%s", hpp.PrPrint(tpl)  )
 }
 ```
 
@@ -148,9 +148,9 @@ Output:
 ```html
 <!DOCTYPE html>
 <html>
-    <body>
-        <p>Hello world!</p>
-    </body>
+	<body>
+		<p>Hello world!</p>
+	</body>
 </html>
 ```
 
