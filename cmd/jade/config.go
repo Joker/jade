@@ -2,17 +2,12 @@ package main
 
 import (
 	"bytes"
-	"go/ast"
-	"go/parser"
-	"go/printer"
-	"go/token"
 	"io"
 	"log"
 	"strings"
 	"text/template"
 
 	"github.com/Joker/jade"
-	"golang.org/x/tools/imports"
 )
 
 const (
@@ -38,6 +33,50 @@ import (
 }
 `
 )
+
+var golang = jade.Cfg{
+	GolangMode: true,
+	TagBgn:     "\nbuffer.WriteString(`<%s%s>`)",
+	TagEnd:     "\nbuffer.WriteString(`</%s>`)",
+	TagVoid:    "\nbuffer.WriteString(`<%s%s/>`)",
+	TagArgEsc:  " buffer.WriteString(` %s=\"`)\n var esc%d = %s\n buffer.WriteString(`\"`);",
+	TagArgUne:  " buffer.WriteString(` %s=\"`)\n var unesc%d = %s\n buffer.WriteString(`\"`);",
+	TagArgStr:  " buffer.WriteString(` %s=\"%s\"`);",
+	TagArgAdd:  `%s + " " + %s`,
+	TagArgBgn:  "`);",
+	TagArgEnd:  "buffer.WriteString(`",
+
+	CondIf:     "\nif %s {",
+	CondUnless: "\nif !%s {",
+	CondCase:   "\nswitch %s {",
+	CondWhile:  "\nfor %s {",
+	CondFor:    "\nfor %s, %s := range %s {",
+	CondEnd:    "\n}",
+	CondForIf:  "\nif len(%s) > 0 { for %s, %s := range %s {",
+
+	CodeForElse:   "\n}\n} else {",
+	CodeLongcode:  "\n%s",
+	CodeBuffered:  "\n var esc%d = %s",
+	CodeUnescaped: "\n var unesc%d = %s",
+	CodeElse:      "\n} else {",
+	CodeElseIf:    "\n} else if %s {",
+	CodeCaseWhen:  "\ncase %s:",
+	CodeCaseDef:   "\ndefault:",
+	CodeMixBlock:  "\nbuffer.Write(block)",
+
+	TextStr:     "\nbuffer.WriteString(`%s`)",
+	TextComment: "\nbuffer.WriteString(`<!-- %s -->`)",
+
+	MixinBgn:         "\n{ %s",
+	MixinEnd:         "}\n",
+	MixinVarBgn:      "\nvar (",
+	MixinVar:         "\n%s = %s",
+	MixinVarRest:     "\n%s = %#v",
+	MixinVarEnd:      "\n)\n",
+	MixinVarBlockBgn: "var block []byte\n{\nbuffer := new(bytes.Buffer)",
+	MixinVarBlock:    "var block []byte",
+	MixinVarBlockEnd: "\nblock = buffer.Bytes()\n}\n",
+}
 
 type layout struct {
 	Package string
@@ -123,31 +162,4 @@ func newLayout(constName string) layout {
 		jade.Go.Import = ""
 	}
 	return tpl
-}
-
-//
-
-type goAST struct {
-	node *ast.File
-	fset *token.FileSet
-}
-
-func parseGoSrc(fileName string, GoSrc interface{}) (out goAST, err error) {
-	out.fset = token.NewFileSet()
-	out.node, err = parser.ParseFile(out.fset, fileName, GoSrc, parser.ParseComments)
-	return
-}
-
-func (a *goAST) bytes(bb *bytes.Buffer) []byte {
-	printer.Fprint(bb, a.fset, a.node)
-	return bb.Bytes()
-}
-
-func goImports(absPath string, src []byte) []byte {
-	fmtOut, err := imports.Process(absPath, src, &imports.Options{TabWidth: 4, TabIndent: true, Comments: true, Fragment: true})
-	if err != nil {
-		log.Fatalln("goImports(): ", err)
-	}
-
-	return fmtOut
 }

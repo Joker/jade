@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/printer"
+	"go/token"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,6 +15,7 @@ import (
 	"regexp"
 
 	"github.com/Joker/jade"
+	"golang.org/x/tools/imports"
 )
 
 var (
@@ -35,6 +40,33 @@ func init() {
 	flag.BoolVar(&inline, "inline", false, `inline HTML in generated functions`)
 	flag.BoolVar(&stdlib, "stdlib", false, `use stdlib functions`)
 	flag.BoolVar(&stdbuf, "stdbuf", false, `use bytes.Buffer  [default bytebufferpool.ByteBuffer]`)
+}
+
+//
+
+type goAST struct {
+	node *ast.File
+	fset *token.FileSet
+}
+
+func (a *goAST) bytes(bb *bytes.Buffer) []byte {
+	printer.Fprint(bb, a.fset, a.node)
+	return bb.Bytes()
+}
+
+func parseGoSrc(fileName string, GoSrc interface{}) (out goAST, err error) {
+	out.fset = token.NewFileSet()
+	out.node, err = parser.ParseFile(out.fset, fileName, GoSrc, parser.ParseComments)
+	return
+}
+
+func goImports(absPath string, src []byte) []byte {
+	fmtOut, err := imports.Process(absPath, src, &imports.Options{TabWidth: 4, TabIndent: true, Comments: true, Fragment: true})
+	if err != nil {
+		log.Fatalln("goImports(): ", err)
+	}
+
+	return fmtOut
 }
 
 //
@@ -121,7 +153,7 @@ func main() {
 		return
 	}
 
-	jade.ConfigOtputGo()
+	jade.Config(golang)
 
 	if _, err := os.Stat(outdir); os.IsNotExist(err) {
 		os.MkdirAll(outdir, 0755)
