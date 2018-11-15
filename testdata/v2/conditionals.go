@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_conditionals(buffer *bytebufferpool.ByteBuffer) {
+func tpl_conditionals(buffer *pool.ByteBuffer) {
 
 	var user = struct {
 		description, name string

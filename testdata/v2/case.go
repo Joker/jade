@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_case(buffer *bytebufferpool.ByteBuffer) {
+func tpl_case(buffer *pool.ByteBuffer) {
 
 	var friends1 = 10
 	switch friends1 {

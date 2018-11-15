@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_tags(buffer *bytebufferpool.ByteBuffer) {
+func tpl_tags(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<ul><li>Item A</li><li>Item B</li><li>Item C</li></ul><img/><a><img/></a><foo/><foo bar="baz"/>`)
 

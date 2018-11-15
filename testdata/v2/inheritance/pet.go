@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_pet(petName string, buffer *bytebufferpool.ByteBuffer) {
+func tpl_pet(petName string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<p>`)
 	WriteEscString(petName, buffer)

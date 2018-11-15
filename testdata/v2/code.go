@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_code(buffer *bytebufferpool.ByteBuffer) {
+func tpl_code(buffer *pool.ByteBuffer) {
 
 	for i := 0; i < 3; i++ {
 		buffer.WriteString(`<li>item</li>`)

@@ -5,10 +5,10 @@ package jade
 import (
 	"strconv"
 
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_iteration(buffer *bytebufferpool.ByteBuffer) {
+func tpl_iteration(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<ul>`)
 	for _, val := range []int{1, 2, 3, 4, 5} {

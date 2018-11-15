@@ -5,10 +5,10 @@ package jade
 import (
 	"bytes"
 
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_mixins(buffer *bytebufferpool.ByteBuffer) {
+func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		buffer.WriteString(`<ul><li>foo</li><li>bar</li><li>baz</li></ul>`)

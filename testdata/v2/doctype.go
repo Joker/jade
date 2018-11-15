@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_doctype(buffer *bytebufferpool.ByteBuffer) {
+func tpl_doctype(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<!DOCTYPE html><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"><!DOCTYPE html>`)
 

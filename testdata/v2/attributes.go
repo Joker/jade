@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_attributes(buffer *bytebufferpool.ByteBuffer) {
+func tpl_attributes(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<a href="`)
 	WriteEscString(`google.com`+`google.com`, buffer)

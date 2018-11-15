@@ -101,7 +101,7 @@ func examination(test func(dat []byte, fname string) ([]byte, error), ext, path 
 }
 
 func astTest(text []byte, fname string) ([]byte, error) {
-	jade.ConfigOtputGo()
+	jade.Config(golang)
 
 	outPath := "test"
 	inline = true

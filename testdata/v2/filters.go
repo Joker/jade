@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func Output(user string, buffer *bytebufferpool.ByteBuffer) {
+func Output(user string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<p></p><p>    In the midst of a large amount of plain
     text, suddenly a wild <appeared>

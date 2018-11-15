@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_pagea(title string, petName string, buffer *bytebufferpool.ByteBuffer) {
+func tpl_pagea(title string, petName string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<html><head><title>My Site - `)
 	WriteEscString(title, buffer)

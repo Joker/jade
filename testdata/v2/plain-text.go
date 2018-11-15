@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_plaintext(buffer *bytebufferpool.ByteBuffer) {
+func tpl_plaintext(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<p>This is plain old <em>text</em> content.</p><html><body><p>Indenting the body tag here would make no difference.</p><p>HTML itself isn't whitespace-sensitive.</p></body></html><p>The pipe always goes at the beginning of its own line,not counting indentation.</p><script>  if (usingPug)
     console.log('you are awesome')

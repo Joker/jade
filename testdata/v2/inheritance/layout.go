@@ -3,10 +3,10 @@
 package jade
 
 import (
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_layout(title string, buffer *bytebufferpool.ByteBuffer) {
+func tpl_layout(title string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<html><head><title>My Site - `)
 	WriteEscString(title, buffer)

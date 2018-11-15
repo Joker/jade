@@ -5,10 +5,10 @@ package jade
 import (
 	"strings"
 
-	"github.com/valyala/bytebufferpool"
+	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_interpolation(buffer *bytebufferpool.ByteBuffer) {
+func tpl_interpolation(buffer *pool.ByteBuffer) {
 
 	var title = "On Dogs: Man's Best Friend"
 	var author = "enlore"
