@@ -167,3 +167,25 @@ Output:
 ```sh
 $ go get github.com/Joker/jade/cmd/jade
 ```
+
+
+## Custom filter  :go
+
+### Nested filter  :func
+```
+:go:func
+    CustomNameForTemplateFunc(any []int, input string, args map[string]int)
+
+:go:func(name)
+    OnlyCustomNameForTemplateFunc
+
+:go:func(args)
+    (only string, input float32, args uint)
+```
+
+### Nested filter  :import
+```
+:go:import
+    "github.com/Joker/jade"
+    github.com/Joker/hpp
+```
