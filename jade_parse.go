@@ -91,9 +91,9 @@ Loop:
 		case itemFilterSubf:
 			subf = token.val
 		case itemFilterArgs:
-			args = strings.Trim(token.val, " \t\n")
+			args = strings.Trim(token.val, " \t\r\n")
 		case itemFilterText:
-			text = strings.Trim(token.val, " \t\n")
+			text = strings.Trim(token.val, " \t\r\n")
 		default:
 			break Loop
 		}
