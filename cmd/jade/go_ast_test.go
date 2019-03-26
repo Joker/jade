@@ -110,7 +110,7 @@ func astTest(text []byte, fname string) ([]byte, error) {
 
 	jst, err := jade.New("path").Parse(text)
 	if err != nil {
-		log.Fatalln("jade: jade.New(path).Parse(): ", err)
+		log.Fatalln("cmd/jade: jade.New(path).Parse(): ", err)
 	}
 
 	var (
@@ -123,7 +123,9 @@ func astTest(text []byte, fname string) ([]byte, error) {
 
 	gst, err := parseGoSrc(outPath, bb)
 	if err != nil {
-		log.Fatalln("jade: parseGoSrc(): ", err)
+		bb.WriteString("\n\nERROR: parseGoSrc(): ")
+		bb.WriteString(err.Error())
+		return bb.Bytes(), nil
 	}
 
 	gst.collapseWriteString(inline, fname)
@@ -131,11 +133,7 @@ func astTest(text []byte, fname string) ([]byte, error) {
 	gst.checkUnresolvedBlock()
 
 	bb.Reset()
-	fmtOut := goImports(outPath, gst.bytes(bb))
-
-	//
-
-	return fmtOut, nil
+	return goImports(outPath, gst.bytes(bb)), nil
 }
 
 func TestGoASToptimize(t *testing.T) {
