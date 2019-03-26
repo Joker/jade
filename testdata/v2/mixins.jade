@@ -10,14 +10,17 @@ mixin list
 +list
 
 
+//- Declaration
 mixin pet(name)
   li.pet= name
+//- Use
 ul
   +pet('cat')
   +pet('dog')
   +pet('pig')
 
 
+//- Declaration
 mixin article(title)
   .article
     .article-wrapper
@@ -26,31 +29,44 @@ mixin article(title)
         block
       else
         p No content provided
-
-+article('Hello world')
-
-+article('Hello world')
+//- Use
++article("Hello world")
++article("Hello world")
   p This is my
   p Amazing article
 
 
+//- Declaration
 mixin link(href, name)
   - attributes := struct{class string}{class: "btn"}
   a(class!=attributes.class href=href)= name
+//- Use
++link("/foo", "foo")(class="btn")
++link(fn("/foo", "bar", "baz"), "foo")
 
-+link('/foo', 'foo')(class="btn")
 
-
+//- Declaration
 mixin link(href, name)
   a(href=href)&attributes(attributes)= name
+//- Use
++link("/foo", "foo")(class="btn")
 
-+link('/foo', 'foo')(class="btn")
+
+//- Declaration
+mixin article(title="Default Title")
+  .article
+    .article-wrapper
+      h1= title
+//- Use
++article()
++article("Hello world")
 
 
+//- Declaration
 mixin list(id, ...items)
   ul(id=id)
     each item in items
       li= item
-
-+list('my-list', 1, 2, 3, 4)
-
+//- Use
+// TODO for string
++list(fn("my-list"), "string", 2, 3.5, 4)

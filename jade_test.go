@@ -19,6 +19,14 @@ func init() {
 	wdir, _ = os.Getwd()
 }
 
+func TestStrFilter(t *testing.T) {
+	a := `"aaa'a" + 'b\"bb"b' + 'c' |  +"dddd"  +  "eeee"+"ffff" +` + " `iiii ${jjjj} kkkk`"
+	b := "\"aaa'ab\\\"bb\\\"bc\" |  +\"ddddeeeeffff\" + `iiii `+jjjj+` kkkk`"
+	if filterString(a) != b {
+		t.Fail()
+	}
+}
+
 func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
 	os.Chdir(path)
 	files, err := ioutil.ReadDir(path)
