@@ -155,7 +155,7 @@ Loop:
 			case itemID:
 				tag.attr("id", `"`+token.val+`"`, false)
 			case itemAttrStart:
-				t.parseAttributes(tag)
+				t.parseAttributes(tag, `"`)
 			case itemTagEnd:
 				tag.tagType = itemTagVoid
 				return tag
@@ -174,7 +174,7 @@ type pAttr interface {
 	attr(string, string, bool)
 }
 
-func (t *Tree) parseAttributes(tag pAttr) {
+func (t *Tree) parseAttributes(tag pAttr, qw string) {
 	var (
 		aname string
 		equal bool
@@ -190,7 +190,7 @@ func (t *Tree) parseAttributes(tag pAttr) {
 			case aname == "":
 				aname = token.val
 			case aname != "" && !equal:
-				tag.attr(aname, `"`+aname+`"`, unesc)
+				tag.attr(aname, qw+aname+qw, unesc)
 				aname = token.val
 			case aname != "" && equal:
 				stack = append(stack, token.val)
@@ -224,7 +224,7 @@ func (t *Tree) parseAttributes(tag pAttr) {
 				aname = ""
 				stack = stack[:0]
 			case len_stack == 0 && aname != "":
-				tag.attr(aname, `"`+aname+`"`, unesc)
+				tag.attr(aname, qw+aname+qw, unesc)
 				aname = ""
 			}
 		case itemAttrEnd:
@@ -236,7 +236,7 @@ func (t *Tree) parseAttributes(tag pAttr) {
 					tag.attr(a, a, unesc)
 				}
 			case len_stack == 0 && aname != "":
-				tag.attr(aname, `"`+aname+`"`, unesc)
+				tag.attr(aname, qw+aname+qw, unesc)
 			}
 			return
 		default:
@@ -334,7 +334,7 @@ Loop:
 			mixin.append(t.hub(token))
 		case token.depth == deep:
 			if token.typ == itemAttrStart {
-				t.parseAttributes(mixin)
+				t.parseAttributes(mixin, "")
 			} else {
 				break Loop
 			}
@@ -362,7 +362,7 @@ Loop:
 			mixin.appendToBlock(t.hub(token))
 		case token.depth == deep:
 			if token.typ == itemAttrStart {
-				t.parseAttributes(mixin)
+				t.parseAttributes(mixin, "")
 			} else {
 				break Loop
 			}
@@ -440,13 +440,24 @@ func (t *Tree) parseInclude(tk item) *ListNode {
 }
 
 func (t *Tree) parseSubFile(path string) *ListNode {
+	// log.Println("subtemplate: " + path)
 	var incTree = New(path)
 	incTree.block = t.block
 	incTree.mixin = t.mixin
-	_, err := incTree.Parse(t.read(path))
-	if err != nil {
-		t.errorf(`%s`, err)
+	wd, _ := os.Getwd()
+
+	dir, file := filepath.Split(path)
+	if dir != "" && dir != "./" {
+		os.Chdir(dir)
 	}
+
+	_, err := incTree.Parse(t.read(file))
+	if err != nil {
+		d, _ := os.Getwd()
+		t.errorf(`in '%s' subtemplate '%s': parseSubFile() error: %s`, d, path, err)
+	}
+
+	os.Chdir(wd)
 	return incTree.Root
 }
 
@@ -462,7 +473,8 @@ func (t *Tree) read(path string) []byte {
 	case "":
 		if _, err = os.Stat(path + ".jade"); os.IsNotExist(err) {
 			if _, err = os.Stat(path + ".pug"); os.IsNotExist(err) {
-				t.errorf("try " + path + `.*: ".jade" or ".pug" file required`)
+				wd, _ := os.Getwd()
+				t.errorf("in '%s' subtemplate '%s': file path error: '.jade' or '.pug' file required", wd, path)
 			} else {
 				ext = ".pug"
 			}
@@ -474,8 +486,8 @@ func (t *Tree) read(path string) []byte {
 		t.errorf(`file extension  %s  is not supported`, ext)
 	}
 	if err != nil {
-		dir, _ := os.Getwd()
-		t.errorf(`%s  work dir: %s `, err, dir)
+		wd, _ := os.Getwd()
+		t.errorf(`%s  work dir: %s `, err, wd)
 	}
 
 	return bb
