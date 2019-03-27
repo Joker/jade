@@ -3,10 +3,9 @@
 package main
 
 import (
-	"bytes"
+	"io"
 
 	"github.com/Joker/hpp"
-	pool "github.com/valyala/bytebufferpool"
 )
 
 const (
@@ -18,42 +17,45 @@ const (
 	index__3 = `<p>				Jade/Pug is a terse and simple
 				templating language with
 				a <strong>focus</strong> on performance 
-				and powerful features.</p></div><footer><div class="footer">2018</div></footer></body></html>`
+				and powerful features.</p></div><footer><div class="footer">2019</div></footer></body></html>`
 	index__4 = `<div id="cmd">Precompile jade templates to `
 	index__5 = ` code.</div>`
 	index__6 = `<p>You are amazing</p>`
 	index__7 = `<p>Get on it!</p>`
 )
 
-func Index(pageTitle string, youAreUsingJade bool, buffer *pool.ByteBuffer) {
+func Index(pageTitle string, youAreUsingJade bool, wr io.Writer) {
 
-	buffer.WriteString(index__0)
-	WriteEscString(pageTitle, buffer)
-	buffer.WriteString(index__1)
+	r, w := io.Pipe()
+	go func() {
+		buffer := &WriterAsBuffer{w}
 
-	{
-		var (
-			golang = "Go"
-		)
+		buffer.WriteString(index__0)
+		WriteEscString(pageTitle, buffer)
+		buffer.WriteString(index__1)
 
-		buffer.WriteString(index__4)
-		WriteEscString(golang, buffer)
-		buffer.WriteString(index__5)
-	}
+		{
+			var (
+				golang = "Go"
+			)
 
-	buffer.WriteString(index__2)
+			buffer.WriteString(index__4)
+			WriteEscString(golang, buffer)
+			buffer.WriteString(index__5)
+		}
 
-	if youAreUsingJade {
-		buffer.WriteString(index__6)
+		buffer.WriteString(index__2)
 
-	} else {
-		buffer.WriteString(index__7)
+		if youAreUsingJade {
+			buffer.WriteString(index__6)
 
-	}
-	buffer.WriteString(index__3)
+		} else {
+			buffer.WriteString(index__7)
 
-	index__buffer := hpp.Print(bytes.NewReader(buffer.Bytes()))
-	buffer.Reset()
-	buffer.Write(index__buffer)
+		}
+		buffer.WriteString(index__3)
 
+		w.Close()
+	}()
+	hpp.Format(r, wr)
 }

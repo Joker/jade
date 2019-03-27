@@ -1,21 +1,16 @@
 package main
 
-import (
-	"fmt"
-	"net/http"
+//go:generate jade -pkg=main -writer -fmt index.jade
 
-	pool "github.com/valyala/bytebufferpool"
+import (
+	"net/http"
 )
 
 func main() {
-	buffer := pool.Get()
-
-	Index("Jade.go", true, buffer)
-
-	fmt.Printf("\nOutput:\n\n%s", buffer)
 
 	http.HandleFunc("/", func(wr http.ResponseWriter, req *http.Request) {
-		wr.Write(buffer.Bytes())
+		Index("Jade.go", true, wr)
 	})
+
 	http.ListenAndServe(":8080", nil)
 }
