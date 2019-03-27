@@ -6,7 +6,7 @@
 <p>This is {{ strings.ToUpper(msg) }}</p>
 <p>No escaping for {{ `}` }}!</p>
 <p>Escaping works with \#{interpolation}</p>
-<p>Interpolation works with {{ '#{interpolation}' }} too!</p>
+<p>Interpolation works with {{ "#{interpolation}" }} too!</p>
 {{/* var riskyBusiness = "<em>Some of the girls are wearing my mother's clothing.</em>"; */}}
 <div class="quote">
     <p>Joel: {{ riskyBusiness }}</p>

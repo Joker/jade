@@ -36,7 +36,9 @@ func tpl_attributes(buffer *pool.ByteBuffer) {
 	var btnSize = "lg"
 	buffer.WriteString(`<button type="button" class="`)
 	WriteEscString("btn btn-"+btnType+" btn-"+btnSize, buffer)
-	buffer.WriteString(`"></button><button type="button" class="btn btn-${btnType} btn-${btnSize}"></button></a><div escaped="&lt;code&gt;"></div><div unescaped="<code>"></div><input type="checkbox" checked="checked"/><input type="checkbox" checked="checked"/><input type="checkbox"/><input type="checkbox" checked="true"/><!DOCTYPE html><input type="checkbox" checked="checked"/><input type="checkbox" checked="checked"/><input type="checkbox"/><input type="checkbox" checked="`)
+	buffer.WriteString(`"></button><button type="button" class="`)
+	WriteEscString(`btn btn-`+btnType+` btn-`+btnSize+``, buffer)
+	buffer.WriteString(`"></button></a><div escaped="&lt;code&gt;"></div><div unescaped="<code>"></div><input type="checkbox" checked="checked"/><input type="checkbox" checked="checked"/><input type="checkbox"/><input type="checkbox" checked="true"/><!DOCTYPE html><input type="checkbox" checked="checked"/><input type="checkbox" checked="checked"/><input type="checkbox"/><input type="checkbox" checked="`)
 	WriteBool(true && "checked" == "checked", buffer)
 	buffer.WriteString(`"/><a style="`)
 	WriteAll(map[string]string{"color": "red", "background": "green"}, true, buffer)
@@ -45,9 +47,7 @@ func tpl_attributes(buffer *pool.ByteBuffer) {
 	var classes = []string{"foo", "bar", "baz"}
 	buffer.WriteString(`<a class="`)
 	WriteAll(classes, true, buffer)
-	buffer.WriteString(`"></a><a class="`)
-	WriteEscString("bang"+" "+"classes"+" "+"['bing']", buffer)
-	buffer.WriteString(`"></a>`)
+	buffer.WriteString(`"></a><a class="bang classes [&#39;bing&#39;]"></a>`)
 
 	var currentUrl = "/about"
 	buffer.WriteString(`<a class="`)
@@ -58,9 +58,7 @@ func tpl_attributes(buffer *pool.ByteBuffer) {
 
 	var attributes = struct{ class string }{}
 	attributes.class = "baz"
-	buffer.WriteString(`<div id="foo" data-bar="foo"></div><zxc class="`)
-	WriteEscString("asd"+" "+"qwe"+" "+"zxc", buffer)
-	buffer.WriteString(`" num="`)
+	buffer.WriteString(`<div id="foo" data-bar="foo"></div><zxc class="asd qwe zxc" num="`)
 	WriteInt(int64(1), buffer)
 	buffer.WriteString(`"></zxc><zxc num="`)
 	WriteFloat(1.1, buffer)

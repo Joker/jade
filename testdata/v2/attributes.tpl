@@ -20,7 +20,7 @@
     <a href="{{ print url }}">Another link</a>
     {{/* var btnType = "info" */}}{{/* var btnSize = "lg" */}}
     <button type="button" class="{{ print "btn btn-" + btnType + " btn-" + btnSize }}"></button>
-    <button type="button" class="btn btn-${btnType} btn-${btnSize}"></button>
+    <button type="button" class="{{ print `btn btn-`+btnType+` btn-`+btnSize+`` }}"></button>
 </a>
 <div escaped="&lt;code&gt;"></div>
 <div unescaped="<code>"></div>
@@ -36,7 +36,7 @@
 <a style="{{ print map[string]string{"color": "red", "background": "green"} }}"></a>
 {{/* var classes = []string{"foo", "bar", "baz"} */}}
 <a class="{{ print classes }}"></a>
-<a class="{{ print "bang" " " "classes" " " "['bing']" }}"></a>
+<a class="bang classes [&#39;bing&#39;]"></a>
 {{/* var currentUrl = "/about" */}}
 <a class="{{ print currentUrl == "/" ? "active" : "" }}" href="/">Home</a>
 <a class="{{ print currentUrl == "/about" ? "active" : "" }}" href="/about">About</a>
@@ -47,5 +47,5 @@
 <div id="foo" data-bar="foo"></div>
 {{/* var attributes = struct{class string}{}; */}}{{/* attributes.class = "baz"; */}}
 <div id="foo" data-bar="foo"></div>
-<zxc class="{{ print "asd" " " "qwe" " " "zxc" }}" num="{{ print 1 }}"></zxc>
+<zxc class="asd qwe zxc" num="{{ print 1 }}"></zxc>
 <zxc num="{{ print 1.1 }}"></zxc>

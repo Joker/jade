@@ -8,10 +8,10 @@ var list = []string{"Uno", "Dos", "Tres",
 <p>{{ "This code is 
     <escaped>!" }}
     </p>
-    <p>{{ "This code is" + " 
+    <p>{{ "This code is 
         <escaped>!" }}
         </p>
         <p>{{ "This code is <strong>not</strong> escaped!" }}
         </p>
-        <p>{{ "This code is" + " <strong>not</strong> escaped!" }}
+        <p>{{ "This code is <strong>not</strong> escaped!" }}
         </p>

@@ -8,14 +8,14 @@
     <li>bar</li>
     <li>baz</li>
 </ul>
-<ul>{{ $name := "'cat'" }} 
+<ul>{{ $name := "cat" }} 
     <li class="pet">{{ name }}</li>
-    {{ $name := "'dog'" }} 
+    {{ $name := "dog" }} 
     <li class="pet">{{ name }}</li>
-    {{ $name := "'pig'" }} 
+    {{ $name := "pig" }} 
     <li class="pet">{{ name }}</li>
 </ul>
-{{ $title := "'Hello world'" }} 
+{{ $title := "Hello world" }} 
 <div class="article">
     <div class="article-wrapper">
         <h1>{{ title }}</h1>
@@ -24,7 +24,7 @@
         {{ end }}
     </div>
 </div>
-{{ $title := "'Hello world'" }} 
+{{ $title := "Hello world" }} 
 <p>This is my</p>
 <p>Amazing article</p>
 <div class="article">
@@ -35,12 +35,28 @@
         {{ end }}
     </div>
 </div>
-{{ $href := "'/foo'" }}{{ $name := "'foo'" }}
+{{ $href := "/foo" }}{{ $name := "foo" }}
 {{/* attributes := struct{class string}{class: "btn"} */}}
 <a class="{{ print attributes.class }}" href="{{ print href }}">{{ name }}</a>
-{{ $href := "'/foo'" }}{{ $name := "'foo'" }} 
+{{ $href := fn("/foo", "bar", "baz") }}{{ $name := "foo" }}
+{{/* attributes := struct{class string}{class: "btn"} */}}
+<a class="{{ print attributes.class }}" href="{{ print href }}">{{ name }}</a>
+{{ $href := "/foo" }}{{ $name := "foo" }} 
 <a href="{{ print href }}">{{ name }}</a>
-{{ $items := []string{"\"1\"", "\"2\"", "\"3\"", "\"4\""} }}{{ $id := "'my-list'" }} 
+{{ $title := "Default Title" }} 
+<div class="article">
+    <div class="article-wrapper">
+        <h1>{{ title }}</h1>
+    </div>
+</div>
+{{ $title := "Hello world" }} 
+<div class="article">
+    <div class="article-wrapper">
+        <h1>{{ title }}</h1>
+    </div>
+</div>
+<!-- TODO for string -->
+{{ $items := []string{"\"string\"", "2", "3.5", "4"} }}{{ $id := fn("my-list") }} 
 <ul id="{{ print id }}">{{/* _, item */}}{{ range items }}
     <li>{{ item }}</li>
     {{ end }}

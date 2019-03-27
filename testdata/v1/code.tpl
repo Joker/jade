@@ -7,8 +7,8 @@ var subtitle = ["Really",  "long",
 <ul id="users">{{/* name, user */}}{{ range users }}
     <!-- expands to if (user.isA == 'ferret') -->
     {{ if user.isA == 'ferret' }}
-    <li class="{{ print 'user-' + name }}">{{ name }} is just a ferret</li>
+    <li class="{{ print "user-" + name }}">{{ name }} is just a ferret</li>
     {{ else }}
-    <li class="{{ print 'user-' + name }}">{{ name }} {{ user.email }}</li>
+    <li class="{{ print "user-" + name }}">{{ name }} {{ user.email }}</li>
     {{ end }}{{ end }}
 </ul>

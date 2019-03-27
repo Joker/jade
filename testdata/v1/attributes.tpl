@@ -1,4 +1,4 @@
-<div id="id" class="{{ print "left" " " "container" " " 'user user-' + name }}">
+<div id="id" class="{{ print "left container user user-" + name }}">
     <h1 class="title">{{ name }}</h1>
     <form>
         <!-- An example of attributes. -->

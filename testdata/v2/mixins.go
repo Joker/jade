@@ -23,7 +23,7 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 	buffer.WriteString(`<ul>`)
 	{
 		var (
-			name = "'cat'"
+			name = "cat"
 		)
 
 		buffer.WriteString(`<li class="pet">`)
@@ -33,7 +33,7 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			name = "'dog'"
+			name = "dog"
 		)
 
 		buffer.WriteString(`<li class="pet">`)
@@ -43,7 +43,7 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			name = "'pig'"
+			name = "pig"
 		)
 
 		buffer.WriteString(`<li class="pet">`)
@@ -54,7 +54,7 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 	buffer.WriteString(`</ul>`)
 	{
 		var (
-			title = "'Hello world'"
+			title = "Hello world"
 		)
 		var block []byte
 		buffer.WriteString(`<div class="article"><div class="article-wrapper"><h1>`)
@@ -71,7 +71,7 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			title = "'Hello world'"
+			title = "Hello world"
 		)
 		var block []byte
 		{
@@ -95,8 +95,8 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			href = "'/foo'"
-			name = "'foo'"
+			href = "/foo"
+			name = "foo"
 		)
 
 		attributes := struct{ class string }{class: "btn"}
@@ -111,8 +111,24 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			href = "'/foo'"
-			name = "'foo'"
+			href = fn("/foo", "bar", "baz")
+			name = "foo"
+		)
+
+		attributes := struct{ class string }{class: "btn"}
+		buffer.WriteString(`<a class="`)
+		WriteEscString(attributes.class, buffer)
+		buffer.WriteString(`" href="`)
+		WriteAll(href, true, buffer)
+		buffer.WriteString(`">`)
+		WriteEscString(name, buffer)
+		buffer.WriteString(`</a>`)
+	}
+
+	{
+		var (
+			href = "/foo"
+			name = "foo"
 		)
 
 		buffer.WriteString(`<a href="`)
@@ -124,12 +140,35 @@ func tpl_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		var (
-			items = []string{"\"1\"", "\"2\"", "\"3\"", "\"4\""}
-			id    = "'my-list'"
+			title = "Default Title"
+		)
+
+		buffer.WriteString(`<div class="article"><div class="article-wrapper"><h1>`)
+		WriteEscString(title, buffer)
+		buffer.WriteString(`</h1></div></div>`)
+
+	}
+
+	{
+		var (
+			title = "Hello world"
+		)
+
+		buffer.WriteString(`<div class="article"><div class="article-wrapper"><h1>`)
+		WriteEscString(title, buffer)
+		buffer.WriteString(`</h1></div></div>`)
+
+	}
+
+	buffer.WriteString(`<!--  TODO for string -->`)
+	{
+		var (
+			items = []string{"\"string\"", "2", "3.5", "4"}
+			id    = fn("my-list")
 		)
 
 		buffer.WriteString(`<ul id="`)
-		WriteEscString(id, buffer)
+		WriteAll(id, true, buffer)
 		buffer.WriteString(`">`)
 		for _, item := range items {
 			buffer.WriteString(`<li>`)

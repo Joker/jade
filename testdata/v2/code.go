@@ -23,11 +23,11 @@ func tpl_code(buffer *pool.ByteBuffer) {
 	buffer.WriteString(`<p>`)
 	WriteEscString("This code is &lt;escaped&gt;!", buffer)
 	buffer.WriteString(`</p><p>`)
-	WriteEscString("This code is"+" <escaped>!", buffer)
+	WriteEscString("This code is <escaped>!", buffer)
 	buffer.WriteString(`</p><p>`)
 	buffer.WriteString("This code is <strong>not</strong> escaped!")
 	buffer.WriteString(`</p><p>`)
-	buffer.WriteString("This code is" + " <strong>not</strong> escaped!")
+	buffer.WriteString("This code is <strong>not</strong> escaped!")
 	buffer.WriteString(`</p>`)
 
 }
