@@ -32,8 +32,8 @@ func (a *goAST) checkType() {
 				rewrite(x.Body, &info)
 			case *ast.BlockStmt:
 				rewrite(x.List, &info)
-			case *ast.CallExpr:
-				return false
+				// case *ast.CallExpr:
+				// return false
 			}
 		}
 		return true

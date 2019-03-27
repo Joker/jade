@@ -23,9 +23,11 @@ var (
 	dict     = map[string]string{}
 	lib_name = ""
 	outdir   string
+	basedir  string
 	pkg_name string
 	stdlib   bool
 	stdbuf   bool
+	writer   bool
 	inline   bool
 	format   bool
 	ns_files = map[string]bool{}
@@ -37,11 +39,13 @@ func use() {
 }
 func init() {
 	flag.StringVar(&outdir, "d", "./", `directory for generated .go files`)
+	flag.StringVar(&basedir, "basedir", "./", `base directory for templates`)
 	flag.StringVar(&pkg_name, "pkg", "jade", `package name for generated files`)
 	flag.BoolVar(&format, "fmt", false, `HTML pretty print output for generated functions`)
 	flag.BoolVar(&inline, "inline", false, `inline HTML in generated functions`)
 	flag.BoolVar(&stdlib, "stdlib", false, `use stdlib functions`)
 	flag.BoolVar(&stdbuf, "stdbuf", false, `use bytes.Buffer  [default bytebufferpool.ByteBuffer]`)
+	flag.BoolVar(&writer, "writer", false, `use io.Writer for output`)
 }
 
 //
@@ -142,7 +146,7 @@ func genFile(path, outdir, pkg_name string) {
 	if err != nil {
 		log.Fatalln("cmd/jade: WriteFile(): ", err)
 	}
-	fmt.Print("Done.\n")
+	fmt.Printf("generate: %s.go  done.\n\n", outPath)
 }
 
 func genDir(dir, outdir, pkg_name string) {
@@ -177,6 +181,10 @@ func main() {
 		os.MkdirAll(outdir, 0755)
 	}
 	outdir, _ = filepath.Abs(outdir)
+
+	if _, err := os.Stat(basedir); !os.IsNotExist(err) && basedir != "./" {
+		os.Chdir(basedir)
+	}
 
 	for _, jadePath := range flag.Args() {
 

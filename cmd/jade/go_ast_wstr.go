@@ -18,8 +18,8 @@ func (a *goAST) collapseWriteString(strInline bool, constName string) {
 				wrSt.push(x.Body)
 			case *ast.BlockStmt:
 				wrSt.push(x.List)
-			case *ast.CallExpr:
-				return false
+				// case *ast.CallExpr:
+				// return false
 			}
 		}
 		return true

@@ -106,22 +106,50 @@ func (data *layout) writeAfter(wr *bytes.Buffer) {
 func newLayout(constName string) layout {
 	var tpl layout
 	tpl.Package = pkg_name
-	tpl.Import = []string{`"bytes"`, `"fmt"`, `"html"`, `"strconv"`, `pool "github.com/valyala/bytebufferpool"`, `"github.com/Joker/hpp"`}
+
+	tpl.Import = []string{
+		`"bytes"`,
+		`"io"`,
+		`"fmt"`,
+		`"html"`,
+		`"strconv"`,
+		`"github.com/Joker/hpp"`,
+		`pool "github.com/valyala/bytebufferpool"`,
+	}
 
 	if !inline {
 		tpl.Def = []string{"const ()"}
 	}
-	if stdbuf {
-		tpl.Bbuf = "*bytes.Buffer"
+
+	if writer {
+		tpl.Bbuf = "wr io.Writer"
+		tpl.Before = "buffer := &WriterAsBuffer{wr}"
+	} else if stdbuf {
+		tpl.Bbuf = "buffer *bytes.Buffer"
 	} else {
-		tpl.Bbuf = "*pool.ByteBuffer"
+		tpl.Bbuf = "buffer *pool.ByteBuffer"
 	}
+
 	if format {
-		tpl.After = constName + `__buffer := hpp.Print(bytes.NewReader(buffer.Bytes()))
-		buffer.Reset()
-		buffer.Write(` + constName + `__buffer)
-		`
+		tpl.Before = `
+			r, w := io.Pipe()
+			go func() {
+				buffer := &WriterAsBuffer{w}`
+
+		if writer {
+			tpl.After = `
+				w.Close()
+			}()
+			hpp.Format(r,wr)`
+		} else {
+			tpl.After = `
+				w.Close()
+			}()
+			hpp.Format(r,buffer)`
+		}
 	}
+
+	//
 
 	if jade.Go.Name != "" {
 		tpl.Func = "func " + jade.Go.Name
@@ -129,23 +157,24 @@ func newLayout(constName string) layout {
 	} else {
 		tpl.Func = `func tpl_` + constName
 	}
+
 	if jade.Go.Args != "" {
 		args := strings.Split(jade.Go.Args, ",")
 		buffer := true
 		for k, v := range args {
 			args[k] = strings.Trim(v, " \t\n")
 			if strings.HasPrefix(args[k], "buffer ") {
-				args[k] = "buffer " + tpl.Bbuf
+				args[k] = tpl.Bbuf
 				buffer = false
 			}
 		}
 		if buffer {
-			args = append(args, "buffer "+tpl.Bbuf)
+			args = append(args, tpl.Bbuf)
 		}
 		tpl.Func += "(" + strings.Join(args, ",") + ")"
 		jade.Go.Args = ""
 	} else {
-		tpl.Func += `(buffer ` + tpl.Bbuf + `) `
+		tpl.Func += `(` + tpl.Bbuf + `) `
 	}
 
 	if jade.Go.Import != "" {

@@ -21,8 +21,8 @@ func (a *goAST) checkUnresolvedBlock() {
 									dsSl = append(dsSl, xds)
 									ds = xds
 								}
-							case *ast.CallExpr:
-								return false
+								// case *ast.CallExpr:
+								// 	return false
 							}
 						}
 						return true
@@ -45,8 +45,8 @@ func (a *goAST) checkUnresolvedBlock() {
 	ast.Inspect(a.node, func(n ast.Node) bool {
 		if n != nil {
 			switch x := n.(type) {
-			case *ast.CallExpr:
-				return false
+			// case *ast.CallExpr:
+			// 	return false
 			case *ast.BlockStmt:
 				for i, v := range x.List {
 					if ds, ok := v.(*ast.DeclStmt); ok {

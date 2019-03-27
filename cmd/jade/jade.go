@@ -12,12 +12,11 @@ package {{.Pkg}}
 
 import (
 	"bytes"
+	"io"
 	"strconv"
-	{{  $Buf := "*bytes.Buffer"  }}
 
-	{{- if not .StdBuffer -}}
+	{{- if eq .Buf "*pool.ByteBuffer"}}
 	pool "github.com/valyala/bytebufferpool"
-		{{- $Buf = "*pool.ByteBuffer" -}}
 	{{- end }}
 )
 
@@ -26,7 +25,7 @@ var (
 	replacing = []string{"&lt;", "&gt;", "&#34;", "&#39;", "&amp;"}
 )
 
-func WriteEscString(st string, buffer {{$Buf}}) {
+func WriteEscString(st string, buffer {{.Buf}}) {
 	for i := 0; i < len(st); i++ {
 		if n := bytes.IndexByte(escaped, st[i]); n >= 0 {
 			buffer.WriteString(replacing[n])
@@ -36,7 +35,23 @@ func WriteEscString(st string, buffer {{$Buf}}) {
 	}
 }
 
-func WriteAll(a interface{}, escape bool, buffer {{$Buf}}) {
+type WriterAsBuffer struct {
+	io.Writer
+}
+
+func (w *WriterAsBuffer) WriteString(s string) {
+	w.Write([]byte(s))
+}
+
+func (w *WriterAsBuffer) WriteByte(b byte) {
+	w.Write([]byte{b})
+}
+
+type stringer interface {
+	String() string
+}
+
+func WriteAll(a interface{}, escape bool, buffer {{.Buf}}) {
 	switch v := a.(type) {
 	case string:
 		if escape {
@@ -70,8 +85,14 @@ func WriteAll(a interface{}, escape bool, buffer {{$Buf}}) {
 		buffer.WriteString(strconv.FormatFloat(v, 'f', -1, 64))
 	case bool:
 		WriteBool(v, buffer)
+	case stringer:
+		if escape {
+			WriteEscString(v.String(), buffer)
+		} else {
+			buffer.WriteString(v.String())
+		}
 	default:
-		buffer.WriteString("\n<<< unprinted type >>>\n")
+		buffer.WriteString("\n<<< unprinted type, fmt.Stringer implementation needed >>>\n")
 	}
 }
 
@@ -85,7 +106,7 @@ func ternary(condition bool, iftrue, iffalse interface{}) interface{} {
 
 // Used part of go source:
 // https://github.com/golang/go/blob/master/src/strconv/itoa.go
-func WriteUint(u uint64, buffer {{$Buf}}) {
+func WriteUint(u uint64, buffer {{.Buf}}) {
 	var a [64 + 1]byte
 	i := len(a)
 
@@ -115,14 +136,14 @@ func WriteUint(u uint64, buffer {{$Buf}}) {
 	a[i] = byte(us + '0')
 	buffer.Write(a[i:])
 }
-func WriteInt(i int64, buffer {{$Buf}}) {
+func WriteInt(i int64, buffer {{.Buf}}) {
 	if i < 0 {
 		buffer.WriteByte('-')
 		i = -i
 	}
 	WriteUint(uint64(i), buffer)
 }
-func WriteBool(b bool, buffer {{$Buf}}) {
+func WriteBool(b bool, buffer {{.Buf}}) {
 	if b {
 		buffer.WriteString("true")
 		return
@@ -136,22 +157,28 @@ func makeJfile(std bool) {
 	wr, err := os.Create(outdir + "/jade.go")
 	defer wr.Close()
 	if err != nil {
-		log.Fatalln("jade: makeJfile(): ", err)
+		log.Fatalln("cmd/jade: makeJfile(): ", err)
 	}
 
 	tp := template.Must(template.New("jlayout").Parse(jade_go))
-	if std {
+
+	if writer {
 		err = tp.Execute(wr, struct {
-			Pkg       string
-			StdBuffer bool
-		}{pkg_name, std})
+			Pkg string
+			Buf string
+		}{pkg_name, "*WriterAsBuffer"})
+	} else if std {
+		err = tp.Execute(wr, struct {
+			Pkg string
+			Buf string
+		}{pkg_name, "*bytes.Buffer"})
 	} else {
 		err = tp.Execute(wr, struct {
-			Pkg       string
-			StdBuffer bool
-		}{pkg_name, std})
+			Pkg string
+			Buf string
+		}{pkg_name, "*pool.ByteBuffer"})
 	}
 	if err != nil {
-		log.Fatalln("jade: makeJfile(): ", err)
+		log.Fatalln("cmd/jade: makeJfile(): ", err)
 	}
 }
