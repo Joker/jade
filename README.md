@@ -69,7 +69,7 @@ becomes
 ```
 
 
-See more [examples](https://github.com/Joker/jade/tree/master/example).  
+See [more](https://github.com/Joker/jade/tree/master/testdata/v2) [examples](https://github.com/Joker/jade/tree/master/example).  
 
 
 ## Example usage
@@ -122,7 +122,7 @@ func main() {
 }
 ```
 
-Output:
+Output on localhost:8080 :
 ```html
 <!DOCTYPE html><html><body><p>Hello jade!</p></body></html>
 ```
@@ -171,6 +171,10 @@ $ go get github.com/Joker/jade/cmd/jade
 
 
 ## Custom filter  :go
+This filter is used as helper for command line tool  
+(to set imports, function name and parameters).  
+Filter may be located at any nesting level.  
+When jade used as library :go filter is not needed.  
 
 ### Nested filter  :func
 ```
