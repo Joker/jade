@@ -15,7 +15,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/Joker/jade"
+	"github.com/joker/jade"
 	"golang.org/x/tools/imports"
 )
 
