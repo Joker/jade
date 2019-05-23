@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_indexa(buffer *pool.ByteBuffer) {
+func Jade_indexa(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<!DOCTYPE html><html><head><style>/* style.css */
 h1 {

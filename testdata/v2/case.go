@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_case(buffer *pool.ByteBuffer) {
+func Jade_case(buffer *pool.ByteBuffer) {
 
 	var friends1 = 10
 	switch friends1 {

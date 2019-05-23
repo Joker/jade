@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_attributes(buffer *pool.ByteBuffer) {
+func Jade_attributes(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<a href="`)
 	WriteEscString(`google.com`+`google.com`, buffer)

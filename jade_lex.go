@@ -136,11 +136,13 @@ func lexTags(l *lexer) stateFn {
 			return lexEndLine
 		}
 		if np == '!' && l.next() == '!' && l.depth == 0 {
+			l.ignore()
 			if l.skipSpaces() != -1 {
-				l.ignore()
 				l.emitLineByType(itemDoctype)
-				return lexEndLine
+			} else {
+				l.emit(itemDoctype)
 			}
+			return lexEndLine
 		}
 		return l.errorf("expect '=' after '!'")
 	case isAlphaNumeric(r):

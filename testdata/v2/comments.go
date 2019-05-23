@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_comments(buffer *pool.ByteBuffer) {
+func Jade_comments(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<!--  just some paragraphs --><p>foo</p><p>bar</p><p>foo</p><p>bar</p><body><!-- 
     Comments for your HTML readers.

@@ -8,7 +8,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_iteration(buffer *pool.ByteBuffer) {
+func Jade_iteration(buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<ul>`)
 	for _, val := range []int{1, 2, 3, 4, 5} {

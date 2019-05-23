@@ -8,7 +8,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_mixins(buffer *pool.ByteBuffer) {
+func Jade_mixins(buffer *pool.ByteBuffer) {
 
 	{
 		buffer.WriteString(`<ul><li>foo</li><li>bar</li><li>baz</li></ul>`)

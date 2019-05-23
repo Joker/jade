@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_pet(petName string, buffer *pool.ByteBuffer) {
+func Jade_pet(petName string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<p>`)
 	WriteEscString(petName, buffer)

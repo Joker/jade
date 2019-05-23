@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_conditionals(buffer *pool.ByteBuffer) {
+func Jade_conditionals(buffer *pool.ByteBuffer) {
 
 	var user = struct {
 		description, name string

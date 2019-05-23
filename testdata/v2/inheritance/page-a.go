@@ -6,7 +6,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_pagea(title string, petName string, buffer *pool.ByteBuffer) {
+func Jade_pagea(title string, petName string, buffer *pool.ByteBuffer) {
 
 	buffer.WriteString(`<html><head><title>My Site - `)
 	WriteEscString(title, buffer)

@@ -8,7 +8,7 @@ import (
 	pool "github.com/valyala/bytebufferpool"
 )
 
-func tpl_interpolation(buffer *pool.ByteBuffer) {
+func Jade_interpolation(buffer *pool.ByteBuffer) {
 
 	var title = "On Dogs: Man's Best Friend"
 	var author = "enlore"

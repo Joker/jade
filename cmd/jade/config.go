@@ -155,7 +155,7 @@ func newLayout(constName string) layout {
 		tpl.Func = "func " + jade.Go.Name
 		jade.Go.Name = ""
 	} else {
-		tpl.Func = `func tpl_` + constName
+		tpl.Func = `func Jade_` + constName
 	}
 
 	if jade.Go.Args != "" {
