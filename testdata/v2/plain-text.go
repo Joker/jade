@@ -20,6 +20,19 @@ func Jade_plaintext(buffer *pool.ByteBuffer) {
   but interpolated tags may be easier to <em>visualize</em>
   whether the tags and text are whitespace-separated.
 
-</p>Hey, check out <a href="http://example.biz/kitteh.png">this picture</a> of my cat!`)
+</p>Hey, check out <a href="http://example.biz/kitteh.png">this picture</a> of my cat!<script>`)
+
+	buffer.WriteString(`	const newWS = (url) => {
+		let socket = new WebSocket(url)
+			socket.onopen    =    _    => console.log("Open")
+			socket.onmessage = (event) => console.log(` + "`" + `Message: ${event.data}` + "`" + `)
+			socket.onerror   = (error) => console.error(` + "`" + `Error: ${error.message}` + "`" + `)
+			socket.onclose   = (event) => {
+				if (event.wasClean) console.log(` + "`" + `Clean; code: ${event.code} ${event.reason}` + "`" + `)
+							else console.log(` + "`" + `Err; code: ${event.code} ${event.reason}` + "`" + `)
+			}
+		return socket
+	}`)
+	buffer.WriteString(`</script>`)
 
 }

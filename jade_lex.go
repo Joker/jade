@@ -243,11 +243,11 @@ func text(l *lexer) stateFn {
 			if sp == '{' {
 				l.interpol(itemCodeBuffered)
 			}
-		case r == '$':
-			sp := l.peek()
-			if sp == '{' {
-				l.interpol(itemCodeBuffered)
-			}
+		// case r == '$':
+		// 	sp := l.peek()
+		// 	if sp == '{' {
+		// 		l.interpol(itemCodeBuffered)
+		// 	}
 		case r == '!':
 			sp := l.peek()
 			if sp == '{' {

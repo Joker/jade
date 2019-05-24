@@ -58,3 +58,15 @@ p.
 a(href="http://example.biz/kitteh.png") this picture
 |  of my cat!
 
+script.
+	const newWS = (url) => {
+		let socket = new WebSocket(url)
+			socket.onopen    =    _    => console.log("Open")
+			socket.onmessage = (event) => console.log(`Message: ${event.data}`)
+			socket.onerror   = (error) => console.error(`Error: ${error.message}`)
+			socket.onclose   = (event) => {
+				if (event.wasClean) console.log(`Clean; code: ${event.code} ${event.reason}`)
+							else console.log(`Err; code: ${event.code} ${event.reason}`)
+			}
+		return socket
+	}

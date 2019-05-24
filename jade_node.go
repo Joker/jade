@@ -535,7 +535,11 @@ func (t *TextNode) WriteIn(b io.Writer) {
 	case itemComment:
 		fmt.Fprintf(b, text__comment, t.Text)
 	default:
-		fmt.Fprintf(b, text__str, t.Text)
+		if !golang_mode {
+			fmt.Fprintf(b, text__str, t.Text)
+		} else {
+			fmt.Fprintf(b, text__str, bytes.Replace(t.Text, []byte("`"), []byte("`+\"`\"+`"), -1))
+		}
 	}
 }
 
