@@ -1,4 +1,5 @@
 Copyright (c) 2015, Joker
+Copyright (c) 2020, Gerasimos Maropoulos <kataras2006@hotmail.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

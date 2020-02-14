@@ -6,14 +6,20 @@ package jade
 
 import (
 	"fmt"
+	"io/ioutil"
 	"runtime"
 )
 
 // Tree is the representation of a single parsed template.
 type Tree struct {
-	Name string    // name of the template represented by the tree.
-	Root *ListNode // top-level root of the tree.
-	text string    // text parsed to create the template (or its parent)
+	Name string // name of the template represented by the tree.
+	// ReadFunc is used to read files that are required when parsing a template (e.g. extends $file).
+	// Set to a custom reader to override the default behavior from reading by system directory.
+	//
+	// See https://github.com/kataras/iris/issues/1450.
+	ReadFunc func(path string) ([]byte, error)
+	Root     *ListNode // top-level root of the tree.
+	text     string    // text parsed to create the template (or its parent)
 
 	// Parsing only; cleared after parse.
 	lex       *lexer
@@ -30,9 +36,10 @@ func (t *Tree) Copy() *Tree {
 		return nil
 	}
 	return &Tree{
-		Name: t.Name,
-		Root: t.Root.CopyList(),
-		text: t.text,
+		Name:     t.Name,
+		ReadFunc: t.ReadFunc,
+		Root:     t.Root.CopyList(),
+		text:     t.text,
 	}
 }
 
@@ -137,9 +144,15 @@ func (t *Tree) Parse(text []byte) (tree *Tree, err error) {
 
 // New allocates a new parse tree with the given name.
 func New(name string) *Tree {
+	return NewWithReadFunc(name, ioutil.ReadFile)
+}
+
+// NewWithReadFunc same as `New` but it overrides the template's contents reader.
+func NewWithReadFunc(name string, readFunc func(string) ([]byte, error)) *Tree {
 	return &Tree{
-		Name:  name,
-		mixin: map[string]*MixinNode{},
-		block: map[string]*ListNode{},
+		Name:     name,
+		ReadFunc: readFunc,
+		mixin:    map[string]*MixinNode{},
+		block:    map[string]*ListNode{},
 	}
 }

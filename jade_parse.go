@@ -1,7 +1,6 @@
 package jade
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -444,47 +443,40 @@ func (t *Tree) parseSubFile(path string) *ListNode {
 	var incTree = New(path)
 	incTree.block = t.block
 	incTree.mixin = t.mixin
-	wd, _ := os.Getwd()
 
-	dir, file := filepath.Split(path)
-	if dir != "" && dir != "./" {
-		os.Chdir(dir)
-	}
-
-	_, err := incTree.Parse(t.read(file))
+	_, err := incTree.Parse(t.read(path))
 	if err != nil {
 		d, _ := os.Getwd()
 		t.errorf(`in '%s' subtemplate '%s': parseSubFile() error: %s`, d, path, err)
 	}
 
-	os.Chdir(wd)
 	return incTree.Root
 }
 
+var extensions = [...]string{".jade", ".pug", ".js", ".css", ".tpl", ".md"}
+
 func (t *Tree) read(path string) []byte {
+	currentTmplDir, _ := filepath.Split(t.Name)
+	path = currentTmplDir + path
+
 	var (
 		bb  []byte
-		ext string
 		err error
 	)
-	switch ext = filepath.Ext(path); ext {
-	case ".jade", ".pug", ".js", ".css", ".tpl", ".md":
-		bb, err = ioutil.ReadFile(path)
-	case "":
-		if _, err = os.Stat(path + ".jade"); os.IsNotExist(err) {
-			if _, err = os.Stat(path + ".pug"); os.IsNotExist(err) {
-				wd, _ := os.Getwd()
-				t.errorf("in '%s' subtemplate '%s': file path error: '.jade' or '.pug' file required", wd, path)
-			} else {
-				ext = ".pug"
-			}
-		} else {
-			ext = ".jade"
+
+	ext := filepath.Ext(path)
+
+	for _, s := range extensions {
+		if s == ext {
+			bb, err = t.ReadFunc(path)
+			break
 		}
-		bb, err = ioutil.ReadFile(path + ext)
-	default:
-		t.errorf(`file extension  %s  is not supported`, ext)
+
+		if bb, err = t.ReadFunc(path + s); err == nil {
+			break
+		}
 	}
+
 	if err != nil {
 		wd, _ := os.Getwd()
 		t.errorf(`%s  work dir: %s `, err, wd)

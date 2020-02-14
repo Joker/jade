@@ -110,7 +110,7 @@ func (ws *writeStrings) fillConstNode(decl []ast.Decl) {
 		for _, v := range ws.constSlice {
 			constNode.Specs = append(constNode.Specs, &ast.ValueSpec{
 				Names: []*ast.Ident{
-					&ast.Ident{Name: v.name},
+					{Name: v.name},
 				},
 				Values: []ast.Expr{
 					&ast.BasicLit{Kind: 9, Value: "`" + v.str + "`"}, // 9 => string
