@@ -444,7 +444,7 @@ func (t *Tree) parseSubFile(path string) *ListNode {
 	var incTree = New(currentTmplDir + path)
 	incTree.block = t.block
 	incTree.mixin = t.mixin
-
+	incTree.ReadFunc = t.ReadFunc
 	_, err := incTree.Parse(t.read(path))
 	if err != nil {
 		d, _ := os.Getwd()
