@@ -440,7 +440,8 @@ func (t *Tree) parseInclude(tk item) *ListNode {
 
 func (t *Tree) parseSubFile(path string) *ListNode {
 	// log.Println("subtemplate: " + path)
-	var incTree = New(path)
+	currentTmplDir, _ := filepath.Split(t.Name)
+	var incTree = New(currentTmplDir + path)
 	incTree.block = t.block
 	incTree.mixin = t.mixin
 
