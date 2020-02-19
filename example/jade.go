@@ -26,12 +26,14 @@ type WriterAsBuffer struct {
 	io.Writer
 }
 
-func (w *WriterAsBuffer) WriteString(s string) {
-	w.Write([]byte(s))
+func (w *WriterAsBuffer) WriteString(s string) (n int, err error) {
+	n, err = w.Write([]byte(s))
+	return
 }
 
-func (w *WriterAsBuffer) WriteByte(b byte) {
-	w.Write([]byte{b})
+func (w *WriterAsBuffer) WriteByte(b byte) (err error) {
+	_, err = w.Write([]byte{b})
+	return
 }
 
 type stringer interface {
