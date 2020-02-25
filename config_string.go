@@ -15,7 +15,7 @@ func (i itemType) String() string {
 	return _itemType_name[_itemType_index[i]:_itemType_index[i+1]]
 }
 
-const _NodeType_name = "NodeTextNodeListNodeTagNodeCodeNodeCondNodeStringNodeDoctypeNodeMixinNodeBlock"
+const _NodeType_name = "nodeTextNodeListNodeTagNodeCodeNodeCondNodeStringNodeDoctypeNodeMixinNodeBlock"
 
 var _NodeType_index = [...]uint8{0, 8, 16, 23, 31, 39, 49, 60, 69, 78}
 

@@ -47,7 +47,7 @@ type listNode struct {
 }
 
 func (t *tree) newList(pos pos) *listNode {
-	return &listNode{tr: t, nodeType: NodeList, pos: pos}
+	return &listNode{tr: t, nodeType: nodeList, pos: pos}
 }
 
 func (l *listNode) append(n node) {

@@ -24,7 +24,7 @@ type tagNode struct {
 }
 
 func (t *tree) newTag(pos pos, name string, tagType itemType) *tagNode {
-	return &tagNode{tr: t, nodeType: NodeTag, pos: pos, TagName: name, tagType: tagType}
+	return &tagNode{tr: t, nodeType: nodeTag, pos: pos, TagName: name, tagType: tagType}
 }
 
 func (l *tagNode) append(n node) {
@@ -312,7 +312,7 @@ type condNode struct {
 }
 
 func (t *tree) newCond(pos pos, cond string, condType itemType) *condNode {
-	return &condNode{tr: t, nodeType: NodeCond, pos: pos, cond: cond, condType: condType}
+	return &condNode{tr: t, nodeType: nodeCond, pos: pos, cond: cond, condType: condType}
 }
 
 func (l *condNode) append(n node) {
@@ -413,7 +413,7 @@ type codeNode struct {
 }
 
 func (t *tree) newCode(pos pos, text string, codeType itemType) *codeNode {
-	return &codeNode{tr: t, nodeType: NodeCode, pos: pos, Code: []byte(text), codeType: codeType}
+	return &codeNode{tr: t, nodeType: nodeCode, pos: pos, Code: []byte(text), codeType: codeType}
 }
 
 func (t *codeNode) String() string {
@@ -463,7 +463,7 @@ func (t *codeNode) tree() *tree {
 }
 
 func (t *codeNode) Copy() node {
-	return &codeNode{tr: t.tr, nodeType: NodeCode, pos: t.pos, codeType: t.codeType, Code: append([]byte{}, t.Code...)}
+	return &codeNode{tr: t.tr, nodeType: nodeCode, pos: t.pos, codeType: t.codeType, Code: append([]byte{}, t.Code...)}
 }
 
 //
@@ -478,7 +478,7 @@ type blockNode struct {
 }
 
 func (t *tree) newBlock(pos pos, name string, textType itemType) *blockNode {
-	return &blockNode{tr: t, nodeType: NodeBlock, pos: pos, Name: name, blockType: textType}
+	return &blockNode{tr: t, nodeType: nodeBlock, pos: pos, Name: name, blockType: textType}
 }
 
 func (bn *blockNode) String() string {
@@ -507,7 +507,7 @@ func (bn *blockNode) tree() *tree {
 }
 
 func (bn *blockNode) Copy() node {
-	return &blockNode{tr: bn.tr, nodeType: NodeBlock, pos: bn.pos, blockType: bn.blockType, Name: bn.Name}
+	return &blockNode{tr: bn.tr, nodeType: nodeBlock, pos: bn.pos, blockType: bn.blockType, Name: bn.Name}
 }
 
 //
@@ -522,7 +522,7 @@ type textNode struct {
 }
 
 func (t *tree) newText(pos pos, text []byte, textType itemType) *textNode {
-	return &textNode{tr: t, nodeType: NodeText, pos: pos, Text: text, textType: textType}
+	return &textNode{tr: t, nodeType: nodeText, pos: pos, Text: text, textType: textType}
 }
 
 func (t *textNode) String() string {
@@ -548,7 +548,7 @@ func (t *textNode) tree() *tree {
 }
 
 func (t *textNode) Copy() node {
-	return &textNode{tr: t.tr, nodeType: NodeText, pos: t.pos, textType: t.textType, Text: append([]byte{}, t.Text...)}
+	return &textNode{tr: t.tr, nodeType: nodeText, pos: t.pos, textType: t.textType, Text: append([]byte{}, t.Text...)}
 }
 
 //
@@ -568,7 +568,7 @@ type mixinNode struct {
 }
 
 func (t *tree) newMixin(pos pos) *mixinNode {
-	return &mixinNode{tr: t, nodeType: NodeMixin, pos: pos}
+	return &mixinNode{tr: t, nodeType: nodeMixin, pos: pos}
 }
 
 func (l *mixinNode) append(n node) {
@@ -694,7 +694,7 @@ func (t *tree) newDoctype(pos pos, text string) *doctypeNode {
 	} else {
 		doc = `<!DOCTYPE html>`
 	}
-	return &doctypeNode{tr: t, nodeType: NodeDoctype, pos: pos, doctype: doc}
+	return &doctypeNode{tr: t, nodeType: nodeDoctype, pos: pos, doctype: doc}
 }
 func (d *doctypeNode) String() string {
 	return fmt.Sprintf(text__str, d.doctype)
@@ -707,5 +707,5 @@ func (d *doctypeNode) tree() *tree {
 	return d.tr
 }
 func (d *doctypeNode) Copy() node {
-	return &doctypeNode{tr: d.tr, nodeType: NodeDoctype, pos: d.pos, doctype: d.doctype}
+	return &doctypeNode{tr: d.tr, nodeType: nodeDoctype, pos: d.pos, doctype: d.doctype}
 }

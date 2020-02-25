@@ -211,8 +211,6 @@ type out struct {
 
 var Go out
 
-func ConfigOtputPHP() {}
-
 type itemType int8
 
 const (
@@ -350,13 +348,13 @@ func (t nodeType) Type() nodeType {
 }
 
 const (
-	NodeText nodeType = iota
-	NodeList
-	NodeTag
-	NodeCode
-	NodeCond
-	NodeString
-	NodeDoctype
-	NodeMixin
-	NodeBlock
+	nodeText nodeType = iota
+	nodeList
+	nodeTag
+	nodeCode
+	nodeCond
+	nodeString
+	nodeDoctype
+	nodeMixin
+	nodeBlock
 )
