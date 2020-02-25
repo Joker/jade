@@ -47,7 +47,7 @@ func (t *tree) topParse() {
 	}
 }
 
-func (t *tree) hub(token item) (n Node) {
+func (t *tree) hub(token item) (n node) {
 	for {
 		switch token.typ {
 		case itemDiv:
@@ -83,7 +83,7 @@ func (t *tree) hub(token item) (n Node) {
 	}
 }
 
-func (t *tree) parseFilter(tk item) Node {
+func (t *tree) parseFilter(tk item) node {
 	var subf, args, text string
 Loop:
 	for {
@@ -135,7 +135,7 @@ func filterGo(subf, args, text string) {
 	}
 }
 
-func (t *tree) parseTag(tk item) Node {
+func (t *tree) parseTag(tk item) node {
 	var (
 		deep = tk.depth
 		tag  = t.newTag(tk.pos, tk.val, tk.typ)
@@ -245,7 +245,7 @@ func (t *tree) parseAttributes(tag pAttr, qw string) {
 	}
 }
 
-func (t *tree) parseIf(tk item) Node {
+func (t *tree) parseIf(tk item) node {
 	var (
 		deep = tk.depth
 		cond = t.newCond(tk.pos, tk.val, tk.typ)
@@ -276,7 +276,7 @@ Loop:
 	return cond
 }
 
-func (t *tree) parseFor(tk item) Node {
+func (t *tree) parseFor(tk item) node {
 	var (
 		deep = tk.depth
 		cond = t.newCond(tk.pos, tk.val, tk.typ)
@@ -301,7 +301,7 @@ Loop:
 	return cond
 }
 
-func (t *tree) parseCase(tk item) Node {
+func (t *tree) parseCase(tk item) node {
 	var (
 		deep  = tk.depth
 		iCase = t.newCond(tk.pos, tk.val, tk.typ)
@@ -346,7 +346,7 @@ Loop:
 	return mixin
 }
 
-func (t *tree) parseMixinUse(tk item) Node {
+func (t *tree) parseMixinUse(tk item) node {
 	tMix, ok := t.mixin[tk.val]
 	if !ok {
 		t.errorf(`Mixin "%s" must be declared before use.`, tk.val)

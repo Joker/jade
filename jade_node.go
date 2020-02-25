@@ -15,7 +15,7 @@ type tagNode struct {
 	NodeType
 	pos
 	tr       *tree
-	Nodes    []Node
+	Nodes    []node
 	AttrName []string
 	AttrCode []string
 	AttrUesc []bool
@@ -27,7 +27,7 @@ func (t *tree) newTag(pos pos, name string, tagType itemType) *tagNode {
 	return &tagNode{tr: t, NodeType: NodeTag, pos: pos, TagName: name, tagType: tagType}
 }
 
-func (l *tagNode) append(n Node) {
+func (l *tagNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
@@ -295,7 +295,7 @@ func (l *tagNode) CopyTag() *tagNode {
 	return n
 }
 
-func (l *tagNode) Copy() Node {
+func (l *tagNode) Copy() node {
 	return l.CopyTag()
 }
 
@@ -306,7 +306,7 @@ type condNode struct {
 	NodeType
 	pos
 	tr       *tree
-	Nodes    []Node
+	Nodes    []node
 	cond     string
 	condType itemType
 }
@@ -315,7 +315,7 @@ func (t *tree) newCond(pos pos, cond string, condType itemType) *condNode {
 	return &condNode{tr: t, NodeType: NodeCond, pos: pos, cond: cond, condType: condType}
 }
 
-func (l *condNode) append(n Node) {
+func (l *condNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
@@ -397,7 +397,7 @@ func (l *condNode) CopyCond() *condNode {
 	return n
 }
 
-func (l *condNode) Copy() Node {
+func (l *condNode) Copy() node {
 	return l.CopyCond()
 }
 
@@ -462,7 +462,7 @@ func (t *codeNode) tree() *tree {
 	return t.tr
 }
 
-func (t *codeNode) Copy() Node {
+func (t *codeNode) Copy() node {
 	return &codeNode{tr: t.tr, NodeType: NodeCode, pos: t.pos, codeType: t.codeType, Code: append([]byte{}, t.Code...)}
 }
 
@@ -506,7 +506,7 @@ func (bn *blockNode) tree() *tree {
 	return bn.tr
 }
 
-func (bn *blockNode) Copy() Node {
+func (bn *blockNode) Copy() node {
 	return &blockNode{tr: bn.tr, NodeType: NodeBlock, pos: bn.pos, blockType: bn.blockType, Name: bn.Name}
 }
 
@@ -547,7 +547,7 @@ func (t *textNode) tree() *tree {
 	return t.tr
 }
 
-func (t *textNode) Copy() Node {
+func (t *textNode) Copy() node {
 	return &textNode{tr: t.tr, NodeType: NodeText, pos: t.pos, textType: t.textType, Text: append([]byte{}, t.Text...)}
 }
 
@@ -558,12 +558,12 @@ type mixinNode struct {
 	NodeType
 	pos
 	tr        *tree
-	Nodes     []Node
+	Nodes     []node
 	AttrName  []string
 	AttrCode  []string
 	AttrRest  []string
 	MixinName string
-	block     []Node
+	block     []node
 	tagType   itemType
 }
 
@@ -571,10 +571,10 @@ func (t *tree) newMixin(pos pos) *mixinNode {
 	return &mixinNode{tr: t, NodeType: NodeMixin, pos: pos}
 }
 
-func (l *mixinNode) append(n Node) {
+func (l *mixinNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
 }
-func (l *mixinNode) appendToBlock(n Node) {
+func (l *mixinNode) appendToBlock(n node) {
 	l.block = append(l.block, n)
 }
 
@@ -641,7 +641,7 @@ func (l *mixinNode) CopyMixin() *mixinNode {
 	return n
 }
 
-func (l *mixinNode) Copy() Node {
+func (l *mixinNode) Copy() node {
 	return l.CopyMixin()
 }
 
@@ -706,6 +706,6 @@ func (d *doctypeNode) WriteIn(b io.Writer) {
 func (d *doctypeNode) tree() *tree {
 	return d.tr
 }
-func (d *doctypeNode) Copy() Node {
+func (d *doctypeNode) Copy() node {
 	return &doctypeNode{tr: d.tr, NodeType: NodeDoctype, pos: d.pos, doctype: d.doctype}
 }

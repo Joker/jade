@@ -14,14 +14,14 @@ import (
 // A Node is an element in the parse tree. The interface is trivial.
 // The interface contains an unexported method so that only
 // types local to this package can satisfy it.
-type Node interface {
+type node interface {
 	Type() NodeType
 	String() string
 	WriteIn(io.Writer)
 	// Copy does a deep copy of the Node and all its components.
 	// To avoid type assertions, some XxxNodes also have specialized
 	// CopyXxx methods that return *XxxNode.
-	Copy() Node
+	Copy() node
 	position() pos // byte position of start of node in full original input string
 	// tree returns the containing *tree.
 	// It is unexported so all implementations of Node are in this package.
@@ -43,14 +43,14 @@ type listNode struct {
 	NodeType
 	pos
 	tr    *tree
-	Nodes []Node // The element nodes in lexical order.
+	Nodes []node // The element nodes in lexical order.
 }
 
 func (t *tree) newList(pos pos) *listNode {
 	return &listNode{tr: t, NodeType: NodeList, pos: pos}
 }
 
-func (l *listNode) append(n Node) {
+func (l *listNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
@@ -80,6 +80,6 @@ func (l *listNode) CopyList() *listNode {
 	return n
 }
 
-func (l *listNode) Copy() Node {
+func (l *listNode) Copy() node {
 	return l.CopyList()
 }

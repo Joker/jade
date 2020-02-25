@@ -205,11 +205,11 @@ func Config(c Cfg) {
 	}
 }
 
-type Out struct {
+type out struct {
 	Name, Args, Import string
 }
 
-var Go Out
+var Go out
 
 func ConfigOtputPHP() {}
 
