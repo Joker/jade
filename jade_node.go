@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type TagNode struct {
+type tagNode struct {
 	NodeType
 	Pos
 	tr       *tree
@@ -23,19 +23,19 @@ type TagNode struct {
 	tagType  itemType
 }
 
-func (t *tree) newTag(pos Pos, name string, tagType itemType) *TagNode {
-	return &TagNode{tr: t, NodeType: NodeTag, Pos: pos, TagName: name, tagType: tagType}
+func (t *tree) newTag(pos Pos, name string, tagType itemType) *tagNode {
+	return &tagNode{tr: t, NodeType: NodeTag, Pos: pos, TagName: name, tagType: tagType}
 }
 
-func (l *TagNode) append(n Node) {
+func (l *tagNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *TagNode) tree() *tree {
+func (l *tagNode) tree() *tree {
 	return l.tr
 }
 
-func (l *TagNode) attr(a, b string, c bool) {
+func (l *tagNode) attr(a, b string, c bool) {
 	for k, v := range l.AttrName {
 		// add to existing attribute
 		if v == a {
@@ -49,7 +49,7 @@ func (l *TagNode) attr(a, b string, c bool) {
 	l.AttrUesc = append(l.AttrUesc, c)
 }
 
-func (l *TagNode) ifAttrArgBollean() {
+func (l *tagNode) ifAttrArgBollean() {
 	for k, v := range l.AttrCode {
 		if v == "true" {
 			l.AttrCode[k] = `"` + l.AttrName[k] + `"`
@@ -225,12 +225,12 @@ func ternary(a string) (string, bool) {
 	return "", false
 }
 
-func (l *TagNode) String() string {
+func (l *tagNode) String() string {
 	var b = new(bytes.Buffer)
 	l.WriteIn(b)
 	return b.String()
 }
-func (l *TagNode) WriteIn(b io.Writer) {
+func (l *tagNode) WriteIn(b io.Writer) {
 	var (
 		attr = new(bytes.Buffer)
 	)
@@ -281,7 +281,7 @@ func (l *TagNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (l *TagNode) CopyTag() *TagNode {
+func (l *tagNode) CopyTag() *tagNode {
 	if l == nil {
 		return l
 	}
@@ -295,14 +295,14 @@ func (l *TagNode) CopyTag() *TagNode {
 	return n
 }
 
-func (l *TagNode) Copy() Node {
+func (l *tagNode) Copy() Node {
 	return l.CopyTag()
 }
 
 //
 //
 
-type CondNode struct {
+type condNode struct {
 	NodeType
 	Pos
 	tr       *tree
@@ -311,24 +311,24 @@ type CondNode struct {
 	condType itemType
 }
 
-func (t *tree) newCond(pos Pos, cond string, condType itemType) *CondNode {
-	return &CondNode{tr: t, NodeType: NodeCond, Pos: pos, cond: cond, condType: condType}
+func (t *tree) newCond(pos Pos, cond string, condType itemType) *condNode {
+	return &condNode{tr: t, NodeType: NodeCond, Pos: pos, cond: cond, condType: condType}
 }
 
-func (l *CondNode) append(n Node) {
+func (l *condNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *CondNode) tree() *tree {
+func (l *condNode) tree() *tree {
 	return l.tr
 }
 
-func (l *CondNode) String() string {
+func (l *condNode) String() string {
 	var b = new(bytes.Buffer)
 	l.WriteIn(b)
 	return b.String()
 }
-func (l *CondNode) WriteIn(b io.Writer) {
+func (l *condNode) WriteIn(b io.Writer) {
 	switch l.condType {
 	case itemIf:
 		fmt.Fprintf(b, cond__if, l.cond)
@@ -361,7 +361,7 @@ func (l *CondNode) WriteIn(b io.Writer) {
 	fmt.Fprint(b, cond__end)
 }
 
-func (l *CondNode) parseForArgs() (k, v, name string, ok bool) {
+func (l *condNode) parseForArgs() (k, v, name string, ok bool) {
 	sp := strings.SplitN(l.cond, " in ", 2)
 	if len(sp) != 2 {
 		return
@@ -386,7 +386,7 @@ func (l *CondNode) parseForArgs() (k, v, name string, ok bool) {
 	return
 }
 
-func (l *CondNode) CopyCond() *CondNode {
+func (l *condNode) CopyCond() *condNode {
 	if l == nil {
 		return l
 	}
@@ -397,14 +397,14 @@ func (l *CondNode) CopyCond() *CondNode {
 	return n
 }
 
-func (l *CondNode) Copy() Node {
+func (l *condNode) Copy() Node {
 	return l.CopyCond()
 }
 
 //
 //
 
-type CodeNode struct {
+type codeNode struct {
 	NodeType
 	Pos
 	tr       *tree
@@ -412,16 +412,16 @@ type CodeNode struct {
 	Code     []byte // The text; may span newlines.
 }
 
-func (t *tree) newCode(pos Pos, text string, codeType itemType) *CodeNode {
-	return &CodeNode{tr: t, NodeType: NodeCode, Pos: pos, Code: []byte(text), codeType: codeType}
+func (t *tree) newCode(pos Pos, text string, codeType itemType) *codeNode {
+	return &codeNode{tr: t, NodeType: NodeCode, Pos: pos, Code: []byte(text), codeType: codeType}
 }
 
-func (t *CodeNode) String() string {
+func (t *codeNode) String() string {
 	var b = new(bytes.Buffer)
 	t.WriteIn(b)
 	return b.String()
 }
-func (t *CodeNode) WriteIn(b io.Writer) {
+func (t *codeNode) WriteIn(b io.Writer) {
 	switch t.codeType {
 	case itemCodeBuffered:
 		if !golang_mode {
@@ -458,18 +458,18 @@ func (t *CodeNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (t *CodeNode) tree() *tree {
+func (t *codeNode) tree() *tree {
 	return t.tr
 }
 
-func (t *CodeNode) Copy() Node {
-	return &CodeNode{tr: t.tr, NodeType: NodeCode, Pos: t.Pos, codeType: t.codeType, Code: append([]byte{}, t.Code...)}
+func (t *codeNode) Copy() Node {
+	return &codeNode{tr: t.tr, NodeType: NodeCode, Pos: t.Pos, codeType: t.codeType, Code: append([]byte{}, t.Code...)}
 }
 
 //
 //
 
-type BlockNode struct {
+type blockNode struct {
 	NodeType
 	Pos
 	tr        *tree
@@ -477,16 +477,16 @@ type BlockNode struct {
 	Name      string
 }
 
-func (t *tree) newBlock(pos Pos, name string, textType itemType) *BlockNode {
-	return &BlockNode{tr: t, NodeType: NodeBlock, Pos: pos, Name: name, blockType: textType}
+func (t *tree) newBlock(pos Pos, name string, textType itemType) *blockNode {
+	return &blockNode{tr: t, NodeType: NodeBlock, Pos: pos, Name: name, blockType: textType}
 }
 
-func (bn *BlockNode) String() string {
+func (bn *blockNode) String() string {
 	var b = new(bytes.Buffer)
 	bn.WriteIn(b)
 	return b.String()
 }
-func (bn *BlockNode) WriteIn(b io.Writer) {
+func (bn *blockNode) WriteIn(b io.Writer) {
 	var (
 		out_blk         = bn.tr.block[bn.Name]
 		out_pre, ok_pre = bn.tr.block[bn.Name+"_prepend"]
@@ -502,18 +502,18 @@ func (bn *BlockNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (bn *BlockNode) tree() *tree {
+func (bn *blockNode) tree() *tree {
 	return bn.tr
 }
 
-func (bn *BlockNode) Copy() Node {
-	return &BlockNode{tr: bn.tr, NodeType: NodeBlock, Pos: bn.Pos, blockType: bn.blockType, Name: bn.Name}
+func (bn *blockNode) Copy() Node {
+	return &blockNode{tr: bn.tr, NodeType: NodeBlock, Pos: bn.Pos, blockType: bn.blockType, Name: bn.Name}
 }
 
 //
 //
 
-type TextNode struct {
+type textNode struct {
 	NodeType
 	Pos
 	tr       *tree
@@ -521,16 +521,16 @@ type TextNode struct {
 	Text     []byte // The text; may span newlines.
 }
 
-func (t *tree) newText(pos Pos, text []byte, textType itemType) *TextNode {
-	return &TextNode{tr: t, NodeType: NodeText, Pos: pos, Text: text, textType: textType}
+func (t *tree) newText(pos Pos, text []byte, textType itemType) *textNode {
+	return &textNode{tr: t, NodeType: NodeText, Pos: pos, Text: text, textType: textType}
 }
 
-func (t *TextNode) String() string {
+func (t *textNode) String() string {
 	var b = new(bytes.Buffer)
 	t.WriteIn(b)
 	return b.String()
 }
-func (t *TextNode) WriteIn(b io.Writer) {
+func (t *textNode) WriteIn(b io.Writer) {
 	switch t.textType {
 	case itemComment:
 		fmt.Fprintf(b, text__comment, t.Text)
@@ -543,18 +543,18 @@ func (t *TextNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (t *TextNode) tree() *tree {
+func (t *textNode) tree() *tree {
 	return t.tr
 }
 
-func (t *TextNode) Copy() Node {
-	return &TextNode{tr: t.tr, NodeType: NodeText, Pos: t.Pos, textType: t.textType, Text: append([]byte{}, t.Text...)}
+func (t *textNode) Copy() Node {
+	return &textNode{tr: t.tr, NodeType: NodeText, Pos: t.Pos, textType: t.textType, Text: append([]byte{}, t.Text...)}
 }
 
 //
 //
 
-type MixinNode struct {
+type mixinNode struct {
 	NodeType
 	Pos
 	tr        *tree
@@ -567,32 +567,32 @@ type MixinNode struct {
 	tagType   itemType
 }
 
-func (t *tree) newMixin(pos Pos) *MixinNode {
-	return &MixinNode{tr: t, NodeType: NodeMixin, Pos: pos}
+func (t *tree) newMixin(pos Pos) *mixinNode {
+	return &mixinNode{tr: t, NodeType: NodeMixin, Pos: pos}
 }
 
-func (l *MixinNode) append(n Node) {
+func (l *mixinNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
-func (l *MixinNode) appendToBlock(n Node) {
+func (l *mixinNode) appendToBlock(n Node) {
 	l.block = append(l.block, n)
 }
 
-func (l *MixinNode) attr(a, b string, c bool) {
+func (l *mixinNode) attr(a, b string, c bool) {
 	l.AttrName = append(l.AttrName, a)
 	l.AttrCode = append(l.AttrCode, b)
 }
 
-func (l *MixinNode) tree() *tree {
+func (l *mixinNode) tree() *tree {
 	return l.tr
 }
 
-func (l *MixinNode) String() string {
+func (l *mixinNode) String() string {
 	var b = new(bytes.Buffer)
 	l.WriteIn(b)
 	return b.String()
 }
-func (l *MixinNode) WriteIn(b io.Writer) {
+func (l *mixinNode) WriteIn(b io.Writer) {
 	var (
 		attr = new(bytes.Buffer)
 		an   = len(l.AttrName)
@@ -630,7 +630,7 @@ func (l *MixinNode) WriteIn(b io.Writer) {
 	fmt.Fprintf(b, mixin__end)
 }
 
-func (l *MixinNode) CopyMixin() *MixinNode {
+func (l *mixinNode) CopyMixin() *mixinNode {
 	if l == nil {
 		return l
 	}
@@ -641,21 +641,21 @@ func (l *MixinNode) CopyMixin() *MixinNode {
 	return n
 }
 
-func (l *MixinNode) Copy() Node {
+func (l *mixinNode) Copy() Node {
 	return l.CopyMixin()
 }
 
 //
 //
 
-type DoctypeNode struct {
+type doctypeNode struct {
 	NodeType
 	Pos
 	tr      *tree
 	doctype string
 }
 
-func (t *tree) newDoctype(pos Pos, text string) *DoctypeNode {
+func (t *tree) newDoctype(pos Pos, text string) *doctypeNode {
 	doc := ""
 	txt := strings.Trim(text, " ")
 	if len(txt) > 0 {
@@ -694,18 +694,18 @@ func (t *tree) newDoctype(pos Pos, text string) *DoctypeNode {
 	} else {
 		doc = `<!DOCTYPE html>`
 	}
-	return &DoctypeNode{tr: t, NodeType: NodeDoctype, Pos: pos, doctype: doc}
+	return &doctypeNode{tr: t, NodeType: NodeDoctype, Pos: pos, doctype: doc}
 }
-func (d *DoctypeNode) String() string {
+func (d *doctypeNode) String() string {
 	return fmt.Sprintf(text__str, d.doctype)
 }
-func (d *DoctypeNode) WriteIn(b io.Writer) {
+func (d *doctypeNode) WriteIn(b io.Writer) {
 	fmt.Fprintf(b, text__str, d.doctype)
 	// b.Write([]byte(d.doctype))
 }
-func (d *DoctypeNode) tree() *tree {
+func (d *doctypeNode) tree() *tree {
 	return d.tr
 }
-func (d *DoctypeNode) Copy() Node {
-	return &DoctypeNode{tr: d.tr, NodeType: NodeDoctype, Pos: d.Pos, doctype: d.doctype}
+func (d *doctypeNode) Copy() Node {
+	return &doctypeNode{tr: d.tr, NodeType: NodeDoctype, Pos: d.Pos, doctype: d.doctype}
 }

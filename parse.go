@@ -20,7 +20,7 @@ type tree struct {
 	token     [3]item // three-token lookahead for parser.
 	peekCount int
 
-	mixin map[string]*MixinNode
+	mixin map[string]*mixinNode
 	block map[string]*listNode
 }
 
@@ -139,7 +139,7 @@ func (t *tree) Parse(text []byte) (tree *tree, err error) {
 func New(name string) *tree {
 	return &tree{
 		Name:  name,
-		mixin: map[string]*MixinNode{},
+		mixin: map[string]*mixinNode{},
 		block: map[string]*listNode{},
 	}
 }

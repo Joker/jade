@@ -322,7 +322,7 @@ func (t *tree) parseCase(tk item) Node {
 	return iCase
 }
 
-func (t *tree) parseMixin(tk item) *MixinNode {
+func (t *tree) parseMixin(tk item) *mixinNode {
 	var (
 		deep  = tk.depth
 		mixin = t.newMixin(tk.pos)
@@ -403,7 +403,7 @@ Loop:
 	return mixin
 }
 
-func (t *tree) parseBlock(tk item) *BlockNode {
+func (t *tree) parseBlock(tk item) *blockNode {
 	block := t.newList(tk.pos)
 	for {
 		token := t.nextNonSpace()
