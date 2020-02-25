@@ -22,17 +22,17 @@ type Node interface {
 	// To avoid type assertions, some XxxNodes also have specialized
 	// CopyXxx methods that return *XxxNode.
 	Copy() Node
-	Position() Pos // byte position of start of node in full original input string
+	position() pos // byte position of start of node in full original input string
 	// tree returns the containing *tree.
 	// It is unexported so all implementations of Node are in this package.
 	tree() *tree
 }
 
-// Pos represents a byte position in the original input text from which
+// pos represents a byte position in the original input text from which
 // this template was parsed.
-type Pos int
+type pos int
 
-func (p Pos) Position() Pos {
+func (p pos) position() pos {
 	return p
 }
 
@@ -41,13 +41,13 @@ func (p Pos) Position() Pos {
 // listNode holds a sequence of nodes.
 type listNode struct {
 	NodeType
-	Pos
+	pos
 	tr    *tree
 	Nodes []Node // The element nodes in lexical order.
 }
 
-func (t *tree) newList(pos Pos) *listNode {
-	return &listNode{tr: t, NodeType: NodeList, Pos: pos}
+func (t *tree) newList(pos pos) *listNode {
+	return &listNode{tr: t, NodeType: NodeList, pos: pos}
 }
 
 func (l *listNode) append(n Node) {
@@ -73,7 +73,7 @@ func (l *listNode) CopyList() *listNode {
 	if l == nil {
 		return l
 	}
-	n := l.tr.newList(l.Pos)
+	n := l.tr.newList(l.pos)
 	for _, elem := range l.Nodes {
 		n.append(elem.Copy())
 	}

@@ -273,7 +273,7 @@ func text(l *lexer) stateFn {
 			if l.longtext {
 				var (
 					indent int
-					pos    Pos
+					pos    pos
 				)
 				l.backup()
 				pos = l.pos
@@ -654,7 +654,7 @@ func (l *lexer) toStopRune(stopRune rune, backup bool) {
 func (l *lexer) multiline() {
 	var (
 		indent int
-		pos    Pos
+		pos    pos
 	)
 	for {
 		switch r := l.next(); {
