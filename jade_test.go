@@ -27,7 +27,7 @@ func TestStrFilter(t *testing.T) {
 	}
 }
 
-func examination(test func(dat []byte) (string, error), ext, path string, t *testing.T) {
+func examination(test func(fpath string, dat []byte) (string, error), ext, path string, t *testing.T) {
 	os.Chdir(path)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -52,7 +52,7 @@ func examination(test func(dat []byte) (string, error), ext, path string, t *tes
 			continue
 		}
 
-		tpl, err := test(dat)
+		tpl, err := test(path+name, dat)
 		if err != nil {
 			fmt.Println("_________" + name)
 			fmt.Printf("--- FAIL: test run() error: \n%s\n\n", err)
@@ -102,10 +102,10 @@ func examination(test func(dat []byte) (string, error), ext, path string, t *tes
 	}
 }
 
-func lexerTest(dat []byte) (string, error) {
+func lexerTest(fpath string, dat []byte) (string, error) {
 	var buf bytes.Buffer
 
-	l := lex("test", dat)
+	l := lex(fpath, dat)
 	for i := range l.items {
 		switch {
 		case i.typ == itemError:
@@ -135,8 +135,8 @@ func xTestJadeLex(t *testing.T) {
 
 //
 
-func parserTest(text []byte) (string, error) {
-	outTpl, err := New("test").Parse(text)
+func parserTest(fpath string, text []byte) (string, error) {
+	outTpl, err := New(fpath).Parse(text)
 	if err != nil {
 		return "", err
 	}

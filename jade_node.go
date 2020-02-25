@@ -481,16 +481,16 @@ func (t *Tree) newBlock(pos Pos, name string, textType itemType) *BlockNode {
 	return &BlockNode{tr: t, NodeType: NodeBlock, Pos: pos, Name: name, blockType: textType}
 }
 
-func (t *BlockNode) String() string {
+func (bn *BlockNode) String() string {
 	var b = new(bytes.Buffer)
-	t.WriteIn(b)
+	bn.WriteIn(b)
 	return b.String()
 }
-func (t *BlockNode) WriteIn(b io.Writer) {
+func (bn *BlockNode) WriteIn(b io.Writer) {
 	var (
-		out_blk         = t.tr.block[t.Name]
-		out_pre, ok_pre = t.tr.block[t.Name+"_prepend"]
-		out_app, ok_app = t.tr.block[t.Name+"_append"]
+		out_blk         = bn.tr.block[bn.Name]
+		out_pre, ok_pre = bn.tr.block[bn.Name+"_prepend"]
+		out_app, ok_app = bn.tr.block[bn.Name+"_append"]
 	)
 	if ok_pre {
 		out_pre.WriteIn(b)
@@ -502,12 +502,12 @@ func (t *BlockNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (t *BlockNode) tree() *Tree {
-	return t.tr
+func (bn *BlockNode) tree() *Tree {
+	return bn.tr
 }
 
-func (t *BlockNode) Copy() Node {
-	return &BlockNode{tr: t.tr, NodeType: NodeBlock, Pos: t.Pos, blockType: t.blockType, Name: t.Name}
+func (bn *BlockNode) Copy() Node {
+	return &BlockNode{tr: bn.tr, NodeType: NodeBlock, Pos: bn.Pos, blockType: bn.blockType, Name: bn.Name}
 }
 
 //

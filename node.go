@@ -38,38 +38,38 @@ func (p Pos) Position() Pos {
 
 // Nodes.
 
-// ListNode holds a sequence of nodes.
-type ListNode struct {
+// listNode holds a sequence of nodes.
+type listNode struct {
 	NodeType
 	Pos
 	tr    *Tree
 	Nodes []Node // The element nodes in lexical order.
 }
 
-func (t *Tree) newList(pos Pos) *ListNode {
-	return &ListNode{tr: t, NodeType: NodeList, Pos: pos}
+func (t *Tree) newList(pos Pos) *listNode {
+	return &listNode{tr: t, NodeType: NodeList, Pos: pos}
 }
 
-func (l *ListNode) append(n Node) {
+func (l *listNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *ListNode) tree() *Tree {
+func (l *listNode) tree() *Tree {
 	return l.tr
 }
 
-func (l *ListNode) String() string {
+func (l *listNode) String() string {
 	b := new(bytes.Buffer)
 	l.WriteIn(b)
 	return b.String()
 }
-func (l *ListNode) WriteIn(b io.Writer) {
+func (l *listNode) WriteIn(b io.Writer) {
 	for _, n := range l.Nodes {
 		n.WriteIn(b)
 	}
 }
 
-func (l *ListNode) CopyList() *ListNode {
+func (l *listNode) CopyList() *listNode {
 	if l == nil {
 		return l
 	}
@@ -80,6 +80,6 @@ func (l *ListNode) CopyList() *ListNode {
 	return n
 }
 
-func (l *ListNode) Copy() Node {
+func (l *listNode) Copy() Node {
 	return l.CopyList()
 }

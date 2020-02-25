@@ -12,7 +12,7 @@ import (
 // Tree is the representation of a single parsed template.
 type Tree struct {
 	Name string    // name of the template represented by the tree.
-	Root *ListNode // top-level root of the tree.
+	Root *listNode // top-level root of the tree.
 	text string    // text parsed to create the template (or its parent)
 
 	// Parsing only; cleared after parse.
@@ -21,7 +21,7 @@ type Tree struct {
 	peekCount int
 
 	mixin map[string]*MixinNode
-	block map[string]*ListNode
+	block map[string]*listNode
 }
 
 // Copy returns a copy of the Tree. Any parsing state is discarded.
@@ -140,6 +140,6 @@ func New(name string) *Tree {
 	return &Tree{
 		Name:  name,
 		mixin: map[string]*MixinNode{},
-		block: map[string]*ListNode{},
+		block: map[string]*listNode{},
 	}
 }

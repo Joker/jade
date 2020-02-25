@@ -425,7 +425,7 @@ func (t *Tree) parseBlock(tk item) *BlockNode {
 	return t.newBlock(tk.pos, tk.val, tk.typ)
 }
 
-func (t *Tree) parseInclude(tk item) *ListNode {
+func (t *Tree) parseInclude(tk item) *listNode {
 	switch ext := filepath.Ext(tk.val); ext {
 	case ".jade", ".pug", "":
 		return t.parseSubFile(tk.val)
@@ -439,7 +439,7 @@ func (t *Tree) parseInclude(tk item) *ListNode {
 	}
 }
 
-func (t *Tree) parseSubFile(path string) *ListNode {
+func (t *Tree) parseSubFile(path string) *listNode {
 	// log.Println("subtemplate: " + path)
 	currentTmplDir, _ := filepath.Split(t.Name)
 	var incTree = New(currentTmplDir + path)
