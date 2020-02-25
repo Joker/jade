@@ -19,8 +19,8 @@ const _NodeType_name = "NodeTextNodeListNodeTagNodeCodeNodeCondNodeStringNodeDoc
 
 var _NodeType_index = [...]uint8{0, 8, 16, 23, 31, 39, 49, 60, 69, 78}
 
-func (i NodeType) String() string {
-	if i < 0 || i >= NodeType(len(_NodeType_index)-1) {
+func (i nodeType) String() string {
+	if i < 0 || i >= nodeType(len(_NodeType_index)-1) {
 		return "NodeType(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _NodeType_name[_NodeType_index[i]:_NodeType_index[i+1]]

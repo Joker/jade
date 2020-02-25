@@ -15,7 +15,7 @@ import (
 // The interface contains an unexported method so that only
 // types local to this package can satisfy it.
 type node interface {
-	Type() NodeType
+	Type() nodeType
 	String() string
 	WriteIn(io.Writer)
 	// Copy does a deep copy of the Node and all its components.
@@ -40,14 +40,14 @@ func (p pos) position() pos {
 
 // listNode holds a sequence of nodes.
 type listNode struct {
-	NodeType
+	nodeType
 	pos
 	tr    *tree
 	Nodes []node // The element nodes in lexical order.
 }
 
 func (t *tree) newList(pos pos) *listNode {
-	return &listNode{tr: t, NodeType: NodeList, pos: pos}
+	return &listNode{tr: t, nodeType: NodeList, pos: pos}
 }
 
 func (l *listNode) append(n node) {

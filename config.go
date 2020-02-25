@@ -340,17 +340,17 @@ var key = map[string]itemType{
 	"img": itemTagVoidInline,
 }
 
-// NodeType identifies the type of a parse tree node.
-type NodeType int
+// nodeType identifies the type of a parse tree node.
+type nodeType int
 
 // Type returns itself and provides an easy default implementation
 // for embedding in a Node. Embedded in all non-trivial Nodes.
-func (t NodeType) Type() NodeType {
+func (t nodeType) Type() nodeType {
 	return t
 }
 
 const (
-	NodeText NodeType = iota
+	NodeText nodeType = iota
 	NodeList
 	NodeTag
 	NodeCode
