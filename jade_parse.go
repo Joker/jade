@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (t *Tree) topParse() {
+func (t *tree) topParse() {
 	t.Root = t.newList(t.peek().pos)
 	var (
 		ext   bool
@@ -47,7 +47,7 @@ func (t *Tree) topParse() {
 	}
 }
 
-func (t *Tree) hub(token item) (n Node) {
+func (t *tree) hub(token item) (n Node) {
 	for {
 		switch token.typ {
 		case itemDiv:
@@ -83,7 +83,7 @@ func (t *Tree) hub(token item) (n Node) {
 	}
 }
 
-func (t *Tree) parseFilter(tk item) Node {
+func (t *tree) parseFilter(tk item) Node {
 	var subf, args, text string
 Loop:
 	for {
@@ -135,7 +135,7 @@ func filterGo(subf, args, text string) {
 	}
 }
 
-func (t *Tree) parseTag(tk item) Node {
+func (t *tree) parseTag(tk item) Node {
 	var (
 		deep = tk.depth
 		tag  = t.newTag(tk.pos, tk.val, tk.typ)
@@ -174,7 +174,7 @@ type pAttr interface {
 	attr(string, string, bool)
 }
 
-func (t *Tree) parseAttributes(tag pAttr, qw string) {
+func (t *tree) parseAttributes(tag pAttr, qw string) {
 	var (
 		aname string
 		equal bool
@@ -245,7 +245,7 @@ func (t *Tree) parseAttributes(tag pAttr, qw string) {
 	}
 }
 
-func (t *Tree) parseIf(tk item) Node {
+func (t *tree) parseIf(tk item) Node {
 	var (
 		deep = tk.depth
 		cond = t.newCond(tk.pos, tk.val, tk.typ)
@@ -276,7 +276,7 @@ Loop:
 	return cond
 }
 
-func (t *Tree) parseFor(tk item) Node {
+func (t *tree) parseFor(tk item) Node {
 	var (
 		deep = tk.depth
 		cond = t.newCond(tk.pos, tk.val, tk.typ)
@@ -301,7 +301,7 @@ Loop:
 	return cond
 }
 
-func (t *Tree) parseCase(tk item) Node {
+func (t *tree) parseCase(tk item) Node {
 	var (
 		deep  = tk.depth
 		iCase = t.newCond(tk.pos, tk.val, tk.typ)
@@ -322,7 +322,7 @@ func (t *Tree) parseCase(tk item) Node {
 	return iCase
 }
 
-func (t *Tree) parseMixin(tk item) *MixinNode {
+func (t *tree) parseMixin(tk item) *MixinNode {
 	var (
 		deep  = tk.depth
 		mixin = t.newMixin(tk.pos)
@@ -346,7 +346,7 @@ Loop:
 	return mixin
 }
 
-func (t *Tree) parseMixinUse(tk item) Node {
+func (t *tree) parseMixinUse(tk item) Node {
 	tMix, ok := t.mixin[tk.val]
 	if !ok {
 		t.errorf(`Mixin "%s" must be declared before use.`, tk.val)
@@ -403,7 +403,7 @@ Loop:
 	return mixin
 }
 
-func (t *Tree) parseBlock(tk item) *BlockNode {
+func (t *tree) parseBlock(tk item) *BlockNode {
 	block := t.newList(tk.pos)
 	for {
 		token := t.nextNonSpace()
@@ -425,7 +425,7 @@ func (t *Tree) parseBlock(tk item) *BlockNode {
 	return t.newBlock(tk.pos, tk.val, tk.typ)
 }
 
-func (t *Tree) parseInclude(tk item) *listNode {
+func (t *tree) parseInclude(tk item) *listNode {
 	switch ext := filepath.Ext(tk.val); ext {
 	case ".jade", ".pug", "":
 		return t.parseSubFile(tk.val)
@@ -439,7 +439,7 @@ func (t *Tree) parseInclude(tk item) *listNode {
 	}
 }
 
-func (t *Tree) parseSubFile(path string) *listNode {
+func (t *tree) parseSubFile(path string) *listNode {
 	// log.Println("subtemplate: " + path)
 	currentTmplDir, _ := filepath.Split(t.Name)
 	var incTree = New(currentTmplDir + path)
@@ -454,7 +454,7 @@ func (t *Tree) parseSubFile(path string) *listNode {
 	return incTree.Root
 }
 
-func (t *Tree) read(path string) []byte {
+func (t *tree) read(path string) []byte {
 	currentTmplDir, _ := filepath.Split(t.Name)
 	path = currentTmplDir + path
 	var (

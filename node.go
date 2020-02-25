@@ -23,9 +23,9 @@ type Node interface {
 	// CopyXxx methods that return *XxxNode.
 	Copy() Node
 	Position() Pos // byte position of start of node in full original input string
-	// tree returns the containing *Tree.
+	// tree returns the containing *tree.
 	// It is unexported so all implementations of Node are in this package.
-	tree() *Tree
+	tree() *tree
 }
 
 // Pos represents a byte position in the original input text from which
@@ -42,11 +42,11 @@ func (p Pos) Position() Pos {
 type listNode struct {
 	NodeType
 	Pos
-	tr    *Tree
+	tr    *tree
 	Nodes []Node // The element nodes in lexical order.
 }
 
-func (t *Tree) newList(pos Pos) *listNode {
+func (t *tree) newList(pos Pos) *listNode {
 	return &listNode{tr: t, NodeType: NodeList, Pos: pos}
 }
 
@@ -54,7 +54,7 @@ func (l *listNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *listNode) tree() *Tree {
+func (l *listNode) tree() *tree {
 	return l.tr
 }
 

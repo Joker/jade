@@ -53,6 +53,6 @@ func ParseFile(filename string) (string, error) {
 	return Parse(filepath.Base(filename), bs)
 }
 
-func (t *Tree) WriteIn(b io.Writer) {
+func (t *tree) WriteIn(b io.Writer) {
 	t.Root.WriteIn(b)
 }

@@ -14,7 +14,7 @@ import (
 type TagNode struct {
 	NodeType
 	Pos
-	tr       *Tree
+	tr       *tree
 	Nodes    []Node
 	AttrName []string
 	AttrCode []string
@@ -23,7 +23,7 @@ type TagNode struct {
 	tagType  itemType
 }
 
-func (t *Tree) newTag(pos Pos, name string, tagType itemType) *TagNode {
+func (t *tree) newTag(pos Pos, name string, tagType itemType) *TagNode {
 	return &TagNode{tr: t, NodeType: NodeTag, Pos: pos, TagName: name, tagType: tagType}
 }
 
@@ -31,7 +31,7 @@ func (l *TagNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *TagNode) tree() *Tree {
+func (l *TagNode) tree() *tree {
 	return l.tr
 }
 
@@ -305,13 +305,13 @@ func (l *TagNode) Copy() Node {
 type CondNode struct {
 	NodeType
 	Pos
-	tr       *Tree
+	tr       *tree
 	Nodes    []Node
 	cond     string
 	condType itemType
 }
 
-func (t *Tree) newCond(pos Pos, cond string, condType itemType) *CondNode {
+func (t *tree) newCond(pos Pos, cond string, condType itemType) *CondNode {
 	return &CondNode{tr: t, NodeType: NodeCond, Pos: pos, cond: cond, condType: condType}
 }
 
@@ -319,7 +319,7 @@ func (l *CondNode) append(n Node) {
 	l.Nodes = append(l.Nodes, n)
 }
 
-func (l *CondNode) tree() *Tree {
+func (l *CondNode) tree() *tree {
 	return l.tr
 }
 
@@ -407,12 +407,12 @@ func (l *CondNode) Copy() Node {
 type CodeNode struct {
 	NodeType
 	Pos
-	tr       *Tree
+	tr       *tree
 	codeType itemType
 	Code     []byte // The text; may span newlines.
 }
 
-func (t *Tree) newCode(pos Pos, text string, codeType itemType) *CodeNode {
+func (t *tree) newCode(pos Pos, text string, codeType itemType) *CodeNode {
 	return &CodeNode{tr: t, NodeType: NodeCode, Pos: pos, Code: []byte(text), codeType: codeType}
 }
 
@@ -458,7 +458,7 @@ func (t *CodeNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (t *CodeNode) tree() *Tree {
+func (t *CodeNode) tree() *tree {
 	return t.tr
 }
 
@@ -472,12 +472,12 @@ func (t *CodeNode) Copy() Node {
 type BlockNode struct {
 	NodeType
 	Pos
-	tr        *Tree
+	tr        *tree
 	blockType itemType
 	Name      string
 }
 
-func (t *Tree) newBlock(pos Pos, name string, textType itemType) *BlockNode {
+func (t *tree) newBlock(pos Pos, name string, textType itemType) *BlockNode {
 	return &BlockNode{tr: t, NodeType: NodeBlock, Pos: pos, Name: name, blockType: textType}
 }
 
@@ -502,7 +502,7 @@ func (bn *BlockNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (bn *BlockNode) tree() *Tree {
+func (bn *BlockNode) tree() *tree {
 	return bn.tr
 }
 
@@ -516,12 +516,12 @@ func (bn *BlockNode) Copy() Node {
 type TextNode struct {
 	NodeType
 	Pos
-	tr       *Tree
+	tr       *tree
 	textType itemType
 	Text     []byte // The text; may span newlines.
 }
 
-func (t *Tree) newText(pos Pos, text []byte, textType itemType) *TextNode {
+func (t *tree) newText(pos Pos, text []byte, textType itemType) *TextNode {
 	return &TextNode{tr: t, NodeType: NodeText, Pos: pos, Text: text, textType: textType}
 }
 
@@ -543,7 +543,7 @@ func (t *TextNode) WriteIn(b io.Writer) {
 	}
 }
 
-func (t *TextNode) tree() *Tree {
+func (t *TextNode) tree() *tree {
 	return t.tr
 }
 
@@ -557,7 +557,7 @@ func (t *TextNode) Copy() Node {
 type MixinNode struct {
 	NodeType
 	Pos
-	tr        *Tree
+	tr        *tree
 	Nodes     []Node
 	AttrName  []string
 	AttrCode  []string
@@ -567,7 +567,7 @@ type MixinNode struct {
 	tagType   itemType
 }
 
-func (t *Tree) newMixin(pos Pos) *MixinNode {
+func (t *tree) newMixin(pos Pos) *MixinNode {
 	return &MixinNode{tr: t, NodeType: NodeMixin, Pos: pos}
 }
 
@@ -583,7 +583,7 @@ func (l *MixinNode) attr(a, b string, c bool) {
 	l.AttrCode = append(l.AttrCode, b)
 }
 
-func (l *MixinNode) tree() *Tree {
+func (l *MixinNode) tree() *tree {
 	return l.tr
 }
 
@@ -651,11 +651,11 @@ func (l *MixinNode) Copy() Node {
 type DoctypeNode struct {
 	NodeType
 	Pos
-	tr      *Tree
+	tr      *tree
 	doctype string
 }
 
-func (t *Tree) newDoctype(pos Pos, text string) *DoctypeNode {
+func (t *tree) newDoctype(pos Pos, text string) *DoctypeNode {
 	doc := ""
 	txt := strings.Trim(text, " ")
 	if len(txt) > 0 {
@@ -703,7 +703,7 @@ func (d *DoctypeNode) WriteIn(b io.Writer) {
 	fmt.Fprintf(b, text__str, d.doctype)
 	// b.Write([]byte(d.doctype))
 }
-func (d *DoctypeNode) tree() *Tree {
+func (d *DoctypeNode) tree() *tree {
 	return d.tr
 }
 func (d *DoctypeNode) Copy() Node {
