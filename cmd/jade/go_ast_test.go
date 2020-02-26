@@ -22,7 +22,7 @@ func init() {
 	wdir, _ = os.Getwd()
 }
 
-func examination(test func(dat []byte, fname string) ([]byte, error), ext, path string, t *testing.T) {
+func examination(test func(fpath string, dat []byte, fname string) ([]byte, error), ext, path string, t *testing.T) {
 	os.Chdir(path)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -50,7 +50,7 @@ func examination(test func(dat []byte, fname string) ([]byte, error), ext, path 
 		rx, _ := regexp.Compile("[^a-zA-Z0-9]+")
 		constName := rx.ReplaceAllString(name[:len(name)-4], "")
 
-		tpl, err := test(dat, constName)
+		tpl, err := test(path+name, dat, constName)
 		if err != nil {
 			fmt.Println("_________" + name)
 			fmt.Printf("--- FAIL: test run() error: \n%s\n\n", err)
@@ -100,7 +100,7 @@ func examination(test func(dat []byte, fname string) ([]byte, error), ext, path 
 	}
 }
 
-func astTest(text []byte, fname string) ([]byte, error) {
+func astTest(fpath string, text []byte, fname string) ([]byte, error) {
 	jade.Config(golang)
 
 	outPath := "test"
@@ -108,7 +108,7 @@ func astTest(text []byte, fname string) ([]byte, error) {
 
 	//
 
-	jst, err := jade.New("path").Parse(text)
+	jst, err := jade.New(fpath).Parse(text)
 	if err != nil {
 		log.Fatalln("cmd/jade: jade.New(path).Parse(): ", err)
 	}
