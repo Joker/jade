@@ -111,27 +111,27 @@ Loop:
 func filterGo(subf, args, text string) {
 	switch subf {
 	case "func":
-		Go.Name = ""
+		goFlt.Name = ""
 		switch args {
 		case "name":
-			Go.Name = text
+			goFlt.Name = text
 		case "arg", "args":
-			if Go.Args != "" {
-				Go.Args += ", " + strings.Trim(text, "()")
+			if goFlt.Args != "" {
+				goFlt.Args += ", " + strings.Trim(text, "()")
 			} else {
-				Go.Args = strings.Trim(text, "()")
+				goFlt.Args = strings.Trim(text, "()")
 			}
 		default:
 			fn := strings.Split(text, "(")
 			if len(fn) == 2 {
-				Go.Name = strings.Trim(fn[0], " \t\n)")
-				Go.Args = strings.Trim(fn[1], " \t\n)")
+				goFlt.Name = strings.Trim(fn[0], " \t\n)")
+				goFlt.Args = strings.Trim(fn[1], " \t\n)")
 			} else {
 				log.Fatal(":go:func filter error in " + text)
 			}
 		}
 	case "import":
-		Go.Import = text
+		goFlt.Import = text
 	}
 }
 

@@ -34,7 +34,7 @@ import (
 `
 )
 
-var golang = jade.Cfg{
+var golang = jade.ReplaseTokens{
 	GolangMode: true,
 	TagBgn:     "\nbuffer.WriteString(`<%s%s>`)",
 	TagEnd:     "\nbuffer.WriteString(`</%s>`)",
@@ -151,15 +151,17 @@ func newLayout(constName string) layout {
 
 	//
 
-	if jade.Go.Name != "" {
-		tpl.Func = "func " + jade.Go.Name
-		jade.Go.Name = ""
+	goFilter := jade.UseGoFilter()
+
+	if goFilter.Name != "" {
+		tpl.Func = "func " + goFilter.Name
+		goFilter.Name = ""
 	} else {
 		tpl.Func = `func Jade_` + constName
 	}
 
-	if jade.Go.Args != "" {
-		args := strings.Split(jade.Go.Args, ",")
+	if goFilter.Args != "" {
+		args := strings.Split(goFilter.Args, ",")
 		buffer := true
 		for k, v := range args {
 			args[k] = strings.Trim(v, " \t\n")
@@ -172,13 +174,13 @@ func newLayout(constName string) layout {
 			args = append(args, tpl.Bbuf)
 		}
 		tpl.Func += "(" + strings.Join(args, ",") + ")"
-		jade.Go.Args = ""
+		goFilter.Args = ""
 	} else {
 		tpl.Func += `(` + tpl.Bbuf + `) `
 	}
 
-	if jade.Go.Import != "" {
-		imp := strings.Split(jade.Go.Import, "\n")
+	if goFilter.Import != "" {
+		imp := strings.Split(goFilter.Import, "\n")
 		for k, v := range imp {
 			str := strings.Trim(v, " \t")
 			if v[len(v)-1:] != `"` { // lastChar != `"`
@@ -188,7 +190,7 @@ func newLayout(constName string) layout {
 			}
 		}
 		tpl.Import = append(tpl.Import, imp...)
-		jade.Go.Import = ""
+		goFilter.Import = ""
 	}
 	return tpl
 }

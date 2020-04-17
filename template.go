@@ -4,7 +4,6 @@ package jade
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"path/filepath"
 )
 
@@ -46,7 +45,7 @@ func Parse(name string, text []byte) (string, error) {
 
 // ParseFile parse the jade template file in given filename
 func ParseFile(filename string) (string, error) {
-	bs, err := ioutil.ReadFile(filename)
+	bs, err := ReadFn(filename)
 	if err != nil {
 		return "", err
 	}

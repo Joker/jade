@@ -1,8 +1,11 @@
 package jade
 
+import "io/ioutil"
+
 //go:generate stringer -type=itemType,NodeType -trimprefix=item -output=config_string.go
 
 var TabSize = 4
+var ReadFn = ioutil.ReadFile
 
 var (
 	golang_mode  = false
@@ -49,7 +52,7 @@ var (
 	mixin__var_block_end = ""
 )
 
-type Cfg struct {
+type ReplaseTokens struct {
 	GolangMode bool
 	TagBgn     string
 	TagEnd     string
@@ -93,7 +96,7 @@ type Cfg struct {
 	MixinVarBlockEnd string
 }
 
-func Config(c Cfg) {
+func Config(c ReplaseTokens) {
 	golang_mode = c.GolangMode
 	if c.TagBgn != "" {
 		tag__bgn = c.TagBgn
@@ -205,11 +208,18 @@ func Config(c Cfg) {
 	}
 }
 
-type out struct {
+//
+
+type goFilter struct {
 	Name, Args, Import string
 }
 
-var Go out
+var goFlt goFilter
+
+// global variable access (goFlt)
+func UseGoFilter() *goFilter { return &goFlt }
+
+//
 
 type itemType int8
 
@@ -337,6 +347,8 @@ var key = map[string]itemType{
 	"br":  itemTagVoidInline,
 	"img": itemTagVoidInline,
 }
+
+//
 
 // nodeType identifies the type of a parse tree node.
 type nodeType int
