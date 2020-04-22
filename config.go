@@ -5,7 +5,7 @@ import "io/ioutil"
 //go:generate stringer -type=itemType,NodeType -trimprefix=item -output=config_string.go
 
 var TabSize = 4
-var ReadFn = ioutil.ReadFile
+var ReadFunc = ioutil.ReadFile
 
 var (
 	golang_mode  = false
@@ -351,7 +351,7 @@ var key = map[string]itemType{
 //
 
 // nodeType identifies the type of a parse tree node.
-type nodeType int
+type nodeType int8
 
 // Type returns itself and provides an easy default implementation
 // for embedding in a Node. Embedded in all non-trivial Nodes.

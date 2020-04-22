@@ -45,7 +45,7 @@ func Parse(name string, text []byte) (string, error) {
 
 // ParseFile parse the jade template file in given filename
 func ParseFile(filename string) (string, error) {
-	bs, err := ReadFn(filename)
+	bs, err := ReadFunc(filename)
 	if err != nil {
 		return "", err
 	}
