@@ -441,27 +441,22 @@ func (t *Tree) parseInclude(tk item) *ListNode {
 
 func (t *Tree) parseSubFile(path string) *ListNode {
 	// log.Println("subtemplate: " + path)
-	var incTree = New(path)
+	currentTmplDir, _ := filepath.Split(t.Name)
+	var incTree = New(currentTmplDir + path)
 	incTree.block = t.block
 	incTree.mixin = t.mixin
-	wd, _ := os.Getwd()
-
-	dir, file := filepath.Split(path)
-	if dir != "" && dir != "./" {
-		os.Chdir(dir)
-	}
-
-	_, err := incTree.Parse(t.read(file))
+	_, err := incTree.Parse(t.read(path))
 	if err != nil {
 		d, _ := os.Getwd()
 		t.errorf(`in '%s' subtemplate '%s': parseSubFile() error: %s`, d, path, err)
 	}
 
-	os.Chdir(wd)
 	return incTree.Root
 }
 
 func (t *Tree) read(path string) []byte {
+	currentTmplDir, _ := filepath.Split(t.Name)
+	path = currentTmplDir + path
 	var (
 		bb  []byte
 		ext string
