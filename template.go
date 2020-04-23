@@ -16,22 +16,27 @@ Trivial usage:
 
 	import (
 		"fmt"
+		"html/template"
+		"net/http"
+
 		"github.com/Joker/jade"
 	)
 
-	func main() {
-		tpl, err := jade.Parse("tpl_name", "doctype 5: html: body: p Hello world!")
-		if err != nil {
-			fmt.Printf("Parse error: %v", err)
-			return
-		}
+	func handler(w http.ResponseWriter, r *http.Request) {
+		jadeTpl, _ := jade.Parse("jade", []byte("doctype 5\n html: body: p Hello #{.Word}!"))
+		goTpl, _ := template.New("html").Parse(jadeTpl)
 
-		fmt.Printf( "Output:\n\n%s", tpl  )
+		goTpl.Execute(w, struct{ Word string }{"jade"})
+	}
+
+	func main() {
+		http.HandleFunc("/", handler)
+		http.ListenAndServe(":8080", nil)
 	}
 
 Output:
 
-	<!DOCTYPE html><html><body><p>Hello world!</p></body></html>
+	<!DOCTYPE html><html><body><p>Hello jade!</p></body></html>
 */
 func Parse(name string, text []byte) (string, error) {
 	outTpl, err := New(name).Parse(text)

@@ -1,15 +1,15 @@
 # Jade.go - template engine for Go (golang)  
 Package jade (github.com/Joker/jade) is a simple and fast template engine implementing Jade/Pug template.  
 Jade precompiles templates to Go code or generates html/template.  
-Now Jade-lang renamed to [Pug template engine](https://pugjs.org/api/getting-started.html).  
+Now Jade-lang is renamed to [Pug template engine](https://pugjs.org/language/tags.html).  
 
-[![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://godoc.org/github.com/Joker/jade) [![Go Report Card](https://goreportcard.com/badge/github.com/Joker/jade)](https://goreportcard.com/report/github.com/Joker/jade)
+[![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://pkg.go.dev/github.com/Joker/jade?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/Joker/jade)](https://goreportcard.com/report/github.com/Joker/jade)
 
 ## Jade/Pug syntax
 example:
 
 ```jade
-:go:func Index(pageTitle string, youAreUsingJade bool)
+//-  :go:func Index(pageTitle string, youAreUsingJade bool)
 
 mixin for(golang)
     #cmd Precompile jade templates to #{golang} code.
@@ -68,16 +68,17 @@ becomes
 </html>
 ```
 
-
-See [more](https://github.com/Joker/jade/tree/master/testdata/v2) [examples](https://github.com/Joker/jade/tree/master/example).  
+Here are additional [examples](https://github.com/Joker/jade/tree/master/example) and [test cases](https://github.com/Joker/jade/tree/master/testdata/v2).
 
 
 ## Example usage
 
+### jade command
 ```sh
 jade -pkg=main -writer hello.jade
 ```
-jade command precompiles hello.jade to hello.jade.go  
+
+jade command precompiles _hello.jade_ to _hello.jade.go_  
 
 `hello.jade`
 ```
@@ -115,44 +116,49 @@ package main
 import "net/http"
 
 func main() {
-	http.HandleFunc("/", func(wr http.ResponseWriter, req *http.Request) {
-		tpl_hello("jade", wr)
-	})
-	http.ListenAndServe(":8080", nil)
+    http.HandleFunc("/", func(wr http.ResponseWriter, req *http.Request) {
+        tpl_hello("jade", wr)
+    })
+    http.ListenAndServe(":8080", nil)
 }
 ```
 
-Output on localhost:8080 :
+output at localhost:8080
 ```html
 <!DOCTYPE html><html><body><p>Hello jade!</p></body></html>
 ```
-  
-  
-or generate html/template at runtime
 
+### github.com/Joker/jade packege
+generate html/template at runtime
+(This case is slightly slower and doesn't support all features of Jade.go)
 
 ```go
 package main
 
 import (
     "fmt"
+    "html/template"
+    "net/http"
+
     "github.com/Joker/hpp" // Prettify HTML
     "github.com/Joker/jade"
 )
 
-func main() {
-    tpl, err := jade.Parse("name_of_tpl", "doctype 5\n html: body: p Hello #{.Word} !")
-    if err != nil {
-        fmt.Printf("Parse error: %v", err)
-        return
-    }
+func handler(w http.ResponseWriter, r *http.Request) {
+    jadeTpl, _ := jade.Parse("jade", []byte("doctype 5\n html: body: p Hello #{.Word} !"))
+    goTpl, _ := template.New("html").Parse(jadeTpl)
 
-    fmt.Printf( "Output:\n\n%s", hpp.PrPrint(tpl) )
+    fmt.Printf("output:%s\n\n", hpp.PrPrint(jadeTpl))
+    goTpl.Execute(w, struct{ Word string }{"jade"})
+}
+
+func main() {
+    http.HandleFunc("/", handler)
+    http.ListenAndServe(":8080", nil)
 }
 ```
 
-Output:
-
+console output
 ```html
 <!DOCTYPE html>
 <html>
@@ -162,9 +168,12 @@ Output:
 </html>
 ```
 
+output at localhost:8080
+```html
+<!DOCTYPE html><html><body><p>Hello jade !</p></body></html>
+```
 
 ## Installation
-
 ```sh
 $ go get github.com/Joker/jade/cmd/jade
 ```
@@ -173,8 +182,8 @@ $ go get github.com/Joker/jade/cmd/jade
 ## Custom filter  :go
 This filter is used as helper for command line tool  
 (to set imports, function name and parameters).  
-Filter may be located at any nesting level.  
-When jade used as library :go filter is not needed.  
+Filter may be placed at any nesting level.  
+When Jade used as library :go filter is not needed.  
 
 ### Nested filter  :func
 ```
