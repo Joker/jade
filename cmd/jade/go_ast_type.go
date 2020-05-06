@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go/ast"
 	"go/importer"
 	"go/types"
@@ -16,10 +17,12 @@ func (a *goAST) checkType() {
 			Uses:  make(map[*ast.Ident]types.Object),
 		}
 		conf = types.Config{
-			Importer: importer.Default(),
+			Importer: importer.ForCompiler(a.fset, "source", nil),
 			// DisableUnusedImportCheck: true,
 			Error: func(err error) {
-				// fmt.Println(err)
+				if sl := strings.Split(err.Error(), "could not import"); len(sl) == 2 {
+					fmt.Printf("\n Error: could not import%s\n\n", sl[1])
+				}
 			},
 		}
 	)

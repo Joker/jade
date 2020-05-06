@@ -140,4 +140,5 @@ func TestGoASToptimize(t *testing.T) {
 	examination(astTest, ".go", wdir+"/testdata/v2/", t)
 	examination(astTest, ".go", wdir+"/testdata/v2/includes/", t)
 	examination(astTest, ".go", wdir+"/testdata/v2/inheritance/", t)
+	examination(astTest, ".go", wdir+"/testdata/imp/", t)
 }
