@@ -70,15 +70,24 @@ becomes
 
 Here are additional [examples](https://github.com/Joker/jade/tree/master/example) and [test cases](https://github.com/Joker/jade/tree/master/testdata/v2).
 
+## Installation
+Install [jade compiler](https://github.com/Joker/jade/tree/master/cmd/jade)
+```console
+go install github.com/Joker/jade/cmd/jade@latest
+```
+or github.com/Joker/jade package
+```console
+go get -u github.com/Joker/jade
+```
 
 ## Example usage
 
-### jade command
-```sh
-jade -pkg=main -writer hello.jade
+### jade compiler
+```console
+jade -writer -pkg=main hello.jade
 ```
 
-jade command precompiles _hello.jade_ to _hello.jade.go_  
+jade command[^1] precompiles _hello.jade_ to _hello.jade.go_  
 
 `hello.jade`
 ```
@@ -100,7 +109,7 @@ const (
     hello__0 = `<!DOCTYPE html><html><body><p>Hello `
     hello__1 = `!</p></body></html>`
 )
-func tpl_hello(word string, wr io.Writer) {
+func Jade_hello(word string, wr io.Writer) {
     buffer := &WriterAsBuffer{wr}
     buffer.WriteString(hello__0)
     WriteEscString(word, buffer)
@@ -117,7 +126,7 @@ import "net/http"
 
 func main() {
     http.HandleFunc("/", func(wr http.ResponseWriter, req *http.Request) {
-        tpl_hello("jade", wr)
+        Jade_hello("jade", wr)
     })
     http.ListenAndServe(":8080", nil)
 }
@@ -128,9 +137,9 @@ output at localhost:8080
 <!DOCTYPE html><html><body><p>Hello jade!</p></body></html>
 ```
 
-### github.com/Joker/jade packege
-generate html/template at runtime
-(This case is slightly slower and doesn't support all features of Jade.go)
+### github.com/Joker/jade package
+generate [`html/template`](https://golang.org/pkg/html/template/) at runtime
+(This case is slightly slower and doesn't support[^2] all features of Jade.go)
 
 ```go
 package main
@@ -173,11 +182,9 @@ output at localhost:8080
 <!DOCTYPE html><html><body><p>Hello jade !</p></body></html>
 ```
 
-## Installation
-```sh
-$ go get github.com/Joker/jade/cmd/jade
-```
-
+## Performance
+The data of chart comes from [SlinSo/goTemplateBenchmark](https://github.com/SlinSo/goTemplateBenchmark).
+![chart](https://user-images.githubusercontent.com/11617/141963788-3bf16698-c41e-4dc7-9f11-80d9473009ad.png)
 
 ## Custom filter  :go
 This filter is used as helper for command line tool  
@@ -203,3 +210,41 @@ When Jade used as library :go filter is not needed.
     "github.com/Joker/jade"
     github.com/Joker/hpp
 ```
+
+#### note
+[^1]:
+    `Usage: ./jade [OPTION]... [FILE]...`
+    ```
+    -basedir string
+            base directory for templates (default "./")
+    -d string
+            directory for generated .go files (default "./")
+    -fmt
+            HTML pretty print output for generated functions
+    -inline
+            inline HTML in generated functions
+    -pkg string
+            package name for generated files (default "jade")
+    -stdbuf
+            use bytes.Buffer  [default bytebufferpool.ByteBuffer]
+    -stdlib
+            use stdlib functions
+    -writer
+            use io.Writer for output
+    ```
+[^2]:
+    Runtime `html/template` generation doesn't support the following features:  
+    `=>` means it generate the folowing template  
+    ```
+	for                =>  "{{/* %s, %s */}}{{ range %s }}"
+	for if             =>  "{{ if gt len %s 0 }}{{/* %s, %s */}}{{ range %s }}"
+
+	multiline code     =>  "{{/* %s */}}"
+	inheritance block  =>  "{{/* block */}}"
+
+	case statement     =>  "{{/* switch %s */}}"
+	when               =>  "{{/* case %s: */}}"
+	default            =>  "{{/* default: */}}"
+    ```
+    You can change this behaviour in [`config.go`](https://github.com/Joker/jade/blob/master/config.go#L24) file.  
+    Partly this problem can be solved by [custom](https://pkg.go.dev/text/template#example-Template-Func) functions.  
