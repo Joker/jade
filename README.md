@@ -213,7 +213,7 @@ When Jade used as library :go filter is not needed.
 
 #### note
 [^1]:
-    `Usage: ./jade [OPTION]... [FILE]...`
+    `Usage: ./jade [OPTION]... [FILE]...`  
     ```
     -basedir string
             base directory for templates (default "./")

@@ -119,7 +119,12 @@ func genFile(path, outdir, pkg_name string) {
 		tpl = newLayout(constName)
 	)
 	tpl.writeBefore(bb)
+	before := bb.Len()
 	jst.WriteIn(bb)
+	if before == bb.Len() {
+		fmt.Print("generated: skipped (empty output)  done.\n\n")
+		return
+	}
 	tpl.writeAfter(bb)
 
 	//
@@ -146,7 +151,7 @@ func genFile(path, outdir, pkg_name string) {
 	if err != nil {
 		log.Fatalln("cmd/jade: WriteFile(): ", err)
 	}
-	fmt.Printf("generate: %s.go  done.\n\n", outPath)
+	fmt.Printf("generated: %s.go  done.\n\n", outPath)
 }
 
 func genDir(dir, outdir, pkg_name string) {
