@@ -1,11 +1,8 @@
 package jade
 
-import "io/ioutil"
-
 //go:generate stringer -type=itemType,NodeType -trimprefix=item -output=config_string.go
 
 var TabSize = 4
-var ReadFunc = ioutil.ReadFile
 
 var (
 	golang_mode  = false

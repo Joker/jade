@@ -6,14 +6,16 @@ package jade
 
 import (
 	"fmt"
+	"net/http"
 	"runtime"
 )
 
 // Tree is the representation of a single parsed template.
 type tree struct {
-	Name string    // name of the template represented by the tree.
-	Root *listNode // top-level root of the tree.
-	text string    // text parsed to create the template (or its parent)
+	Name       string    // name of the template represented by the tree.
+	Root       *listNode // top-level root of the tree.
+	text       string    // text parsed to create the template (or its parent)
+	fileSystem http.FileSystem
 
 	// Parsing only; cleared after parse.
 	lex       *lexer
@@ -141,5 +143,14 @@ func New(name string) *tree {
 		Name:  name,
 		mixin: map[string]*mixinNode{},
 		block: map[string]*listNode{},
+	}
+}
+
+func NewFileSystem(name string, fs http.FileSystem) *tree {
+	return &tree{
+		Name:       name,
+		fileSystem: fs,
+		mixin:      map[string]*mixinNode{},
+		block:      map[string]*listNode{},
 	}
 }
