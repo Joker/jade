@@ -3,7 +3,7 @@ Package jade (github.com/Joker/jade) is a simple and fast template engine implem
 Jade precompiles templates to Go code or generates html/template.  
 Now Jade-lang is renamed to [Pug template engine](https://pugjs.org/language/tags.html).  
 
-[![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://pkg.go.dev/github.com/Joker/jade?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/Joker/jade)](https://goreportcard.com/report/github.com/Joker/jade)
+[![GoDoc](https://godoc.org/github.com/Joker/jade?status.svg)](https://pkg.go.dev/github.com/Joker/jade#section-documentation) [![Go Report Card](https://goreportcard.com/badge/github.com/Joker/jade)](https://goreportcard.com/report/github.com/Joker/jade)
 
 ## Jade/Pug syntax
 example:
@@ -138,7 +138,7 @@ output at localhost:8080
 ```
 
 ### github.com/Joker/jade package
-generate [`html/template`](https://golang.org/pkg/html/template/) at runtime
+generate [`html/template`](https://pkg.go.dev/html/template#hdr-Introduction) at runtime
 (This case is slightly slower and doesn't support[^2] all features of Jade.go)
 
 ```go
