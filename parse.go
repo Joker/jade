@@ -12,10 +12,9 @@ import (
 
 // Tree is the representation of a single parsed template.
 type tree struct {
-	Name       string    // name of the template represented by the tree.
-	Root       *listNode // top-level root of the tree.
-	text       string    // text parsed to create the template (or its parent)
-	fileSystem http.FileSystem
+	Name string    // name of the template represented by the tree.
+	Root *listNode // top-level root of the tree.
+	text string    // text parsed to create the template (or its parent)
 
 	// Parsing only; cleared after parse.
 	lex       *lexer
@@ -24,6 +23,8 @@ type tree struct {
 
 	mixin map[string]*mixinNode
 	block map[string]*listNode
+
+	fs http.FileSystem // embedded file system
 }
 
 // Copy returns a copy of the Tree. Any parsing state is discarded.
@@ -143,14 +144,5 @@ func New(name string) *tree {
 		Name:  name,
 		mixin: map[string]*mixinNode{},
 		block: map[string]*listNode{},
-	}
-}
-
-func NewFileSystem(name string, fs http.FileSystem) *tree {
-	return &tree{
-		Name:       name,
-		fileSystem: fs,
-		mixin:      map[string]*mixinNode{},
-		block:      map[string]*listNode{},
 	}
 }

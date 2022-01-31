@@ -4,9 +4,7 @@ package jade
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net/http"
-	"path/filepath"
 )
 
 /*
@@ -40,59 +38,49 @@ Output:
 
 	<!DOCTYPE html><html><body><p>Hello jade!</p></body></html>
 */
-func Parse(name string, text []byte) (string, error) {
-	outTpl, err := New(name).Parse(text)
+func Parse(fname string, text []byte) (string, error) {
+	outTpl, err := New(fname).Parse(text)
 	if err != nil {
 		return "", err
 	}
-	b := new(bytes.Buffer)
-	outTpl.WriteIn(b)
-	return b.String(), nil
-}
-
-func ParseFileSystem(name string, text []byte, fs http.FileSystem) (string, error) {
-	outTpl, err := NewFileSystem(name, fs).Parse(text)
-	if err != nil {
-		return "", err
-	}
-	b := new(bytes.Buffer)
-	outTpl.WriteIn(b)
-	return b.String(), nil
+	bb := new(bytes.Buffer)
+	outTpl.WriteIn(bb)
+	return bb.String(), nil
 }
 
 // ParseFile parse the jade template file in given filename
-func ParseFile(filename string) (string, error) {
-	bs, err := ReadFunc(filename, nil)
+func ParseFile(fname string) (string, error) {
+	text, err := ReadFunc(fname)
 	if err != nil {
 		return "", err
 	}
-	return Parse(filepath.Base(filename), bs)
+	return Parse(fname, text)
+}
+
+// ParseWithFileSystem parse in context of a http.FileSystem (supports embedded files)
+func ParseWithFileSystem(fname string, text []byte, fs http.FileSystem) (str string, err error) {
+	outTpl := New(fname)
+	outTpl.fs = fs
+
+	outTpl, err = outTpl.Parse(text)
+	if err != nil {
+		return "", err
+	}
+
+	bb := new(bytes.Buffer)
+	outTpl.WriteIn(bb)
+	return bb.String(), nil
+}
+
+// ParseFileFromFileSystem parse template file in context of a http.FileSystem (supports embedded files)
+func ParseFileFromFileSystem(fname string, fs http.FileSystem) (str string, err error) {
+	text, err := readFile(fname, fs)
+	if err != nil {
+		return "", err
+	}
+	return ParseWithFileSystem(fname, text, fs)
 }
 
 func (t *tree) WriteIn(b io.Writer) {
 	t.Root.WriteIn(b)
-}
-
-func ReadFunc(filename string, fs http.FileSystem) ([]byte, error) {
-	if fs == nil {
-		return ioutil.ReadFile(filename)
-	}
-
-	file, err := fs.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	info, err := file.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	buf := make([]byte, info.Size())
-	_, err = file.Read(buf)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
 }
