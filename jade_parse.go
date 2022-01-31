@@ -1,7 +1,9 @@
 package jade
 
 import (
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -439,11 +441,12 @@ func (t *tree) parseInclude(tk item) *listNode {
 }
 
 func (t *tree) parseSubFile(path string) *listNode {
-	// log.Println("subtemplate: " + path)
-	currentTmplDir, _ := filepath.Split(t.Name)
-	var incTree = New(currentTmplDir + path)
+	var incTree = New(t.resolvePath(path))
+
 	incTree.block = t.block
 	incTree.mixin = t.mixin
+	incTree.fs = t.fs
+
 	_, err := incTree.Parse(t.read(path))
 	if err != nil {
 		d, _ := os.Getwd()
@@ -454,10 +457,8 @@ func (t *tree) parseSubFile(path string) *listNode {
 }
 
 func (t *tree) read(path string) []byte {
-	currentTmplDir, _ := filepath.Split(t.Name)
-	path = currentTmplDir + path
-
-	bb, err := ReadFunc(path)
+	path = t.resolvePath(path)
+	bb, err := readFile(path, t.fs)
 
 	if os.IsNotExist(err) {
 
@@ -472,7 +473,7 @@ func (t *tree) read(path string) []byte {
 			} else {
 				ext = ".jade"
 			}
-			bb, err = ReadFunc(path + ext)
+			bb, err = readFile(path+ext, t.fs)
 		}
 	}
 	if err != nil {
@@ -480,4 +481,23 @@ func (t *tree) read(path string) []byte {
 		t.errorf(`%s  work dir: %s `, err, wd)
 	}
 	return bb
+}
+
+func (t *tree) resolvePath(path string) string {
+	currentTmplDir, _ := filepath.Split(t.Name)
+	return filepath.Clean(currentTmplDir + path)
+}
+
+func readFile(fname string, fs http.FileSystem) ([]byte, error) {
+	if fs == nil {
+		return ReadFunc(fname)
+	}
+
+	file, err := fs.Open(fname)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	return ioutil.ReadAll(file)
 }

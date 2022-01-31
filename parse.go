@@ -6,6 +6,7 @@ package jade
 
 import (
 	"fmt"
+	"net/http"
 	"runtime"
 )
 
@@ -22,6 +23,8 @@ type tree struct {
 
 	mixin map[string]*mixinNode
 	block map[string]*listNode
+
+	fs http.FileSystem // embedded file system
 }
 
 // Copy returns a copy of the Tree. Any parsing state is discarded.
