@@ -485,7 +485,8 @@ func (t *tree) read(path string) []byte {
 
 func (t *tree) resolvePath(path string) string {
 	currentTmplDir, _ := filepath.Split(t.Name)
-	return filepath.Clean(currentTmplDir + path)
+	path = filepath.Join(currentTmplDir, path)
+	return filepath.ToSlash(path)
 }
 
 func readFile(fname string, fs http.FileSystem) ([]byte, error) {
