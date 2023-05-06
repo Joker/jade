@@ -32,7 +32,7 @@ func (a *goAST) checkUnresolvedBlock() {
 				if len(xds.Args) == 1 {
 					if i, ok := xds.Args[0].(*ast.Ident); ok {
 						if i.Name == "block" {
-							if dsSl[len(dsSl)-1] == ds {
+							if len(dsSl) > 0 && dsSl[len(dsSl)-1] == ds {
 								dsSl = dsSl[:len(dsSl)-1]
 							}
 						}
