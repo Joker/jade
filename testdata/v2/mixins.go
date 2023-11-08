@@ -178,4 +178,20 @@ func Jade_mixins(buffer *pool.ByteBuffer) {
 		buffer.WriteString(`</ul>`)
 	}
 
+	{
+		var (
+			foo = "My inner paragraph"
+		)
+
+		{
+			var (
+				bar = foo
+			)
+
+			buffer.WriteString(`<p>`)
+			WriteEscString(bar, buffer)
+			buffer.WriteString(`</p>`)
+		}
+	}
+
 }

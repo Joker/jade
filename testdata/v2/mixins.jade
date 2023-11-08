@@ -70,3 +70,11 @@ mixin list(id, ...items)
 //- Use
 // TODO for string
 +list(fn("my-list"), "string", 2, 3.5, 4)
+
+//- Declaration
+mixin inner(bar)
+  p= bar
+mixin outer(foo)
+  +inner(foo)
+//- Use
++outer('My inner paragraph')

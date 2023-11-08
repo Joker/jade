@@ -570,6 +570,15 @@ type mixinNode struct {
 func (t *tree) newMixin(pos pos) *mixinNode {
 	return &mixinNode{tr: t, nodeType: nodeMixin, pos: pos}
 }
+func (m *mixinNode) cloneMixin() *mixinNode {
+	return &mixinNode{
+		tr:       m.tr,
+		nodeType: nodeMixin,
+		pos:      m.pos,
+		AttrName: m.AttrName,
+		AttrCode: m.AttrCode,
+	}
+}
 
 func (l *mixinNode) append(n node) {
 	l.Nodes = append(l.Nodes, n)
@@ -630,11 +639,16 @@ func (l *mixinNode) WriteIn(b io.Writer) {
 	fmt.Fprintf(b, mixin__end)
 }
 
-func (l *mixinNode) CopyMixin() *mixinNode {
+func (l *mixinNode) CopyMixin(withAttributes bool) *mixinNode {
 	if l == nil {
 		return l
 	}
-	n := l.tr.newMixin(l.pos)
+	var n *mixinNode
+	if withAttributes {
+		n = l.cloneMixin()
+	} else {
+		n = l.tr.newMixin(l.pos)
+	}
 	for _, elem := range l.Nodes {
 		n.append(elem.Copy())
 	}
@@ -642,7 +656,7 @@ func (l *mixinNode) CopyMixin() *mixinNode {
 }
 
 func (l *mixinNode) Copy() node {
-	return l.CopyMixin()
+	return l.CopyMixin(true)
 }
 
 //

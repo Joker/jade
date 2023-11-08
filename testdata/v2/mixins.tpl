@@ -61,3 +61,6 @@
     <li>{{ item }}</li>
     {{ end }}
 </ul>
+{{ $foo := "My inner paragraph" }}
+{{ $bar := foo }} 
+<p>{{ bar }}</p>

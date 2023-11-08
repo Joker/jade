@@ -354,7 +354,7 @@ func (t *tree) parseMixinUse(tk item) node {
 	}
 	var (
 		deep  = tk.depth
-		mixin = tMix.CopyMixin()
+		mixin = tMix.CopyMixin(false)
 	)
 Loop:
 	for {
