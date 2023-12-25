@@ -62,7 +62,7 @@ var golang = jade.ReplaseTokens{
 	CodeElseIf:    "\n} else if %s {",
 	CodeCaseWhen:  "\ncase %s:",
 	CodeCaseDef:   "\ndefault:",
-	CodeMixBlock:  "\nbuffer.Write(block)",
+	CodeMixBlock:  "\nbuffer.Write(blockk)",
 
 	TextStr:     "\nbuffer.WriteString(`%s`)",
 	TextComment: "\nbuffer.WriteString(`<!-- %s -->`)",
@@ -73,9 +73,9 @@ var golang = jade.ReplaseTokens{
 	MixinVar:         "\n%s = %s",
 	MixinVarRest:     "\n%s = %#v",
 	MixinVarEnd:      "\n)\n",
-	MixinVarBlockBgn: "var block []byte\n{\nbuffer := new(bytes.Buffer)",
-	MixinVarBlock:    "var block []byte",
-	MixinVarBlockEnd: "\nblock = buffer.Bytes()\n}\n",
+	MixinVarBlockBgn: "var blockk []byte\n{\nbuffer := new(bytes.Buffer)",
+	MixinVarBlock:    "var blockk []byte",
+	MixinVarBlockEnd: "\nblockk = buffer.Bytes()\n}\n",
 }
 
 type layout struct {
